@@ -1,0 +1,10 @@
+{% autoescape off %}
+  -------------------------------------------------
+	{{ overview.first_name }} {{ first_name }}  
+	{{ overview.last_name }} {{ last_name }}
+	{{ overview.email }} {{ email }}
+
+	{{ overview.username }} {{ username }}
+	{{ overview.perms }} {{ perms }}
+{% endautoescape %}
+  -------------------------------------------------

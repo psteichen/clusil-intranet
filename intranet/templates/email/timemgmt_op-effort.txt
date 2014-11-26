@@ -1,0 +1,9 @@
+{% autoescape off %}
+  -------------------------------------------------
+	{{ overview.mandate }} {{ mandate }}
+	{{ overview.period }} {{ period }}
+
+	{{ overview.effort.title }}{% for t in effort %}
+		{% if t.task %}{{ t.task }} : {{ t.percentage }}{{ overview.effort.percentage }}{% endif %}{% endfor %}
+{% endautoescape %}
+  -------------------------------------------------

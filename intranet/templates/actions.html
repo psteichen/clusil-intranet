@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+{% if title %}<h2>{{ title }}</h2>{% endif %}
+  {% for part in actions %}
+  {% if part.has_perms in perms or not part.has_perms %}
+  <div class="col-xs-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        {% if part.heading %}<p>{{ part.heading|safe }}</p>{% endif %}
+      </div>
+      <div class="panel-body">
+        <center>
+        {% for action in part.actions %}
+        {% if action.has_perms in perms or not action.has_perms %}
+          {% if action.url %}
+            <a class="btn btn-success" href="{{ action.url }}" role="button">{% if action.glyphicon %}<span class="glyphicon {{ action.glyphicon }}"></span>{% endif %}&nbsp;&nbsp;{{ action.label }}&nbsp;</a>
+     	    <br />
+     	    {% if action.desc %}<span class="btn-footer">( {{ action.desc }} )</span>{% endif %}
+     	    <br />
+     	    <br />
+          {% endif %}
+        {% endif %}
+        {% endfor %}
+        </center>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}
+

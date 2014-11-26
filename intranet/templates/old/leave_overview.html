@@ -1,0 +1,36 @@
+<center>
+<fieldset class="overview"><legend><h2>{{ overview.title }}</h2></legend>
+ <table>
+  <tr>
+   <th>{{ overview.type }}</th><td>{{ type }}</td>
+   <th>{{ overview.comment }}</th><td>{{ comment }}</td>
+  </tr>
+  <tr>
+{% if end_date %}
+   <th>{{ overview.start_date }}</th><td>{{ start_date }}</td>
+ {% if start_time %}
+   <th>{{ overview.start_time }}</th><td>{{ start_time }}</td>
+ {% endif %}
+  </tr>  
+  <tr>
+   <th>{{ overview.end_date }}</th><td>{{ end_date }}</td>
+ {% if end_time %}
+   <th>{{ overview.end_time }}</th><td>{{ end_time }}</td>
+ {% endif %}
+{% else %}
+   <th>{{ overview.day }}</th><td>{{ start_date }}</td>
+ {% if half_day %}
+   <td>{{ half_day }}</td>
+ {% endif %}
+  </tr>  
+{% endif %}
+{% if lh %}
+  <tr>
+   <th>{{ overview.lh }}</th><td colspan="3">{{ lh }}</td>
+   <br />
+  </tr>
+{% endif %}
+ </table>
+</fieldset>
+</center>
+

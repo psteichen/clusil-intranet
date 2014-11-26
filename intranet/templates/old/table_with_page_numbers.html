@@ -1,0 +1,78 @@
+{% spaceless %}
+{% load django_tables2 %}
+{% load i18n %}
+{% load l10n %}
+<div class="table-container">
+{% block table %}
+<table{% if table.attrs %} {{ table.attrs.as_html }}{% endif %}>
+    {% nospaceless %}
+    {% block table.thead %}
+    <thead>
+        <tr>
+        {% for column in table.columns %}
+            {% if column.orderable %}
+            <th {{ column.attrs.th.as_html }}><a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}">{{ column.header }}</a></th>
+            {% else %}
+            <th {{ column.attrs.th.as_html }}>{{ column.header }}</th>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    </thead>
+    {% endblock table.thead %}
+    {% block table.tbody %}
+    <tbody>
+        {% for row in table.page.object_list|default:table.rows %} {# support pagination #}
+        {% block table.tbody.row %}
+        <tr class="{{ forloop.counter|divisibleby:2|yesno:"even,odd" }}"> {# avoid cycle for Django 1.2-1.6 compatibility #}
+            {% for column, cell in row.items %}
+<!--                <td {{ column.attrs.td.as_html }}>{% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}</td> -->
+                <td {{ column.attrs.td.as_html }}>{{ cell|localize }}</td>
+            {% endfor %}
+        </tr>
+        {% endblock table.tbody.row %}
+        {% empty %}
+        {% if table.empty_text %}
+        {% block table.tbody.empty_text %}
+        <tr><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
+        {% endblock table.tbody.empty_text %}
+        {% endif %}
+        {% endfor %}
+    </tbody>
+    {% endblock table.tbody %}
+    {% block table.tfoot %}
+    <tfoot></tfoot>
+    {% endblock table.tfoot %}
+    {% endnospaceless %}
+</table>
+{% endblock table %}
+
+{% block footer %}
+<ul class="table_footer">
+ {% if table.page %}
+ {% with table.page.paginator.count as total %}
+ {% with table.page.object_list|length as count %}
+ {% block pagination %}
+  {% block pagination.allpages %}
+    {% for p in table.paginator.page_range %}
+      {% if table.page.number == p %}
+        {% block pagination.current %}<li class="current">{{ p }}</li>{% endblock pagination.current %}
+      {% else %}
+        {% block pagination.other %}<li class="page"><a href="{% querystring table.prefixed_page_field=p %}">{{ p }}</a></li>{% endblock pagination.other %}
+      {% endif %}
+    {% endfor %}
+  {% endblock pagination.allpages %}
+  {% block pagination.cardinality %}<li class="cardinality">&nbsp;&nbsp;::&nbsp;&nbsp;&nbsp;{% if total != count %}{% blocktrans %}{{ count }} of {{ total }}{% endblocktrans %}{% else %}{{ total }}{% endif %} {% if total == 1 %}{{ table.data.verbose_name }}{% else %}{{ table.data.verbose_name_plural }}{% endif %}</li>{% endblock pagination.cardinality %}
+ {% endblock pagination %}
+ {% endwith %}
+ {% endwith %}
+ {% else %}
+  {% with table.rows|length as total %}
+   {% block cardinality %}<li class="cardinality">&nbsp;&nbsp;::&nbsp;&nbsp;&nbsp;{{ total }}&nbsp;{% if total == 1 %}{{ table.data.verbose_name }}{% else %}{{ table.data.verbose_name_plural }}{% endif %}</li>{% endblock cardinality %}
+  {% endwith %}
+ {% endif %}
+ {% block table.report %}<li class="cardinality">&nbsp;&nbsp;::&nbsp;&nbsp;&nbsp;export to:&nbsp;{% if table.is_configured %}{% for label, format in table.formats %}<a href="{% querystring table.param_report=format %}"><img src="{{ STATIC_URL }}img/{{ format }}_icon_22.png" title="{{ label }}" valign="middle"/></a>{% endfor %}{% endif %}</li>{% endblock table.report %}
+</ul>
+{% endblock footer %}
+
+</div>
+{% endspaceless %}

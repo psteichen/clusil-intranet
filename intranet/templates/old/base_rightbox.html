@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+  {% block head %}
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="en" />
+    <meta http-equiv="content-language" content="en">
+    <meta name="robots" content="none">
+
+    <meta name="author" content="{{ meta.author }}">
+    <meta name="copyright" content="{{ meta.copyright }}">
+    
+    <title>{{ meta.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    <meta name="keywords" content="{{ meta.keywords }}">
+    
+    <link rel="index" href="/" title="{{ meta.title }}">
+    <link rel="stylesheet" media="screen,projection" type="text/css" href="{{ meta.stylesheet }}">
+  {% endblock %}
+  </head>
+  <body id="body">
+    <div id="wrap">
+      <div id="top"></div>
+      <div id="content">
+	<div class="header">
+          <h3>[{{ meta.app_env }}]</h3>
+          <h1>{{ meta.title }}</h1>
+          <h2>{{ meta.subtitle }}</h2>
+	</div>
+        <div class="breadcrumb">
+        {% for breadcrumb in request.breadcrumbs %}
+         :: <a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>{% if forloop.last %} :: {% endif %}
+        {% endfor %}
+        </div>
+        <div class="middle">
+          {% block content %}{% endblock %}
+        </div>
+        {% if user.is_authenticated %}
+        <div class="right">
+          <h1>Logged in as:</h1>
+          <ul><li><b>{{ user.first_name }} {{ user.last_name }}</b></li></ul>
+          <h1>with premissions:</h1>
+          <ul>
+          {% if 'smash' in perms %}
+            {% if 'smash.MD' in perms %}
+              <li><i>MD</i></li>
+            {% endif %}
+            {% if 'smash.SMOBO' in perms %}
+              <li><i>SMOBO</i></li>
+            {% endif %}
+            {% if 'smash.HR' in perms %}
+              <li><i>HR</i></li>
+            {% endif %}
+            {% if 'smash.FIN' in perms %}
+              <li><i>FIN</i></li>
+            {% endif %}
+          {% else %}
+              <li><i>User</i></li>
+          {% endif %}
+          </ul>
+          <hr />
+          <p align="right"><a href="/chgpwd/">Change password</a>&nbsp;/&nbsp;<a href="/logout/">Logout</a></p>
+        </div>
+        {% endif %}
+        <div id="clear"></div>
+      </div>
+      <div id="bottom"></div>
+    </div>
+    <div id="footer">
+      &copy; SMILE 2014
+    </div>
+    <div id="debug">
+      {% if DEBUG %}<p>DEBUGGING message:</p><pre>{{ DEBUG }}</pre>{% endif %}
+    </div>
+  </body>
+</html>

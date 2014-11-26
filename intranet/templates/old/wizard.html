@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+{% if desc %}<pre>{{ desc }}</pre>{% endif %}
+{% if error_message %}<p class="error">{{ error_message }}</p>{% endif %}
+<form action="" method="post">
+{% csrf_token %}
+  <center>
+  <fieldset><legend><h2>{{ step_title }}</h2></legend>
+   {{ wizard.management_form }}
+   {{ wizard.form.non_form_errors }}
+   {% if wizard.form.forms %}
+     {{ wizard.form.management_form }}
+     {% for form in wizard.form.forms %}
+     <table class="formset">
+       {{ form }}
+     </table>
+     {% endfor %}
+   {% else %}
+   <table>
+     {{ wizard.form }}
+   </table>
+   {% endif %}
+  <button class="submit" type="submit" value="{{ next }}">{{ next }}</button>
+   {% if wizard.steps.prev %}<br /><button class="step" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{{ first }}</button>::<button class="step" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{{ prev }}</button>{% endif %}
+  </fieldset>
+  </center>
+<p class="steps">[ step {{ wizard.steps.step1 }} of {{ wizard.steps.count }} ]</p>
+</form>
+  {{ overview }}
+{% endblock %}

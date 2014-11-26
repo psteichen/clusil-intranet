@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+{% if error_message %}<p class="error">{{ error_message }}</p>{% endif %}
+ <form action="." method="post">
+{% csrf_token %}
+  <h1>{{ title }}</h1>
+  <p>{{ desc }}</p>
+  <center>
+  <fieldset><legend><h2>{{ subtitle }}</h2></legend>
+   <table>
+   {{ form }}
+  </table>
+  <hr/>
+  <input id="submit" type="submit" value="{{ submit }}" /></center></p>
+  </fieldset>
+  </center>
+</form>
+{% endblock %}
+

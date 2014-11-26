@@ -1,0 +1,26 @@
+{% autoescape off %}
+  -------------------------------------------------
+	{{ overview.mandate }} {{ mandate }}
+  	{{ overview.funding }} {{ f_source }} - {{ f_type }} - {{ f_way }}
+
+  	{{ overview.reference }} {{ reference }}
+  	{{ overview.checked_by }} {{ checked_by }}
+
+  	{{ overview.task }} {{ task }}
+
+  	{{ overview.invoice.title }}
+  		{{ overview.invoice.inv_date }} {{ inv_date }}
+  		{{ overview.invoice.corresp }} {{ corresp }}
+
+  		{{ overview.invoice.amount }} [ {{ currency }} ]
+      			{{ overview.invoice.htva }} {{ htva }}
+      			{{ overview.invoice.vat }} {{ vat }}
+      			{{ overview.invoice.ttc }} {{ ttc }}
+
+  		{{ overview.invoice.depr }} {{ depr }}
+  		{{ overview.invoice.pay_date }} {{ pay_date }}
+
+  	{{ overview.status }} {{ status }}
+  	{{ overview.comment }} {{ comment }}
+  -------------------------------------------------
+{% endautoescape %}

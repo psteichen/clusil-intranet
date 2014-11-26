@@ -1,0 +1,17 @@
+{% autoescape off %}
+Dear {{ FULLNAME }},
+
+Your User account for the CLUSIL Member Intranet, with the following login:
+	{{ LOGIN }}
+
+has been deactivated by: 
+	{{ HOL_D }}
+
+{{ QUESTIONS }}
+
+{{ SALUTATION }}
+
+--
+{{ DISCLAIMER }}
+{% endautoescape %}
+

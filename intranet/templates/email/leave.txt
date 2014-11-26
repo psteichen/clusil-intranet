@@ -1,0 +1,15 @@
+{% autoescape off %}
+  -------------------------------------------------
+	{{ overview.type }}	{{ type }}
+	{{ overview.comment }}	{{ comment }}
+{% if end_date %}
+	{{ overview.start_date }}	{{ start_date }}
+	{% if start_time %}{{ overview.start_time }}	{{ start_time }}{% endif %}
+	{{ overview.end_date }}	{{ end_date }}
+	{% if end_time %}{{ overview.end_time }}	{{ end_time }}{% endif %}
+{% else %}
+	{{ overview.day }}		{{ start_date }}  {% if half_day %}{{ half_day }}{% endif %}
+{% endif %}{% if lh %}
+	{{ overview.lh }}	{{ lh }}{% endif %}
+{% endautoescape %}
+  -------------------------------------------------

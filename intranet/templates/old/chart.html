@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super}}
+  <!-- google charts //-->
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart", "treemap"]});
+  </script>
+{% endblock %}
+
+{% block content %}
+  <h2>{{ title }}</h2>
+  {% if error_message %}<p class="error">{{ error_message }}</p>{% endif %}
+
+  <div id="chart">
+    {{ chart.as_html }}
+  </div>
+
+  {% if form %}
+    <form action="." method="post">
+     {% csrf_token %}
+     <center>
+     <fieldset><legend><h2>{{ subtitle }}</h2></legend>
+      <table>
+      {{ form }}
+      </table>
+     <hr/>
+     <input id="submit" type="submit" value="{{ submit }}" /></center></p>
+     </fieldset>
+     </center>
+    </form>
+  {% endif %}
+{% endblock %}
+
+

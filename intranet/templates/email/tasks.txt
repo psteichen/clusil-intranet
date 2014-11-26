@@ -1,0 +1,12 @@
+{% autoescape off %}
+  -------------------------------------------------
+	{{ overview.mandate }} {{ mandate }}	{{ overview.task.title }} {{ title }}
+
+	{{ overview.category }} {{ category }}	{{ overview.type }} {{ type }}
+	{{ overview.task.head }} {{ head }}	{{ overview.task.team }} {{ team }}
+{% if revenue %}	{{ overview.task.budget }} {{ budget }}
+	{{ overview.task.revenue }} {{ revenue }}{% else %}
+	{{ overview.task.budget }} {{ budget }}{% endif %}
+{% if start_date %}	{{ overview.task.start_date }} {{ start_date }}	{{ overview.task.end_date }} {{ end_date }}{% endif %}
+{% endautoescape %}
+  -------------------------------------------------

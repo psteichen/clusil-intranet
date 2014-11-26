@@ -1,0 +1,5 @@
+{% autoescape off %}
+{% if FULLNAME %}{{ FULLNAME }},{% endif %}
+{{ MESSAGE }}
+{{ FOOTER }}
+{% endautoescape %}

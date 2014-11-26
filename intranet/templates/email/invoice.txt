@@ -1,0 +1,20 @@
+{% autoescape off %}
+Dear {{ FULLNAME }},
+
+Your invoice is ready. Please see attachment.
+
+Invoice ID:     {{ ID }}
+Invoice Date:   {{ DATE }}
+Client:         {{ FULLNAME }}
+Total Due:      {{ AMOUNT }} {{ CURRENCY }}
+
+If you have any questions or concerns, please contact: {{ SUPPORT_MAIL }}
+
+Thank you for becoming CLUSIL member!
+
+{{ SALUTATION }}
+
+--
+{{ DISCLAIMER }}
+{% endautoescape %}
+

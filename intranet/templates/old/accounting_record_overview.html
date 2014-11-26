@@ -1,0 +1,44 @@
+<center>
+<fieldset class="overview"><legend><h2>{{ overview.title }}</h2></legend>
+ <table>
+  <tr>
+   <th>{{ overview.mandate }}</th><td>{{ mandate }}</td>
+   <th>{{ overview.funding }}</th><td colspan="3">{{ f_source }} - {{ f_type }} - {{ f_way }}</td>
+  </tr>  
+  <tr>
+   <th>{{ overview.reference }}</th><td colspan="2">{{ reference }}</td>
+   <th>{{ overview.checked_by }}</th><td colspan="2">{{ checked_by }}</td>
+  </tr>
+  <tr>
+   <th>{{ overview.task }}</th><td colspan="5">{{ task }}{{ skill }}</td>
+  </tr>  
+  <tr><th colspan="6"></th></tr>
+  <tr>
+   <th colspan="6">{{ overview.invoice.title }}</th>
+  </tr>
+  <tr>
+   <th>{{ overview.invoice.inv_date }}</th><td>{{ inv_date }}</td>
+   <th colspan="2">{{ overview.invoice.corresp }}</th><td colspan="2">{{ corresp }}</td>
+  </tr>
+  <tr>
+   <th colspan="4" rowspan="3">{{ overview.invoice.amount }} [ {{ currency }} ]</th>
+   <th>{{ overview.invoice.htva }}</th><td>{{ htva }}</td>
+  </tr>
+  <tr>
+   <th>{{ overview.invoice.vat }}</th><td>{{ vat }}</td>
+  </tr>
+  <tr>
+   <th>{{ overview.invoice.ttc }}</th><td>{{ ttc }}</td>
+  </tr>
+  <tr>
+   <th>{{ overview.invoice.depr }}</th><td colspan="2">{{ depr }}</td>
+   <th>{{ overview.invoice.pay_date }}</th><td colspan="2">{{ pay_date }}</td>
+  </tr>
+  <tr><th colspan="6"></th></tr>
+  <tr>
+   <th>{{ overview.status }}</th><td>{{ status }}</td>
+   <th>{{ overview.comment }}</th><td colspan="3" rowspan="3">{{ comment }}</td>
+  </tr>
+ </table>
+</fieldset>
+</center>

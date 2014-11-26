@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+  <h2>{{ title }}</h2>
+  {% if desc %}<p>{{ desc|safe }}</p>{% endif %}
+  {% render_table table "table_with_page_numbers.html" %}
+{% endblock %}
+
+

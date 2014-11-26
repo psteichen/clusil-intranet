@@ -1,0 +1,20 @@
+{% extends "wiki/base_site.html" %}
+
+{% block wiki_header_branding %}
+<a class="navbar-brand" href="/">CLUSIL INTRANET</a>
+{% endblock %}
+
+{% block wiki_header_navlinks %}
+<ul class="nav navbar-nav">
+  <li class="active"><a href="{% url 'wiki:root' %}">\/\/ i K |</a></li>
+  <li><a href="/documentation/">Documentation</a></li>
+</ul>
+{% endblock %}
+
+{% block wiki_footer_logo %}
+  <a href="https://clusil.lu/" class="pull-right"><img src="https://clusil.lu/pics/clusil_picto.png" /></a>
+{% endblock %}
+
+{% block wiki_footer_prepend %}
+  <p>...</p>
+{% endblock %}

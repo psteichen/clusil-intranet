@@ -1,0 +1,12 @@
+{% autoescape off %}
+  -------------------------------------------------
+	{{ overview.mandate }} {{ mandate }}
+	{{ overview.period }} {{ period }}
+
+	{{ overview.dev.title }}{% for s in dev %}
+		{% if s.title %}{{ s.title }} - [{{ s.type }}]
+		{{ overview.dev.location }} {{ s.location }}
+		{{ overview.dev.duration }} {{ s.duration }} {{ s.duration_units }}
+		{{ overview.comment }} {{ s.comment }}{% endif %}{% endfor %}
+{% endautoescape %}
+  -------------------------------------------------

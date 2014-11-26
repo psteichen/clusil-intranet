@@ -1,0 +1,18 @@
+{% autoescape off %}
+Dear {{ FULLNAME }},
+[Member-ID: {{ MEMBER_ID }}]
+
+Hereby we confirm your updated CMP (CLUSIL Membership Profile).
+
+The following changes were done (by user: {{ USER }}):
+{{ MEMBER_MOD }}
+{{ USER_MOD }}
+{{ WG_MOD }}
+
+{{ QUESTIONS }}
+
+{{ SALUTATION }}
+
+--
+{% endautoescape %}
+{{ DISCLAIMER }}

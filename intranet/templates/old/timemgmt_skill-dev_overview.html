@@ -1,0 +1,32 @@
+<center>
+<fieldset class="overview"><legend><h2>{{ overview.title }}</h2></legend>
+ <table>
+  {% if skill %}
+  <tr>
+   <th>{{ overview.skill }}</th><td colspan="3">{{ skill }}</td>
+  </tr>
+  <tr>
+  {% else %}
+  <tr>
+   <th colspan="2">{{ overview.skill }}</th><td colspan="2">{{ title }}</td>
+  </tr>
+  <tr>
+   {% if end %}
+    <th>{{ overview.start }}</th><td>{{ start }}</td>
+    <th>{{ overview.end }}</th><td>{{ end }}</td>
+   {% else %}
+    <th colspan="2">{{ overview.duration }}</th><td colspan="2">{{ start }} {{ duration }}h</td>
+   {% endif %}
+  </tr>  
+  <tr>
+   <th>{{ overview.type }}</th><td>{{ type }}</td>
+   <th>{{ overview.location }}</th><td>{{ location }}</td>
+  {% endif %}
+  </tr>  
+  <tr>
+   <th>{{ overview.comment }}</th><td colspan="3">{{ comment }}</td>
+  </tr>
+ </table>
+</fieldset>
+</center>
+

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load extra_tags %}
+
+{% block content %}
+
+{% block errors %}
+  {% if error_message %}<p class="error">{{ error_message }}</p>{% endif %}
+{% endblock %}
+
+{% block form %}
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h2 class="panel-title">{{ title }}</h2>
+    </div>
+    <div class="panel-body">
+      {% if desc %}<p>{{ desc }}</p>{% endif %}
+    </div>
+    <div class="panel-body">
+    <form role="form" class="form-horizontal" action="." method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        {% if not field.is_hidden %}
+          <div class="form-group">
+          {% if field.errors %}
+            <div class="col-sm-12">{{ field.errors }}</div>
+          {% endif %}
+          <div class="col-sm-3">{{ field.label_tag }}</div>
+          <div class="col-sm-9">{{ field|addclass:"form-control" }}<span class="help-block">{{ field.help_text }}</span></div>
+          </div>
+        {% else %}
+          <div class="hidden">{{ field }}</div>
+        {% endif %}
+      {% endfor %}
+      <div class="btn-toolbar">
+       <div class="btn-group">
+        <button class="btn btn-info" type="submit" value="{{ submit }}">{{ submit }}&nbsp;&nbsp;<span class="glyphicon glyphicon-play"></span></button>
+       </div>
+      </div>
+    </form>  
+    </div>
+  </div>
+{% endblock %}
+
+{% endblock %}
+

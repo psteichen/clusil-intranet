@@ -1,0 +1,19 @@
+{% autoescape off %}
+Dear {{ D_FULLNAME }},
+
+Your are now the Delegate for Member [{{ MEMBER_ID }}].
+
+Your CLUSIL Intranet User:
+	{{ D_LOGIN }}
+
+is now set to manage the CLUSIL Member Profile (https://intranet.clusil.lu/profile/).
+
+
+{{ QUESTIONS }}
+
+{{ SALUTATION }}
+
+--
+{{ DISCLAIMER }}
+{% endautoescape %}
+

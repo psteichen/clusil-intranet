@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="none">
+
+    <meta name="author" content="Pascal Steichen - pst@clusil.lu ; 2012, 2014">
+    <meta name="copyright" content="CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014">
+    
+    <title>CLUSIL INTRANET</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    
+    <link rel="index" href="/" title="CLUSIL INTRANET">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+   
+    <!-- custom stylesheet -->
+    <link rel="stylesheet" href="/static/css/bt-clusil.css">
+  
+  </head>
+  <body role="document">
+    <div class="container">
+
+    <!-- header -->
+    <nav class="navbar navbar-default" role="navigation">
+     <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="row">
+       <div class="col-xs-2">
+        <a href="/"><img class="navbar-brand" src="http://clusil.lu/pics/clusil_picto.png" /><p class="text-muted"></p></a>
+       </div>
+       <div class="col-xs-8">
+        <center><h1 class="text-success"><strong><em>CLUSIL INTRANET (WebDAV)</em></strong></h1></center>
+       </div>
+
+      </div>
+     </div>
+    </nav>
+
+
+    <!-- upload -->
+    <div class="pull-right">
+      <a type="button" class="btn btn-warning" href="/dav/upload/?path={{ res.get_escaped_path }}"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;&nbsp;Upload file</a>
+    </div>
+
+    <!-- list -->
+    <div class="jumbotron">
+    <h3>Index of: {{ res.get_escaped_path }}</h3>
+    <div class="col-xs-3">
+      {% if res.get_escaped_path != '/' %}<a href="{{ base_url }}{{ res.get_parent.get_escaped_path }}"><span class="glyphicon glyphicon-chevron-up"> up</span></a>{% endif %}
+    </div>
+    <table class="table table-striped">
+    <tr>
+      <th>Name</th>
+      <th>Created</th>
+      <th>Last modified</th>
+      <th>Size</th>
+    </tr>
+    {% for child in res.get_children %}
+    <tr>
+      <td><a href="{{ base_url }}{{ child.get_escaped_path }}">{{ child.displayname }}</a></td>
+      <td>{{ child.get_created|date:"d-M-Y H:i" }}</td>
+      <td>{{ child.get_modified|date:"d-M-Y H:i" }}</td>
+      <td>{{ child.getcontentlength|filesizeformat }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    </div> <!-- end jumbotron -->
+  
+    <!-- footer -->
+    <div class="footer">
+     <p class="text-muted pull-right">&copy; CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014</p>
+    </div>
+
+    </div> <!-- end container -->
+  
+  </body>
+</html>

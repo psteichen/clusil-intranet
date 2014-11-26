@@ -1,0 +1,63 @@
+<div class="overview">
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h2 class="panel-title">{{ overview.title }}</h2>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-4">
+        <dl class="dl-horizontal">
+          <dt>{{ overview.mandate }}</dt><dd class="lead">{{ mandate }}</dd>
+          <dt>{{ overview.reference }}</dt><dd class="lead">{{ reference }}</dd>
+        </dl>
+      </div>
+      <div class="col-sm-8">
+        <dl class="dl-horizontal">
+          <dt>{{ overview.funding }}</dt><dd class="lead">{{ f_source }} - {{ f_type }} - {{ f_way }}</dd>
+          <dt>{{ overview.checked_by }}</dt><dd class="lead">{{ checked_by }}</dd>
+        </dl>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <dl class="dl-horizontal">
+          <dt>{{ overview.task }}</dt><dd class="lead">{{ task }}</dd>
+        </dl>
+      </div>
+    </div>  
+    <h2>{{ overview.invoice.title }}</h2>
+    <div class="row">
+      <div class="col-sm-6">
+        <dl class="dl-horizontal">
+          <dt>{{ overview.invoice.inv_date }}</dt><dd class="lead">{{ inv_date }}</dd>
+          <dt>{{ overview.invoice.corresp }}</dt><dd class="lead">{{ corresp }}</dd>
+          <dt>{{ overview.invoice.pay_date }}</dt><dd class="lead">{{ pay_date }}</dd>
+          <dt>{{ overview.invoice.depr }}</dt><dd class="lead">{{ depr }}</ddd>
+        </dl>
+      </div>
+      <div class="col-sm-6">
+        <dl class="dl-horizontal">
+          <dt>{{ overview.invoice.amount }} [ {{ currency }} ]</dt>
+          <dd class="lead">
+            <div class="col-sm-4">{{ overview.invoice.htva }}</div><div class="col-sm-8">{{ htva }}</div>
+            <div class="col-sm-4">{{ overview.invoice.vat }}</div><div class="col-sm-8">{{ vat }}</div>
+            <div class="col-sm-4">{{ overview.invoice.ttc }}</div><div class="col-sm-8">{{ ttc }}</div>
+          </dd>
+        </dl>
+      </div>
+    </div>  
+    <div class="row">
+      <div class="col-sm-6">
+        <dl class="dl-horizontal">
+          <dt>{{ overview.status }}</dt><dd class="lead">{{ status }}</dd>
+        </dl>
+      </div>
+      <div class="col-sm-6">
+        <dl class="dl-horizontal">
+          <dt>{{ overview.comment }}</dt><dd class="lead">{{ comment }}</dd>
+        </dl>
+      </div>
+    </div>  
+  </div>
+</div>
+</div>

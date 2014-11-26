@@ -1,0 +1,12 @@
+<!-- google charts //-->
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+  google.load("visualization", "1", {packages:["corechart", "treemap"]});
+</script>
+
+<h1>{{ overview.title }}{{ week }}</h1>
+<div class="panel panel-default">
+  <div class="panel-body">
+    {{ chart.as_html }}
+  </div>
+</div>

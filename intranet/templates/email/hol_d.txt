@@ -1,0 +1,17 @@
+{% autoescape off %}
+Dear,
+[Member-ID : {{ MEMBER_ID }}]
+
+The new Head-of-list is: {{ H_FULLNAME }} ({{ H_LOGIN }}). 
+
+The new Delegate is: {{ D_FULLNAME }} ({{ D_LOGIN }}). 
+
+
+{{ QUESTIONS }}
+
+{{ SALUTATION }}
+
+--
+{{ DISCLAIMER }}
+{% endautoescape %}
+

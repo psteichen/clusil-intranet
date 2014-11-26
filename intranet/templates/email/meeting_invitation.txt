@@ -1,0 +1,8 @@
+{% autoescape off %}
+J'ai le plaisir de t'inviter à la {{ title }} pour le {{ when }} à {{ time }} au restaurant "{{ location }}".
+
+Merci de t'inscrire/désister via les liens ci-dessous :
+
+	OUI, je participe : 	{{ attendance.YES }}
+	NON, je m'excuse :	{{ attendance.NO }}
+{% endautoescape %}

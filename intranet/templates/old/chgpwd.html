@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+{% if form.errors %}<p class="error">{{ error.chgpwd }}</p>{% endif %}
+<form action="" method="post">
+{% csrf_token %}
+  <fieldset><legend><h2>{{ auth.chgpwd.title }}{{ login }}</h2></legend>
+  <table>
+    {{ form.as_p }}
+  </table>
+  <br/> 
+  <input id="submit" type="submit" value="{{ auth.chgpwd.submit }}" />
+</form>
+{% endblock %}

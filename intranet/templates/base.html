@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  {% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="none">
+
+    <meta name="author" content="{{ meta.author }}">
+    <meta name="copyright" content="{{ meta.copyright }}">
+    
+    <title>{{ meta.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    <meta name="keywords" content="{{ meta.keywords }}">
+    
+    <link rel="index" href="/" title="{{ meta.title }}">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{{ meta.css.bt }}">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="{{ meta.css.bt_theme }}">
+   
+    <!-- custom stylesheet -->
+    <link rel="stylesheet" href="{{ meta.css.own }}">
+
+  {% endblock %}
+  </head>
+
+  <body role="document">
+
+   <div class="container">
+
+    <nav class="navbar navbar-default" role="navigation">
+     <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="row">
+       <div class="col-xs-2">
+        <a href="/"><img class="navbar-brand" src="{{ meta.logo.img }}" /><p class="text-muted">{{ meta.logo.title }}</p></a>
+       </div>
+       <div class="col-xs-8">
+        <center><h1 class="text-success"><strong><em>{{ meta.title }}</em></strong></h1></center>
+       </div>
+       <div class="col-xs-2">
+        {% if user.is_authenticated %}
+        <!-- Split button -->
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="text-muted">Welcome, </span><span class="text-primary">{{ user.first_name }} <span class="text-uppercase">{{ user.last_name }}</span> ({{ user }})</span><span class="text-muted caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="/members/profile/{{ user }}"><span class="text-muted">User profile</span></a></li>
+              <li><a href="/pwd/change/"><span class="text-muted">Change password</span></a></li>
+              <li class="divider"></li>
+              <li><a href="/logout/"><span class="text-primary">Logout</span></a></li>
+            </ul>
+          </li>
+        </ul>
+        {% else %}
+        <ul class="nav navbar-nav">
+          <li><a href="/login/"><span class="text-primary">Login</span></a></li>
+        </ul>
+        {% endif %}
+       </div>
+      </div>
+     </div><!-- /.container-fluid -->
+    </nav>
+
+    <!-- breadcrumbs -->
+    {% for breadcrumb in request.breadcrumbs %}
+      {% if forloop.first %}<ol class="breadcrumb">{% endif %}
+      {% if forloop.last %}<li class="active"><a class="active" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li></ol>{% else %}<li><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>{% endif %}
+    {% endfor %}
+
+    <div class="jumbotron">
+
+     <div class="content">
+     {% block content %}{% endblock %}
+     </div>
+
+    </div> <!-- end jumbotron -->
+
+    <div class="footer">
+     <p class="text-muted pull-right">&copy; {{ meta.copyright }}</p>
+    </div>
+
+   </div> <!-- end container -->
+
+   <!-- jquery //-->
+   <script src="{{ meta.js.jq }}"></script>
+
+   <!-- Latest compiled and minified JavaScript -->
+   <script src="{{ meta.js.bt }}"></script>
+
+  </body>
+</html>
+

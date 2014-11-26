@@ -1,0 +1,40 @@
+{% extends "basic.html" %}
+
+{% block head %}
+{{ block.super}}
+  <!-- google charts //-->
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart", "treemap"]});
+  </script>
+{% endblock %}
+
+{% block content %}
+  {% if form %}
+    {% block form %}
+      {{ block.super}}
+    {% endblock %}
+  {% else %}
+    {% block title %}
+      {{ block.super}}
+    {% endblock %}
+   
+    {% if user_charts_list %}
+      {% for user in user_charts_list %}
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="col-sm-4"><h2>{{ user.name }}:</h2></div>
+            <div class="col-sm-8">{{ user.chart.as_html }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {{ chart.as_html }}
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+

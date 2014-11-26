@@ -1,0 +1,29 @@
+{% extends "password_reset/base.html" %}
+{% load i18n %}
+{% load url from future %}
+{% load extra_tags %}
+
+{% block content %}
+<center>
+<form role="form" class="form-horizontal" method="post" action="{{ url }}">
+{% csrf_token %}
+ <div class="panel panel-danger">
+  <div class="panel-heading">
+   <h2 class="panel-title">{{ pwd.recover.title }}</h2>
+  </div>
+  <div class="panel-body">
+   {% for field in form %}
+     <div class="form-group row">
+       {% if field.errors %}<div class="col-xs-12">{{ field.errors }}</div>{% endif %}
+       <div class="col-xs-3"></div>
+       <div class="col-xs-3">{{ field.label_tag }}</div>
+       <div class="col-xs-3">{{ field|addclass:"form-control" }}</div>
+       <div class="col-xs-3"></div>
+     </div>
+   {% endfor %}
+   <button class="btn btn-warning" type="submit">{{ pwd.recover.submit }}</button>
+  </div>
+ </div>
+</form>
+</center>
+{% endblock %}

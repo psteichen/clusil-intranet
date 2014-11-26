@@ -1,0 +1,7 @@
+Django>=1.7
+django-breadcrumbs
+django-tables2
+django-password-reset
+djangodav
+reportlab
+django-recaptcha

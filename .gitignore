@@ -52,9 +52,12 @@ docs/_build/
 
 # PyBuilder
 target/
+<<<<<<< HEAD
 
 #local app ignores
 */migrations/
 db.sqlite
 HERE
 TODO
+=======
+>>>>>>> 48f31ef239bd02ddca59feb115151dff02243418

@@ -1,4 +1,4 @@
-from django.db.models import Model, EmailField, DateField, IntegerField, CharField, ForeignKey, ManyToManyField
+from django.db.models import Model, EmailField, DateField, IntegerField, CharField, ForeignKey, ManyToManyField, FileField
 from django.db.models.deletion import SET_NULL
 from django.contrib.auth.models import User
 
@@ -24,7 +24,7 @@ class Organisation(Model):
   address	= ForeignKey(Address)
 
   def __unicode__(self):
-    return self.name + ' (' + self.address + ')'
+    return self.name + ' (' + unicode(self.address) + ')'
 
 
 # Member model
@@ -55,13 +55,14 @@ class Member(Model):
   head_of_list 	= ForeignKey(User,related_name='head_of_list+',null=True,on_delete=SET_NULL)
   delegate 	= ForeignKey(User,related_name='delegate+',blank=True,null=True,on_delete=SET_NULL)
   users 	= ManyToManyField(User, related_name='users+')
+  student_proof	= FileField(upload_to='board/registration/students/',blank=True,null=True)
 
   def __unicode__(self):
     o = ''
-    if self.member_type == Member.ORG:
+    if self.type == Member.ORG and self.organisation:
       o += self.organisation + ' - head-of-list: '
 
-    return self.member_id + ' [ '+ Member.MEMBER_TYPES[self.member_type][1] + ' ] ' + o + gen_user_fullname(self.head_of_list)
+    return self.id + ' [ '+ Member.MEMBER_TYPES[self.type][1] + ' ] ' + o + gen_user_fullname(self.head_of_list)
 
 
 # Role model

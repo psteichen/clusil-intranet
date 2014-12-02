@@ -6,12 +6,15 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.contrib.formtools.wizard.views import SessionWizardView
+from django.contrib.auth.models import Permission
 
-from intranet.functions import show_form
+from intranet.functions import show_form, notify_by_email
 
-from members.models import Member
+from accounting.functions import generate_invoice
+from members.models import Member, Organisation, Address
 from members.groups.models import Group, Affiliation
 
+from .functions import gen_member_id, add_to_groups, gen_fullname
 
 def show_delegate_form(wizard):
   return show_form(wizard,'type','member_type',Member.ORG)
@@ -56,94 +59,115 @@ class RegistrationWizard(SessionWizardView):
     if step == 'address':
       cleaned_data = self.get_cleaned_data_for_step('type') or {}
       if cleaned_data != {}:
-        ty = cleaned_data['member_type']
-        if ty != Member.ORG:
+        ty = int(cleaned_data['member_type'])
+        if ty == Member.ORG:
+          del form.fields['first_name']
+          del form.fields['last_name']
+          del form.fields['email']
+        if ty == Member.IND:
           del form.fields['organisation']
-        if ty != Member.STD:
           del form.fields['student_proof']
+        if ty == Member.STD:
+          del form.fields['organisation']
+
+    if step == 'head':
+      cleaned_data = self.get_cleaned_data_for_step('address') or {}
+      if cleaned_data != {}:
+        try:
+          form.fields['first_name'].initial = cleaned_data['first_name']
+        except: pass
+        try:
+          form.fields['last_name'].initial = cleaned_data['last_name']
+        except: pass
+        try:
+          form.fields['email'].initial = cleaned_data['email']
+        except: pass
 
     return form
 
-  def done(self, fl, **kwargs):
+  def done(self, fl, form_dict, **kwargs):
 
     template = settings.TEMPLATE_CONTENT['reg']['register']['done']['template']
     e_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template']
 
-    # reg and acces form
-    if r_f.is_valid() and g_f.is_valid() and u_f.is_valid():
+    m_id = gen_member_id()
 
-      m_id = gen_member_id()
-      t = r_f.cleaned_data['member_type']
-      n = r_f.cleaned_data['lastname']
-      fn = r_f.cleaned_data['firstname']
-      e = r_f.cleaned_data['email']
-      o = r_f.cleaned_data['organisation']
-      wg = wg_f.cleaned_data['wg']
-      u = u_f.cleaned_data['username']
+    M = O = A = U = D = Gs = None
 
-      # some basic checks according to member types
+    t_f = form_dict['type']
+    ty = int(t_f.cleaned_data['member_type'])
+    a_f = form_dict['address']
+    h_f = form_dict['head']
+    if a_f.is_valid() and h_f.is_valid():
+      A = a_f.save()
+      U = h_f.save()
+      #organisation
+      if ty == Member.ORG:
+        o = a_f.cleaned_data['organisation']
+        O = Organisation(name=o,address=A)
 
-      # if type=std, student proof file must be present
-      if int(t) == 2: # student
-        # proof document must be uploaded
-        try:
-          sp = r.FILES['student_proof']
-        except:
-          return render(r,'reg.html', {'reg_form': r_f, 'wg_form': wg_f, 'user_form': u_f, 'captcha': display_captcha(), 'error_message': settings.TEMPLATE_CONTENT['error']['std']})
+        # add head-of-list permissions
+        is_hol_d = Permission.objects.get(codename='MEMBER')
+        U.user_permissions.add(is_hol_d)
 
-      # if type=org, org field must be filled out
-      if int(t) == 1: # organisation
-        if o == '':
-          return render(r,'reg.html', {'reg_form': r_f, 'wg_form': wg_f, 'user_form': u_f, 'captcha': display_captcha(), 'error_message': settings.TEMPLATE_CONTENT['error']['org']})
+        # delegate
+        d_f = form_dict['delegate']
+        if d_f.is_valid():
+          D = d_f.save()
+      #student
+      if ty == Member.STD:
+        sp_f = form_dict['student_proof']
+        if sp_f.is_valid():
+          M = sp_f.save(commit=False)
+          M.id=m_id
+          M.type=ty
 
-            # add first and last name as well as email to the User model
-      U = u_f.save(commit=False)
-      U.first_name = fn
-      U.last_name = n
-      U.email = e
-      U.save()
-      # add head-of-list permissions
-      is_hol_d = Permission.objects.get(codename='is_hol_d')
-      U.user_permissions.add(is_hol_d)
+      if M == None: M = Member(id=m_id,type=ty)
 
       # add member_id and head_of_list to Member model
-      M=r_f.save(commit=False)
-      M.member_id=m_id
+      if ty == Member.ORG: M.organisation = O
+      M.address=A
       M.head_of_list=U
-      M.users=[U]
       M.save()
+      if D == None: M.users.add(D)
 
-      # link member, user and WG (including the default WG)
-      add_wg(U,wg)
+      g_f = form_dict['group']
+      if g_f.is_valid():
+        Gs = g_f.cleaned_data['groups']
+        add_to_groups(U,Gs)
 
       # build confirmation mail
       org_msg = ''
-      if int(t) == 1: # organisation
+      if ty == Member.ORG:
         org_msg += '''
-You are the head-of-list for ''' + o + ''' giving you the privilege to manage the Member account 
+You are the head-of-list for ''' + unicode(O) + ''' giving you the privilege to manage the Member account 
 and add further users (up to 6 in total).
 '''
       message_content = {
         'FULLNAME': gen_fullname(M),
         'MEMBER_ID': m_id,
-        'MEMBER_TYPE': Member.MEMBER_TYPES[int(t)][1],
+        'MEMBER_TYPE': Member.MEMBER_TYPES[ty][1],
 	'ORGANISATION':	org_msg,
-	'LOGIN': u,
-	'DEFAULT_WG': WG.objects.get(acronym='main'),
-  	'WG': wg,
+	'LOGIN': U.username,
+#	'DEFAULT_WG': Group.objects.get(acronym='main'),
+ 	'WG': Gs,
       }
 
       # send confirmation
-      subject = settings.TEMPLATE_CONTENT['reg']['register']['done']['title'] % m_id
-      ok=notify_by_email(subject,e,e_template,message_content)
+      subject = settings.TEMPLATE_CONTENT['reg']['register']['done']['title']
+      ok=notify_by_email(subject,U.email,e_template,message_content)
       if not ok:
-        return render(r,'reg.html', {'reg_form': r_f, 'wg_form': wg_f, 'user_form': u_f, 'captcha': display_captcha(), 'error_message': settings.TEMPLATE_CONTENT['error']['email']})
+        return render(self.request,template, { 
+				'mode': 'Error in email confirmation', 
+				'message': settings.TEMPLATE_CONTENT['error']['email'],
+		     })
 
       # generate invoice (this will send the invoice email implicitly)
       generate_invoice(M)
 
       # redirect to thank you page
-      return render(r,'done.html', {'mode': 'your Registration', 'message': render_to_string(settings.MAIL_CONFIRMATION['reg']['template'],message_content)})
-    else:
-      return render(r,'reg.html', {'reg_form': r_f, 'wg_form': wg_f, 'user_form': u_f, 'captcha': display_captcha(), 'error_message': settings.TEMPLATE_CONTENT['error']['gen']})
+      return render(self.request,template, { 
+				'mode': 'your Registration', 
+				'message': render_to_string(settings.MAIL_CONFIRMATION['reg']['template'],message_content),
+		   })
 

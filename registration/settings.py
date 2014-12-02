@@ -45,7 +45,7 @@ REGISTRATION_TMPL_CONTENT = {
       'desc'   		: '''CLUSIL is an association of active involvement, please choice your prefered working group (topic) you want to contribute to.''',
       'next'            : 'next',
     },
-    'catpcha' : {
+    'captcha' : {
       'title'           : 'Catpcha',
       'desc'   		: '',
       'next'            : 'submit',

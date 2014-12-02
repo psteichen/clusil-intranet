@@ -22,8 +22,8 @@ class User(models.Model):
 
   class Meta:
     permissions = (
-      ('BOARD' 	, 'Member of the Board'),
-      ('SECR' 	, 'Secretary of the Board'),
-      ('MEMBER'	, 'CLUSIL member'),
+      ('BOARD' 		, 'Member of the Board'),
+      ('SECR' 		, 'Secretary of the Board'),
+      ('MEMBER'		, 'CLUSIL member'),
     )
 

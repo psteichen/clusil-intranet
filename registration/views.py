@@ -45,7 +45,7 @@ class RegistrationWizard(SessionWizardView):
       cleaned_data = self.get_cleaned_data_for_step('type') or {}
       if int(cleaned_data['member_type']) != Member.ORG:
         context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['alttitle']})
-        context.update({'step_desc': False})
+        context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['altdesc']})
 
     return context
 
@@ -66,7 +66,6 @@ class RegistrationWizard(SessionWizardView):
           del form.fields['email']
         if ty == Member.IND:
           del form.fields['organisation']
-          del form.fields['student_proof']
         if ty == Member.STD:
           del form.fields['organisation']
 
@@ -129,7 +128,7 @@ class RegistrationWizard(SessionWizardView):
       M.address=A
       M.head_of_list=U
       M.save()
-      if D == None: M.users.add(D)
+      if D != None: M.users.add(D)
 
       g_f = form_dict['group']
       if g_f.is_valid():

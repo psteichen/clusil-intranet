@@ -28,6 +28,7 @@ REGISTRATION_TMPL_CONTENT = {
       'title'   	: 'Head of List',
       'desc'   		: '''The head-of-list is our main point of contact and does have full rights to manage the membership (create/delete users, change membership profile, etc.)''',
       'alttitle'   	: 'User',
+      'altdesc' 	: 'Create a user for the CLUSIL Member Intranet Platform.',
       'next'          	: 'next',
     },
     'delegate' : {

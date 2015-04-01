@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from members.groups.models import Group
 
-from .functions import gen_user_fullname
+from .functions import gen_fullname
 
 # Address model
 class Address(Model):
@@ -60,9 +60,9 @@ class Member(Model):
   def __unicode__(self):
     o = ''
     if self.type == Member.ORG and self.organisation:
-      o += self.organisation + ' - head-of-list: '
+      o += unicode(self.organisation) + ' - head-of-list: ' + gen_fullname(self.head_of_list)
 
-    return self.id + ' [ '+ Member.MEMBER_TYPES[self.type][1] + ' ] ' + o + gen_user_fullname(self.head_of_list)
+    return self.id + ' [ '+ Member.MEMBER_TYPES[self.type][1] + ' ] ' + o
 
 
 # Role model
@@ -74,6 +74,6 @@ class Role(Model):
   end_date      = DateField(blank=True,null=True) 
 
   def __unicode__(self):
-    return self.title + ' : ' + gen_user_fullname(self.user)
+    return self.title + ' : ' + gen_fullname(self.user)
 
 

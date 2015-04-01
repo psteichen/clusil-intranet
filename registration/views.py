@@ -3,6 +3,7 @@ from datetime import date
 
 from django.conf import settings
 from django.shortcuts import render 
+from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.contrib.formtools.wizard.views import SessionWizardView
@@ -17,7 +18,7 @@ from members.groups.models import Group, Affiliation
 from .functions import gen_member_id, add_to_groups, gen_fullname
 
 def show_delegate_form(wizard):
-  return show_form(wizard,'type','member_type',Member.ORG)
+  return show_form(wizard,'type','member_type',Member.ORG) and show_form(wizard,'head','delegate',True)
 
 def show_student_proof_form(wizard):
   return show_form(wizard,'type','member_type',Member.STD)
@@ -57,8 +58,8 @@ class RegistrationWizard(SessionWizardView):
       step = self.steps.current
 
     if step == 'address':
-      cleaned_data = self.get_cleaned_data_for_step('type') or {}
-      if cleaned_data != {}:
+      cleaned_data = self.get_cleaned_data_for_step('type') or False
+      if cleaned_data:
         ty = int(cleaned_data['member_type'])
         if ty == Member.ORG:
           del form.fields['first_name']
@@ -70,8 +71,8 @@ class RegistrationWizard(SessionWizardView):
           del form.fields['organisation']
 
     if step == 'head':
-      cleaned_data = self.get_cleaned_data_for_step('address') or {}
-      if cleaned_data != {}:
+      cleaned_data = self.get_cleaned_data_for_step('address') or False
+      if cleaned_data:
         try:
           form.fields['first_name'].initial = cleaned_data['first_name']
         except: pass
@@ -81,6 +82,9 @@ class RegistrationWizard(SessionWizardView):
         try:
           form.fields['email'].initial = cleaned_data['email']
         except: pass
+
+    if step == 'delegate':
+      del form.fields['delegate']
 
     return form
 
@@ -110,9 +114,12 @@ class RegistrationWizard(SessionWizardView):
         U.user_permissions.add(is_hol_d)
 
         # delegate
-        d_f = form_dict['delegate']
-        if d_f.is_valid():
-          D = d_f.save()
+        delegate = h_f.cleaned_data['delegate']
+        if delegate:
+          d_f = form_dict['delegate']
+          if d_f.is_valid():
+            D = d_f.save()
+
       #student
       if ty == Member.STD:
         sp_f = form_dict['student_proof']
@@ -162,11 +169,11 @@ and add further users (up to 6 in total).
 		     })
 
       # generate invoice (this will send the invoice email implicitly)
-      generate_invoice(M)
+#      generate_invoice(M)
 
       # redirect to thank you page
       return render(self.request,template, { 
 				'mode': 'your Registration', 
-				'message': render_to_string(settings.MAIL_CONFIRMATION['reg']['template'],message_content),
+				'message': render_to_string(settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template'],message_content),
 		   })
 

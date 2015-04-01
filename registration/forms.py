@@ -4,7 +4,7 @@ from captcha.fields import ReCaptchaField
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import Form, ChoiceField, ModelForm, CharField, FileField,  ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField
+from django.forms import Form, ChoiceField, ModelForm, CharField, FileField,  ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField, BooleanField
 
 from members.models import Member, Address
 from members.groups.models import Group, Affiliation
@@ -24,6 +24,7 @@ class AddressForm(ModelForm):
     fields = ( 'first_name', 'last_name', 'email', 'organisation', 'street', 'num', 'postal_code', 'town', 'country', )
 
 class RegisterUserForm(UserCreationForm):
+  delegate 	= BooleanField(label='add Delegate?',required=False)
   class Meta:
     model = User
     fields = ( 'first_name', 'last_name', 'email', 'username', 'password1', 'password2', )

@@ -44,6 +44,7 @@ def upload(r, path):
 			'title': settings.TEMPLATE_CONTENT['dav']['upload']['title'],
 			'message': settings.TEMPLATE_CONTENT['dav']['upload']['desc'],
 			'form': DavUploadForm(initial=init_data),
+			'submit': settings.TEMPLATE_CONTENT['dav']['upload']['submit'],
 		})
 
     return render(r, settings.TEMPLATE_CONTENT['dav']['upload']['template'], {

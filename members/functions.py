@@ -4,7 +4,7 @@ def get_active_members():
   from .models import Member
   return Member.objects.filter(status=Member.ACT)
 
-def gen_user_fullname(user):
+def gen_fullname(user):
   return unicode(user.first_name) + u' ' + unicode.upper(user.last_name)
 
 def gen_member_initial(m):

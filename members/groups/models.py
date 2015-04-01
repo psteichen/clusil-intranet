@@ -1,6 +1,8 @@
 from django.db.models import Model, IntegerField, CharField, ForeignKey
 from django.contrib.auth.models import User
 
+from members.functions import gen_fullname
+
 # Group (board, working group, etc.) model
 class Group(Model):
   MG = 0
@@ -37,7 +39,11 @@ class Affiliation(Model):
   group 	= ForeignKey(Group)
 
   def __unicode__(self):
-    return gen_user_fullname(self.user) + ' - ' + unicode.upper(self.group.acronym)
+    g=u' - '
+    try:
+      g = self.group.acronym
+    except: pass
+    return gen_fullname(self.user) + unicode.upper(g)
 
   class Meta:
     unique_together = ( 'user', 'group', )

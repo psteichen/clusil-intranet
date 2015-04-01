@@ -3,7 +3,7 @@
 {% block content %}
   {% if title %}<h2>{{ title }}</h2>{% endif %}
   <p class="error">{{ error_message }}</p>
-  {% if message %}<p>{{ message }}</p>{% endif %}
+  {% if message %}<pre>{{ message }}</pre>{% endif %}
   {% if list %}<p>{{ list|join:"<br/>" }}</p>{% endif %}
 {% endblock %}
 

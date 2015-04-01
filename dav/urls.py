@@ -18,8 +18,6 @@ board_dav_view = DavView.as_view(resource_class=BoardDavResource, lock_class=Dum
 #wrapper with specific permissions
 board_dav_view_wrapper = permission_required('clusil.BOARD')(board_dav_view)
 
-
-
 urlpatterns = patterns('',
   url(r'^members/(?P<path>.*)$', member_dav_view_wrapper, name="member-dav" ),
   url(r'^board/(?P<path>.*)$', board_dav_view_wrapper, name="board-dav" ),

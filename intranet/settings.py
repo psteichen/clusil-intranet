@@ -381,9 +381,13 @@ TEMPLATE_CONTENT['dav'] = DAV_TMPL_CONTENT
 
 EVENTS_ATTENDANCE_URL = 'http://intranet.clusil.lu/events/attendance/'
 
-#webcontent
-#from webcontent.settings import *
-#TEMPLATE_CONTENT['webcontent'] = WEBCONTENT_TMPL_CONTENT
+#accounting
+from accounting.settings import *
+TEMPLATE_CONTENT['accounting'] = ACCOUNTING_TMPL_CONTENT
+INVOICE = {
+  'logo'	: STATIC_URL + 'pics/logo.jpg',
+  'currency' 	: 'EUR',
+}
 
 #wiki settings
 SITE_ID = 1 

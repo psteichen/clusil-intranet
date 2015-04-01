@@ -8,7 +8,7 @@ from django.utils.html import escape
 from django_tables2.tables import Table
 from django_tables2 import Column
 
-from members.functions import gen_user_fullname
+from members.functions import gen_fullname
 
 from .models import Meeting
 
@@ -25,10 +25,10 @@ class MeetingTable(Table):
   def render_attendance(self, value):
     return 'blabla'
 
-#    return ' ; '.join([gen_member_fullname(a) for a in value.all()])
+#    return ' ; '.join([gen_fullname(a) for a in value.all()])
 
 #  def render_excused(self, value):
-#    return ' ; '.join([gen_member_fullname(e) for e in value.all()])
+#    return ' ; '.join([gen_fullname(e) for e in value.all()])
 
   def render_totals(self, record):
     return '{} / {}'.format(record.attendance.all().count(),record.excused.all().count())

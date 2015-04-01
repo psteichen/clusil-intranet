@@ -43,7 +43,7 @@ def draw_footer(canvas):
     canvas.drawText(textobject)
 
 def draw_pdf(buffer, member, details):
-  from reg.models import Member
+  from members.models import Member
   """ Draws the invoice """
   canvas = Canvas(buffer, pagesize=A4)
   canvas.translate(0, 29.7 * cm)

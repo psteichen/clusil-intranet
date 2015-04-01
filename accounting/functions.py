@@ -1,4 +1,26 @@
+from datetime import date
+
+from django.conf import settings
+
+from members.functions import gen_fullname
+
+from .models import Fee
 from .invoice import draw_pdf
+
+# rename the uploaded member files
+def rmf(member, mod, filename=None):
+  import os
+  try:
+    orig_name, orig_ext = os.path.splitext(filename)
+  except:
+    orig_ext = ''
+
+  fn=member.id + os.sep + mod.upper() + '_' + member.head_of_list.first_name + ' ' + member.head_of_list.last_name.upper()
+  if member.type == 1: # organisation
+    fn += ' (' + unicode(member.organisation) + ')'
+
+  import unicodedata
+  return {'name': unicodedata.normalize('NFKD', fn).encode('ascii','ignore'),'ext': orig_ext}
 
 # gen invoice id
 def invoice_id(m):
@@ -10,9 +32,9 @@ def invoice_id(m):
 def generate_invoice(m):
   invoice_details = {
     'ID': invoice_id(m),
-    'FULLNAME': gen_fullname(m),
+    'FULLNAME': gen_fullname(m.head_of_list),
     'DATE': date.today().strftime('%Y-%m-%d'),
-    'AMOUNT': settings.FEE[m.member_type],
+    'AMOUNT': Fee.MEMBER_FEES[m.type][1],
     'CURRENCY': settings.INVOICE['currency'],
   } 
 

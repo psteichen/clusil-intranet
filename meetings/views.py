@@ -10,7 +10,7 @@ from django_tables2  import RequestConfig
 
 from intranet.functions import notify_by_email
 
-from members.functions import get_active_members, gen_user_fullname
+from members.functions import get_active_members, gen_fullname
 
 from .functions import gen_invitation_message, gen_hash, gen_meeting_overview, gen_meeting_initial, gen_location_initial
 from .models import Location, Meeting
@@ -162,7 +162,7 @@ def add(r):
         subject = settings.TEMPLATE_CONTENT['meetings']['add']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
         invitation_message = gen_invitation_message(e_template,Mt,m)
         message_content = {
-          'FULLNAME'    : gen_member_fullname(m),
+          'FULLNAME'    : gen_fullname(m),
           'MESSAGE'     : invitation_message + mf.cleaned_data['additional_message'],
         }
         #send email
@@ -182,7 +182,7 @@ def add(r):
       else:
         return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] + ' ; '.join([gen_member_fullname(m) for m in get_active_members()]),
+                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] + ' ; '.join([gen_fullname(m) for m in get_active_members()]),
                 })
 
     # form not valid -> error
@@ -321,13 +321,13 @@ def attendance(r, meeting_num, attendance_hash):
     if gen_hash(meeting,m.email) == attendance_hash:
       # it's a YES
       meeting.attendance.add(m)
-      message = settings.TEMPLATE_CONTENT['meetings']['attendance']['yes'] % { 'name': gen_member_fullname(m), }
+      message = settings.TEMPLATE_CONTENT['meetings']['attendance']['yes'] % { 'name': gen_fullname(m), }
       notify=True
 
     if gen_hash(meeting,m.email,False) == attendance_hash:
       # it's a NO
       meeting.excused.add(m)
-      message = settings.TEMPLATE_CONTENT['meetings']['attendance']['no'] % { 'name': gen_member_fullname(m), }
+      message = settings.TEMPLATE_CONTENT['meetings']['attendance']['no'] % { 'name': gen_fullname(m), }
       notify=True
 
   if notify:

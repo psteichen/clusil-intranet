@@ -26,10 +26,13 @@ modify_member_wrapper = login_required(modify_member_wizard)
 urlpatterns = patterns('',
   url(r'^$', index, name='index'),
 
-  url(r'^role/add/', role_add, name='role_add'),
+  # front-office (members)
+  url(r'^profile/$', include('members.profile.urls')),
 
+  # back-office (board)
+  url(r'^list/', list, name='list'),
   url(r'^add/', add, name='add'),
   url(r'^modify/', modify_member_wrapper, name='modify'),
-  url(r'^list/', list, name='list'),
 
+  url(r'^role/add/', role_add, name='role_add'),
 )

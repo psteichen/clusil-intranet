@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.conf import settings
 
 from django_tables2  import RequestConfig
 
-from intranet.functions import show_form
+from cms.functions import show_form
 
 from .functions import gen_member_initial, gen_role_initial
 from .models import Member, Role
@@ -15,7 +15,7 @@ from .tables  import MemberTable
 
 # index #
 #########
-@login_required
+@permission_required('clusil.BOARD')
 def index(request):
   request.breadcrumbs( ( ('home','/home/'),
                          ('members','/members/'),
@@ -26,42 +26,54 @@ def index(request):
                         'actions': settings.TEMPLATE_CONTENT['members']['actions'],
                         })
 
-# role_add #
-############
+
+# profile #
+###########
 @login_required
-def role_add(r):
-  r.breadcrumbs( ( ('home','/home/'),
-                   ('members','/members/'),
-                   ('add a role','/members/role/add/'),
-                ) )
+def profile(request):
+  request.breadcrumbs( ( 
+				('home','/home/'),
+                         	('members','/members/'),
+                         	('profile','/members/profile/'),
+                     ) )
 
-  if r.POST:
-    rf = RoleForm(r.POST)
-    if rf.is_valid():
-      Rl = rf.save()
-      
-      # all fine -> done
-      return render(r, settings.TEMPLATE_CONTENT['members']['role']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['members']['role']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['members']['role']['add']['done']['message'] + unicode(Rl),
-                })
+  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
+                        'title': settings.TEMPLATE_CONTENT['members']['title'],
+                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
+                        })
 
-    # form not valid -> error
-    else:
-      return render(r, settings.TEMPLATE_CONTENT['members']['role']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['members']['role']['add']['done']['title'], 
-                'error_message': settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in rf.errors]),
-                })
+# users #
+#########
+@login_required
+def users(request):
+  request.breadcrumbs( ( 
+				('home','/home/'),
+                         	('members','/members/'),
+                         	('users','/members/users/'),
+                     ) )
 
-  # no post yet -> empty form
-  else:
-    form = RoleForm()
-    return render(r, settings.TEMPLATE_CONTENT['members']['role']['add']['template'], {
-                'title': settings.TEMPLATE_CONTENT['members']['role']['add']['title'],
-                'desc': settings.TEMPLATE_CONTENT['members']['role']['add']['desc'],
-                'submit': settings.TEMPLATE_CONTENT['members']['role']['add']['submit'],
-                'form': form,
-                })
+  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
+                        'title': settings.TEMPLATE_CONTENT['members']['title'],
+                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
+                        })
+
+# list #
+#########
+@login_required
+def list(request):
+  request.breadcrumbs( ( ('home','/home/'),
+                         ('members','/members/'),
+                         ('list members','/members/list/'),
+                        ) )
+
+  table = MemberTable(Member.objects.all().order_by('status', 'last_name'))
+  RequestConfig(request, paginate={"per_page": 75}).configure(table)
+
+  return render(request, settings.TEMPLATE_CONTENT['members']['list']['template'], {
+                        'title': settings.TEMPLATE_CONTENT['members']['list']['title'],
+                        'desc': settings.TEMPLATE_CONTENT['members']['list']['desc'],
+                        'table': table,
+                        })
 
 
 # add #
@@ -180,21 +192,41 @@ class ModifyMemberWizard(SessionWizardView):
                  })
 
 
-# list #
-#########
+# role_add #
+############
 @login_required
-def list(request):
-  request.breadcrumbs( ( ('home','/home/'),
-                         ('members','/members/'),
-                         ('list members','/members/list/'),
-                        ) )
+def role_add(r):
+  r.breadcrumbs( ( ('home','/home/'),
+                   ('members','/members/'),
+                   ('add a role','/members/role/add/'),
+                ) )
 
-  table = MemberTable(Member.objects.all().order_by('status', 'last_name'))
-  RequestConfig(request, paginate={"per_page": 75}).configure(table)
+  if r.POST:
+    rf = RoleForm(r.POST)
+    if rf.is_valid():
+      Rl = rf.save()
+      
+      # all fine -> done
+      return render(r, settings.TEMPLATE_CONTENT['members']['role']['add']['done']['template'], {
+                'title': settings.TEMPLATE_CONTENT['members']['role']['add']['done']['title'], 
+                'message': settings.TEMPLATE_CONTENT['members']['role']['add']['done']['message'] + unicode(Rl),
+                })
 
-  return render(request, settings.TEMPLATE_CONTENT['members']['list']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['members']['list']['title'],
-                        'desc': settings.TEMPLATE_CONTENT['members']['list']['desc'],
-                        'table': table,
-                        })
+    # form not valid -> error
+    else:
+      return render(r, settings.TEMPLATE_CONTENT['members']['role']['add']['done']['template'], {
+                'title': settings.TEMPLATE_CONTENT['members']['role']['add']['done']['title'], 
+                'error_message': settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in rf.errors]),
+                })
+
+  # no post yet -> empty form
+  else:
+    form = RoleForm()
+    return render(r, settings.TEMPLATE_CONTENT['members']['role']['add']['template'], {
+                'title': settings.TEMPLATE_CONTENT['members']['role']['add']['title'],
+                'desc': settings.TEMPLATE_CONTENT['members']['role']['add']['desc'],
+                'submit': settings.TEMPLATE_CONTENT['members']['role']['add']['submit'],
+                'form': form,
+                })
+
 

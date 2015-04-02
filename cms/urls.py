@@ -9,14 +9,15 @@ from django.contrib import admin
 admin.autodiscover()
 
 
-from .views import open_home, documentation
+from .views import home, documentation
 
-from .views import home
+from .views import board
 
 urlpatterns = patterns('',
 
   #front-office
-  url(r'^$', open_home, name='open_home'),
+  url(r'^$', home, name='home'),
+  url(r'^home/$', home, name='home'),
   url(r'^documentation/', documentation, name='documentaion'),
 
   url(r'^reg/', include('registration.urls')),
@@ -38,7 +39,7 @@ urlpatterns = patterns('',
 
 
   #back-office
-  url(r'^home/', home, name='home'),
+  url(r'^board/', board, name='board'),
 
   url(r'^members/', include('members.urls')),
   url(r'^members/groups/', include('members.groups.urls')),

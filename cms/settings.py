@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-Django settings for intranet project.
+Django settings for cms project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -58,7 +58,7 @@ INSTALLED_APPS = (
   'djangodav',
   'dav',
 # my apps
-  'intranet',
+  'cms',
   'members',
   'members.groups',
   'meetings',
@@ -77,7 +77,7 @@ MIDDLEWARE_CLASSES = (
 # via supporting apps
   'breadcrumbs.middleware.BreadcrumbsMiddleware',
 # force login for wiki
-  'intranet.middleware.RequireLoginMiddleware',
+  'cms.middleware.RequireLoginMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -91,12 +91,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
   'django.core.context_processors.request', #needed for django-tables2
   'django.core.context_processors.debug', #needed for django-wiki
   'sekizai.context_processors.sekizai', #needed for django-wiki
-  'intranet.context_processors.template_content',
+  'cms.context_processors.template_content',
 )
 
-ROOT_URLCONF = 'intranet.urls'
+ROOT_URLCONF = 'cms.urls'
 
-WSGI_APPLICATION = 'intranet.wsgi.application'
+WSGI_APPLICATION = 'cms.wsgi.application'
 
 
 # Database
@@ -105,7 +105,7 @@ WSGI_APPLICATION = 'intranet.wsgi.application'
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': os.path.join(BASE_DIR, 'intranet/db.sqlite'),
+    'NAME': os.path.join(BASE_DIR, 'cms/db.sqlite'),
   }
 }
 
@@ -129,7 +129,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'intranet/static/'),
+    os.path.join(BASE_DIR, 'cms/static/'),
 )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -153,9 +153,9 @@ LOGIN_REQUIRED_URLS_EXCEPTIONS = (
 
 #where to find templates
 TEMPLATE_DIRS = (
-  os.path.join(BASE_DIR, 'intranet/templates/'),
-  os.path.join(BASE_DIR, 'intranet/templates/email/'),
-  os.path.join(BASE_DIR, 'intranet/templates/documentation/'),
+  os.path.join(BASE_DIR, 'cms/templates/'),
+  os.path.join(BASE_DIR, 'cms/templates/email/'),
+  os.path.join(BASE_DIR, 'cms/templates/documentation/'),
 )
 
 #ReCAPTCHA stuff
@@ -237,28 +237,31 @@ TEMPLATE_CONTENT = {
   },
 }
 
-# open_home
-OPEN_ACTIONS = (
+# home
+HOME_ACTIONS = (
   {
-    'heading'      : 'Registration and Documentation',
-    'actions'   : (
+    'heading'		: 'Membership Management',
+    'has_perms'		: 'cms.MEMBER',
+    'actions' : (
       {         
-        'label'         : 'Registration', 
-        'glyphicon'     : 'glyphicon-ok',
-        'desc'          : 'Register for CLUSIL membership (including Intranet access)',
-        'url'           : '/reg/',
+        'label'         : 'Profile', 
+        'glyphicon'     : 'glyphicon-home',
+        'desc'          : 'Manage your Membership profile',
+        'url'           : '/members/profile/',
+        'has_perms'	: 'cms.MEMBER',
       },
       {         
-        'label'         : 'Documentation', 
-        'glyphicon'     : 'glyphicon-book',
-        'desc'          : 'How to use the CLUSIL Intranet',
-        'url'           : '/documentation/',
+        'label'         : 'Users', 
+        'glyphicon'     : 'glyphicon-user',
+        'desc'          : 'Manage users and their access profile',
+        'url'           : '/members/users/',
+        'has_perms'	: 'cms.MEMBER',
       },
     ),
   },
   {
-    'heading'      : 'Collaboration Tools',
-    'actions'   : (
+    'heading'		: 'Collaboration Tools',
+    'actions' : (
       {         
         'label'         : 'WebDAV', 
         'glyphicon'     : 'glyphicon-folder-open',
@@ -273,13 +276,25 @@ OPEN_ACTIONS = (
       },
     ),
   },
-
+  {
+    'heading'   	: 'Board Console',
+    'has_perms'		: 'cms.BOARD',
+    'actions' : (
+      {         
+        'label'         : 'Dashboard', 
+        'glyphicon'     : 'glyphicon-tasks',
+        'desc'          : 'Club management tools and functions',
+        'url'           : '/board/',
+        'has_perms'	: 'cms.BOARD',
+      },
+    ),
+  },
 )
 
-TEMPLATE_CONTENT['open_home'] = {
+TEMPLATE_CONTENT['home'] = {
   'title'     	: 'What do you want to do today ?',
   'template'    : 'actions.html',
-  'actions'     : OPEN_ACTIONS,
+  'actions'     : HOME_ACTIONS,
 }
 
 #documentation
@@ -313,8 +328,8 @@ TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
 #where to store and get user-uploaded files
 MEDIA_ROOT = '/var/www/clusil.lu/dav/'
 
-# home
-ACTIONS = (
+# board
+BOARD_ACTIONS = (
   {
     'heading'      	: 'Web and online content management applications:',
     'actions' : (
@@ -352,10 +367,10 @@ ACTIONS = (
   },
 )
 
-TEMPLATE_CONTENT['home'] = {
+TEMPLATE_CONTENT['board'] = {
   'title'     	: 'What do you want to do today ?',
   'template'    : 'actions.html',
-  'actions'     : ACTIONS,
+  'actions'     : BOARD_ACTIONS,
 }
 
 #members
@@ -364,12 +379,15 @@ TEMPLATE_CONTENT['members'] = MEMBERS_TMPL_CONTENT
 #groups
 from members.groups.settings import *
 TEMPLATE_CONTENT['groups'] = GROUPS_TMPL_CONTENT
+#profile
+from members.profile.settings import *
+TEMPLATE_CONTENT['profile'] = PROFILE_TMPL_CONTENT
 
 #meetings
 from meetings.settings import *
 TEMPLATE_CONTENT['meetings'] = MEETINGS_TMPL_CONTENT
 
-MEETINGS_ATTENDANCE_URL = 'http://intranet.clusil.lu/meetings/attendance/'
+MEETINGS_ATTENDANCE_URL = 'http://new.intranet.clusil.lu/meetings/attendance/'
 
 #dav
 from dav.settings import *
@@ -379,7 +397,7 @@ TEMPLATE_CONTENT['dav'] = DAV_TMPL_CONTENT
 #from events.settings import *
 #TEMPLATE_CONTENT['events'] = EVENTS_TMPL_CONTENT
 
-EVENTS_ATTENDANCE_URL = 'http://intranet.clusil.lu/events/attendance/'
+EVENTS_ATTENDANCE_URL = 'http://new.intranet.clusil.lu/events/attendance/'
 
 #accounting
 from accounting.settings import *

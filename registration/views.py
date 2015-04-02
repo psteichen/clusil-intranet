@@ -9,7 +9,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib.auth.models import Permission
 
-from intranet.functions import show_form, notify_by_email
+from cms.functions import show_form, notify_by_email
 
 from accounting.functions import generate_invoice
 from members.models import Member, Organisation, Address

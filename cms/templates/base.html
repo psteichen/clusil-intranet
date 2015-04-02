@@ -37,15 +37,15 @@
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="row">
        <div class="col-xs-2">
-        <a href="/"><img class="navbar-brand" src="{{ meta.logo.img }}" /><p class="text-muted">{{ meta.logo.title }}</p></a>
+        <img class="navbar-brand" src="{{ meta.logo.img }}" /><p class="text-muted">{{ meta.logo.title }}</p>
        </div>
-       <div class="col-xs-8">
-        <center><h1 class="text-success"><strong><em>{{ meta.title }}</em></strong></h1></center>
+       <div class="col-xs-6">
+        <center><h1 class="text-success"><strong><e>{{ meta.title }}</em></strong></h1></center>
        </div>
-       <div class="col-xs-2">
+       <div class="col-xs-4">
         {% if user.is_authenticated %}
         <!-- Split button -->
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav pull-right">
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="text-muted">Welcome, </span><span class="text-primary">{{ user.first_name }} <span class="text-uppercase">{{ user.last_name }}</span> ({{ user }})</span><span class="text-muted caret"></span></a>
             <ul class="dropdown-menu" role="menu">
@@ -57,7 +57,7 @@
           </li>
         </ul>
         {% else %}
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav pull-right">
           <li><a href="/login/"><span class="text-primary">Login</span></a></li>
         </ul>
         {% endif %}

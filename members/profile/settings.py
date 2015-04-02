@@ -4,42 +4,42 @@
 ACTIONS = (
   {
     'heading'           : 'Membership profile',
-    'has_perms'         : 'clusil.MEMBER',
+    'has_perms'         : 'cms.MEMBER',
     'actions'   : (
       {
         'label'         : 'Modify Profile',
         'glyphicon'     : 'glyphicon-user',
         'desc'          : 'Modify, adjust Membership profile',
         'url'           : '/profile/modify/',
-    	'has_perms'     : 'clusil.MEMBER',
+    	'has_perms'     : 'cms.MEMBER',
       },
       {
         'label'         : 'Add User',
         'glyphicon'     : 'glyphicon-user',
         'desc'          : 'Add a User to your membership',
         'url'           : '/profile/adduser/',
-    	'has_perms'     : 'clusil.MEMBER',
+    	'has_perms'     : 'cms.MEMBER',
       },
       {
         'label'         : 'Delete User',
         'glyphicon'     : 'glyphicon-user',
         'desc'          : 'Delete a User from your membership',
         'url'           : '/profile/tiltuser/',
-    	'has_perms'     : 'clusil.MEMBER',
+    	'has_perms'     : 'cms.MEMBER',
       },
       {
         'label'         : 'Change Head-of-list',
         'glyphicon'     : 'glyphicon-user',
         'desc'          : 'Change Head-of-list or Delegate for your membership',
         'url'           : '/profile/chg_hol_d/',
-    	'has_perms'     : 'clusil.MEMBER',
+    	'has_perms'     : 'cms.MEMBER',
       },
       {
         'label'         : 'Invoice',
         'glyphicon'     : 'glyphicon-euro',
         'desc'          : 'View invoice(s) from your membership',
         'url'           : '/profile/invoice/',
-    	'has_perms'     : 'clusil.MEMBER',
+    	'has_perms'     : 'cms.MEMBER',
       },
     ),
   },

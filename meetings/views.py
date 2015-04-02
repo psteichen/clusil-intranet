@@ -8,7 +8,7 @@ from django.conf import settings
 
 from django_tables2  import RequestConfig
 
-from intranet.functions import notify_by_email
+from cms.functions import notify_by_email
 
 from members.functions import get_active_members, gen_fullname
 

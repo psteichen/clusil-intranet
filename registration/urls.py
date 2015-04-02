@@ -13,7 +13,7 @@ registration_forms = [
         ('delegate'	, RegisterUserForm),
         ('student_proof', StudentProofForm),
         ('group'	, AffiliationForm),
-#        ('captcha'	, CaptchaForm),
+        ('captcha'	, CaptchaForm),
 ]
 #condition dict
 registration_condition_dict = {

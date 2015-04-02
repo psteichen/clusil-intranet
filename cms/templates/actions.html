@@ -5,10 +5,10 @@
 {% if title %}<h2>{{ title }}</h2>{% endif %}
   {% for part in actions %}
   {% if part.has_perms in perms or not part.has_perms %}
-  <div class="col-xs-6">
-    <div class="panel panel-default">
+  <div class="col-sm-6">
+    <div class="panel panel-success">
       <div class="panel-heading">
-        {% if part.heading %}<p>{{ part.heading|safe }}</p>{% endif %}
+        {% if part.heading %}<h2 class="panel-title lead">{{ part.heading }}</h2>{% endif %}
       </div>
       <div class="panel-body">
         <center>

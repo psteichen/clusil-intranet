@@ -2,9 +2,9 @@ from django.db import models
 
 # this is only used to set custom permissions:
 #
-#  - clusil.BOARD	(member of the Management Board)
-#  - clusil.SECR	(secretary of the Management Board)
-#  - clusil.MEMBER	(CLUSIL member (for organisations only head-of-list and delegate get this permission))
+#  - cms.BOARD	(member of the Management Board)
+#  - cms.SECR	(secretary of the Management Board)
+#  - cms.MEMBER	(CLUSIL member (for organisations only head-of-list and delegate get this permission))
 #
 # including a little hack so that we can use these sepcific
 # permissions in a choices field for HR creation

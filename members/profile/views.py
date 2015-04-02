@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.template.loader import render_to_string
 
-from intranet.functions import notify_by_email
+from cms.functions import notify_by_email
 
 from members.functions import add_group
 from members.models import Member
@@ -194,7 +194,7 @@ def modify(r):
      return render(r,'profile_other.html', {'member_form': MemberForm(initial=init_data['member_data']),'wg_form': WGFormCheckBox(initial=init_data['wg_data']), 'user_form': UserChangeForm(initial=init_data['user_data'])})
 
 
-@permission_required('mod.is_hol_d')
+@permission_required('cms.MEMBER')
 def adduser(r): # only if membership-type is ORG
   init_data = initial_data(r)
   m_id = init_data['member_data']['member_id']
@@ -263,7 +263,7 @@ def adduser(r): # only if membership-type is ORG
 
 
 # remove user
-@permission_required('mod.is_hol_d')
+@permission_required('cms.MEMBER')
 def tiltuser(r):
   init_data = initial_data(r)
   m_id = init_data['member_data']['member_id']
@@ -299,7 +299,7 @@ def tiltuser(r):
 
 
 # change head-of-list or delegate
-@permission_required('mod.is_hol_d')
+@permission_required('cms.MEMBER')
 def chg_hol_d(r):
   init_data = initial_data(r)
   m_id = init_data['member_data']['member_id']
@@ -340,7 +340,7 @@ def chg_hol_d(r):
 
 
 # invoice viewing
-@permission_required('mod.is_hol_d')
+@permission_required('cms.MEMBER')
 def invoice(r):
   #no POST data yet -> show user creation form
   return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['tiltuser']['title'], 'form': MemberUsersForm(), 'submit': settings.TEMPLATE_CONTENT['profile']['tiltuser']['submit']})

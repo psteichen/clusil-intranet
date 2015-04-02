@@ -1,6 +1,6 @@
 from django.db.models import Model, ForeignKey, BooleanField, CharField, DateField, FileField
 
-from intranet.functions import rmf
+from cms.functions import rmf
 from members.models import Member
 
 from .invoice import draw_pdf

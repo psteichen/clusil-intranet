@@ -56,5 +56,6 @@ target/
 #local app ignores
 */migrations/
 db.sqlite
+cms/db.sqlite
 HERE
 TODO

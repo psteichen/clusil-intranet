@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load extra_tags %}
+{% load bootstrap3 %}
 
 {% block content %}
 <h2>{{ title }}</h2>
@@ -16,34 +15,16 @@
   </div>
   <div class="panel-body">
   {% if step_desc %}<div class="well well-sm">{{ step_desc|safe }}</div>{% endif %}
-  {% if wizard.form.forms %}
+   <div class="col-xs-10">
+   {% if wizard.form.forms %}
     {{ wizard.form.management_form }}
     {% for form in wizard.form.forms %}
-      {% for field in form %}
-       {% if field.is_hidden %}
-        <div class="form-group hidden">
-       {% else %}
-        <div class="form-group">
-       {% endif %}
-         <div class="col-sm-12">{{ field.errors }}</div>
-         <div class="col-sm-3">{{ field.label_tag }}</div>
-         <div class="col-sm-9">{{ field|addclass:"form-control" }}<span class="help-block">{{ field.help_text }}</span></div>
-        </div>
-      {% endfor %}
+      {% bootstrap_form form %}
     {% endfor %}
-  {% else %}
-    {% for field in wizard.form %}
-      {% if field.is_hidden %}
-       <div class="form-group hidden">
-      {% else %}
-       <div class="form-group">
-      {% endif %}
-        <div class="col-sm-12">{{ field.errors }}</div>
-        <div class="col-sm-3">{{ field.label_tag }}</div>
-        <div class="col-sm-9">{{ field|addclass:"form-control" }}<span class="help-block">{{ field.help_text }}</span></div>
-       </div>
-    {% endfor %}
-  {% endif %}
+   {% else %}
+    {% bootstrap_form wizard.form %}
+   {% endif %}
+   </div>
   </div>
  </div>
  <div class="btn-toolbar">

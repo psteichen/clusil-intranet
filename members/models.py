@@ -8,11 +8,26 @@ from .functions import gen_fullname
 
 # Address model
 class Address(Model):
+  LU	= 0
+  FR	= 1
+  BE	= 2
+  DE	= 3
+  NL	= 4
+  OTH	= 5
+  COUNTRIES = (
+    (LU	,'Luxembourg'),
+    (FR	,'France'),
+    (BE	,'Belgium'),
+    (DE	,'Germany'),
+    (NL	,'The Netherlands'),
+    (OTH,'Other'),
+  )
   street 	= CharField(max_length=250)
   num	 	= CharField(max_length=20,blank=True,null=True)
   postal_code 	= CharField(max_length=250)
   town 		= CharField(max_length=250)
-  country 	= CharField(max_length=250)
+  country 	= IntegerField(choices=COUNTRIES,default=LU)
+  c_other 	= CharField(max_length=250,blank=True,null=True)
  
   def __unicode__(self):
     return self.street + ' ' + self.num + ' ; ' + self.postal_code + ' ' + self.town + ' ; ' + self.country

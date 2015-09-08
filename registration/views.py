@@ -32,6 +32,10 @@ class RegistrationWizard(SessionWizardView):
     return 'wizard.html'
 
   def get_context_data(self, form, **kwargs):
+    self.request.breadcrumbs( ( 
+				('registration','/reg/'),
+                             ) )
+
     context = super(RegistrationWizard, self).get_context_data(form=form, **kwargs)
 
     if self.steps.current != None:
@@ -82,6 +86,12 @@ class RegistrationWizard(SessionWizardView):
         try:
           form.fields['email'].initial = cleaned_data['email']
         except: pass
+      t_data = self.get_cleaned_data_for_step('type') or False
+      if t_data:
+        ty = int(t_data['member_type'])
+        if ty == Member.IND or ty == Member.STD:
+          del form.fields['delegate']
+
 
     if step == 'delegate':
       del form.fields['delegate']
@@ -89,6 +99,10 @@ class RegistrationWizard(SessionWizardView):
     return form
 
   def done(self, fl, form_dict, **kwargs):
+    self.request.breadcrumbs( ( 
+				('registration','/reg/'),
+                             ) )
+
 
     template = settings.TEMPLATE_CONTENT['reg']['register']['done']['template']
     e_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template']

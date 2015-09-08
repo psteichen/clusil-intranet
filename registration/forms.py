@@ -21,7 +21,13 @@ class AddressForm(ModelForm):
 
   class Meta:
     model = Address
-    fields = ( 'first_name', 'last_name', 'email', 'organisation', 'street', 'num', 'postal_code', 'town', 'country', )
+    fields = ( 'first_name', 'last_name', 'email', 'organisation', 'street', 'num', 'postal_code', 'town', 'country', 'c_other', )
+    labels = {
+      'c_other'	: 'Other country',
+    }
+    help_text = {
+      'c_other'	: 'If none from above please specify here',
+    }
 
 class RegisterUserForm(UserCreationForm):
   delegate 	= BooleanField(label='add Delegate?',required=False)

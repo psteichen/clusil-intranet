@@ -1,13 +1,9 @@
-from wiki.urls import get_pattern as get_wiki_pattern
-from django_nyt.urls import get_pattern as get_nyt_pattern
-
 from password_reset.views import recover, recover_done, reset, reset_done
 
 from django.contrib.auth.decorators import login_required
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
-
 
 from .views import home, documentation
 
@@ -21,10 +17,6 @@ urlpatterns = patterns('',
   url(r'^documentation/', documentation, name='documentaion'),
 
   url(r'^reg/', include('registration.urls')),
-
-  #wiki
-  url(r'^wiki/notifications/', get_nyt_pattern()),
-  url(r'^wiki/', get_wiki_pattern()),
 
 
   #login stuff
@@ -52,8 +44,6 @@ urlpatterns = patterns('',
 #  url(r'^events/', include('events.urls')),
 
 #  url(r'^webcontent/', include('webcontent.urls')),
-
-  url(r'^dav/', include('dav.urls')),
 
   #admin
   url(r'^admin/', include(admin.site.urls)),

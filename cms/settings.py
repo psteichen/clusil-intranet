@@ -28,6 +28,8 @@ ALLOWED_HOSTS = [ 'cms.clusil.lu', 'intranet.clusil.lu', ]
 # Application definition
 
 INSTALLED_APPS = (
+# global bootstrap3 integration
+  'bootstrap3',
 # django core apps
   'django.contrib.admin',
   'django.contrib.auth',
@@ -155,11 +157,11 @@ Your CLUSIL team
 TEMPLATE_CONTENT = {
   #basic/generic content for all templates/views:
   'meta' : {
-    'author'            : 'Pascal Steichen - pst@clusil.lu ; 2012, 2014',
-    'copyright'         : 'CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014',
-    'title'             : 'CLUSIL INTRANET',
+    'author'            : 'Pascal Steichen - pst@clusil.lu ; 2012, 2014, 2015',
+    'copyright'         : 'CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014, 2015',
+    'title'             : 'Club Management System',
     'logo' : {
-      'title'		: "",
+      'url'		: "/",
       'img'		: 'http://clusil.lu/pics/clusil_picto.png',
     },
     'description'       : '',
@@ -167,8 +169,8 @@ TEMPLATE_CONTENT = {
     'css' : {
         'bt'            : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css',
         'bt_theme'      : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css',
-        'jumbotron'	: 'https://aperta.lu/css/jumbotron.css',
-        'jt_narrow'	: 'https://aperta.lu/css/jumbotron-narrow.css',
+        'jumbotron'	: 'https://clusil.lu/css/jumbotron.css',
+        'jt_narrow'	: 'https://clusil.lu/css/jumbotron-narrow.css',
         'own'           : STATIC_URL + 'css/bt-clusil.css',
     },
     'js' : {
@@ -234,16 +236,10 @@ HOME_ACTIONS = (
     'heading'		: 'Collaboration Tools',
     'actions' : (
       {         
-        'label'         : 'WebDAV', 
+        'label'         : 'Cloud', 
         'glyphicon'     : 'glyphicon-folder-open',
-        'desc'          : 'Filesharing platform (WebDAV based)',
-        'url'           : '/dav/members/',
-      },
-      {         
-        'label'         : 'Wiki', 
-        'glyphicon'     : 'glyphicon-pencil',
-        'desc'          : 'Collaboration platform (Wiki based)',
-        'url'           : '/wiki/',
+        'desc'          : 'Filesharing platform (SeaFile based)',
+        'url'           : 'https://cloud.clusil.lu/',
       },
     ),
   },
@@ -280,14 +276,9 @@ TEMPLATE_CONTENT['documentation'] = {
       'content'	: 'reg.html',
     },
     {
-      'ref'	: 'dav',
-      'title'	: 'HowTo use the (WebDAV) filesystem for document sharing',
-      'content'	: 'dav.html',
-    },
-    {
-      'ref'	: 'wiki',
-      'title'	: 'HowTo use the Wiki for collaboration',
-      'content'	: 'wiki.html',
+      'ref'	: 'cloud',
+      'title'	: 'HowTo use the (SeaFile) cloud-system for document sharing',
+      'content'	: 'cloud.html',
     },
   ),
 }
@@ -359,10 +350,6 @@ from meetings.settings import *
 TEMPLATE_CONTENT['meetings'] = MEETINGS_TMPL_CONTENT
 
 MEETINGS_ATTENDANCE_URL = 'http://new.intranet.clusil.lu/meetings/attendance/'
-
-#dav
-from dav.settings import *
-TEMPLATE_CONTENT['dav'] = DAV_TMPL_CONTENT
 
 #events
 #from events.settings import *

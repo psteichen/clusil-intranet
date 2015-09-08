@@ -37,10 +37,10 @@
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="row">
        <div class="col-xs-2">
-        <img class="navbar-brand" src="{{ meta.logo.img }}" /><p class="text-muted">{{ meta.logo.title }}</p>
+        <a href="{{ meta.logo.url }}"><img class="nav navbar-nav logo" src="{{ meta.logo.img }}" /></a>
        </div>
        <div class="col-xs-6">
-        <center><h1 class="text-success"><strong><e>{{ meta.title }}</em></strong></h1></center>
+        <center><h2 class="text-success"><strong><e>{{ meta.title }}</em></strong></h2></center>
        </div>
        <div class="col-xs-4">
         {% if user.is_authenticated %}
@@ -69,7 +69,11 @@
     <!-- breadcrumbs -->
     {% for breadcrumb in request.breadcrumbs %}
       {% if forloop.first %}<ol class="breadcrumb">{% endif %}
-      {% if forloop.last %}<li class="active"><a class="active" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li></ol>{% else %}<li><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>{% endif %}
+      {% if forloop.last %}
+        <li class="active">&nbsp;::&nbsp;<a class="active" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>&nbsp;::&nbsp;</li></ol>
+      {% else %}
+        <li>&nbsp;::&nbsp;<a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>&nbsp;::&nbsp;</li>
+      {% endif %}
     {% endfor %}
 
     <div class="jumbotron">

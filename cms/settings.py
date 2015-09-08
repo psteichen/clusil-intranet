@@ -21,10 +21,9 @@ SECRET_KEY = '"&_-L%/(OI&RBçtzdb*v6hv+b8@rav4fgh@zre64z$54wrefdB%&*/Ã§ZR(r!)0b71
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = [ 'new.intranet.clusil.lu', 'intranet.clusil.lu', ]
+ALLOWED_HOSTS = [ 'cms.clusil.lu', 'intranet.clusil.lu', ]
 
 # Application definition
 
@@ -41,22 +40,6 @@ INSTALLED_APPS = (
   'breadcrumbs',
   'captcha',
   'password_reset',
-# apps needed for django-wiki
-  'django.contrib.sites',
-  'django.contrib.humanize',
-  'django_nyt',
-#  'django_notify',
-  'mptt',
-  'sekizai',
-  'sorl.thumbnail',
-  'wiki',
-  'wiki.plugins.attachments',
-  'wiki.plugins.notifications',
-  'wiki.plugins.images',
-  'wiki.plugins.macros',
-# webdav (djangodav based)
-  'djangodav',
-  'dav',
 # my apps
   'cms',
   'members',
@@ -76,8 +59,6 @@ MIDDLEWARE_CLASSES = (
   'django.middleware.clickjacking.XFrameOptionsMiddleware',
 # via supporting apps
   'breadcrumbs.middleware.BreadcrumbsMiddleware',
-# force login for wiki
-  'cms.middleware.RequireLoginMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -89,8 +70,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
   'django.core.context_processors.tz',
   'django.contrib.messages.context_processors.messages',
   'django.core.context_processors.request', #needed for django-tables2
-  'django.core.context_processors.debug', #needed for django-wiki
-  'sekizai.context_processors.sekizai', #needed for django-wiki
   'cms.context_processors.template_content',
 )
 
@@ -142,14 +121,6 @@ STATICFILES_FINDERS = (
 #login/auth (used by the login_required decorator)
 LOGIN_URL="/login/"
 LOGIN_REDIRECT_URL="/home/"
-FORCE_LOGIN_URLS = (
-  r'/wiki/(.*)$',
-  r'/wiki/notifications/(.*)$',
-)
-LOGIN_REQUIRED_URLS_EXCEPTIONS = (
-  r'/$',
-)
-
 
 #where to find templates
 TEMPLATE_DIRS = (
@@ -326,7 +297,7 @@ from registration.settings import *
 TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
 
 #where to store and get user-uploaded files
-MEDIA_ROOT = '/var/www/clusil.lu/dav/'
+MEDIA_ROOT = '/var/www/clusil.lu/cms/media/'
 
 # board
 BOARD_ACTIONS = (
@@ -406,8 +377,3 @@ INVOICE = {
   'logo'	: STATIC_URL + 'pics/logo.jpg',
   'currency' 	: 'EUR',
 }
-
-#wiki settings
-SITE_ID = 1 
-WIKI_ACCOUNT_SIGNUP_ALLOWED=False
-

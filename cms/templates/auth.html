@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load extra_tags %}
+{% load bootstrap3 %}
 
 {% block content %}
 <center>
@@ -11,15 +11,9 @@
    <h2 class="panel-title">{{ auth.title }}</h2>
   </div>
   <div class="panel-body">
-   {% for field in form %}
-     <div class="form-group row">
-       {% if field.errors %}<div class="col-xs-12">{{ field.errors }}</div>{% endif %}
-       <div class="col-xs-3"></div>
-       <div class="col-xs-3">{{ field.label_tag }}</div>
-       <div class="col-xs-3">{{ field|addclass:"form-control" }}</div>
-       <div class="col-xs-3"></div>
-     </div>
-   {% endfor %}
+   <div class="col-xs-10">
+   {% bootstrap_form form %}
+   </div>
    <button class="btn btn-danger" type="submit">{{ auth.submit }}</button>
    <input type="hidden" name="next" value="{{ next }}" />
   </div>

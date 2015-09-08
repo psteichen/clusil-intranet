@@ -4,3 +4,4 @@ django-tables2
 django-password-reset
 reportlab
 django-recaptcha
+django-bootstrap3

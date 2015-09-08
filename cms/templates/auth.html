@@ -3,24 +3,36 @@
 {% load bootstrap3 %}
 
 {% block content %}
-<center>
-<form role="form" class="form-horizontal" method="post" action="{% url 'login' %}">
-{% csrf_token %}
- <div class="panel panel-success">
-  <div class="panel-heading">
-   <h2 class="panel-title">{{ auth.title }}</h2>
-  </div>
+<ul class="nav nav-pills">
+  <li class="active"><a data-toggle="tab" href="#auth">{{ auth.title }}</a></li>
+  <li><a data-toggle="tab" href="#reg">{{ auth.reg.title }}</a></li>
+</ul>
+
+<div class="panel panel-success">
   <div class="panel-body">
-   <div class="col-xs-10">
-   {% bootstrap_form form %}
+   <div class="col-xs-4"></div>
+
+   <div class="tab-content">
+     <div id="auth" class="tab-pane fade in active col-xs-4">
+       <h2 class="text-success">{{ auth.title }}</h2>
+       <form role="form" class="form-horizontal" method="post" action="{% url 'login' %}">
+         {% csrf_token %}
+         {% bootstrap_form form %}
+         <center>
+          <button class="btn btn-danger" type="submit">{{ auth.submit }}</button>
+          <input type="hidden" name="next" value="{{ next }}" />
+          <br/><a href="{% url 'password_reset_recover' %}">Forgot password?</a>
+         </center>
+       </form>
+     </div>
+     <div id="reg" class="tab-pane fade col-xs-4">
+       <h2 class="text-success">{{ auth.reg.title }}</h2>
+       <p class="lead">{{ auth.reg.desc|safe }}</p>
+     </div>
    </div>
-   <button class="btn btn-danger" type="submit">{{ auth.submit }}</button>
-   <input type="hidden" name="next" value="{{ next }}" />
+
+   <div class="col-xs-4"></div>
   </div>
-  <div class="footer">
-    <a href="{% url 'password_reset_recover' %}">Forgot password?</a>
-  </div>
- </div>
-</form>
-</center>
+</div>
+
 {% endblock %}

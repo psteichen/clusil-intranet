@@ -185,8 +185,12 @@ TEMPLATE_CONTENT = {
     'duplicate'         : 'Duplicate found, reconsider your input!',
   },
   'auth' : {
-    'title': 'Authentication',
-    'submit': 'Login',
+    'title'	: 'Sign In',
+    'submit'	: 'Login',
+    'reg' : {
+      'title'	: 'Sign Up',
+      'desc'	: 'and become a member:<br/><a href="/reg/">Member registration</a>',
+    },
   },
   'pwd' : {
     'recover' : {

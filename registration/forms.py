@@ -53,5 +53,6 @@ class AffiliationForm(Form):
 		  )
 
 class CaptchaForm(Form):
+#  captcha = ReCaptchaField(attrs={'theme' : 'clean'})
   captcha = ReCaptchaField(attrs={'theme' : 'clean'})
 

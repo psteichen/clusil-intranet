@@ -1,5 +1,9 @@
 
 
+def get_members_to_validate():
+  from .models import Member
+  return Member.objects.filter(status=Member.REG)
+
 def get_active_members():
   from .models import Member
   return Member.objects.filter(status=Member.ACT)

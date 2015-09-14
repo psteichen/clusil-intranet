@@ -133,7 +133,7 @@ TEMPLATE_DIRS = (
 
 #ReCAPTCHA stuff
 RECAPTCHA_USE_SSL = True
-NOCAPTCHA = True
+#NOCAPTCHA = True
 RECAPTCHA_PUBLIC_KEY = "6Lc7twwTAAAAANJUI4eaSt2cBq0gm7U9QTcyXlLM"
 RECAPTCHA_PRIVATE_KEY = "6Lc7twwTAAAAAD5Gh03S-3FTE3eza8n9QD3WWQSf"
 
@@ -153,6 +153,10 @@ Best Regads,
 Your CLUSIL team
 ''',
 }
+
+MEMBER_ID_SALT     = u']*8/bi83}7te!TJZ(IL!K?&+U'
+REG_VAL_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/reg/validate/'
+
 
 #content for templates and views
 TEMPLATE_CONTENT = {

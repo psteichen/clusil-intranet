@@ -1,7 +1,5 @@
 # coding=utf-8
 
-from captcha.fields import ReCaptchaField
-
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import Form, ChoiceField, ModelForm, CharField, FileField,  ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField, BooleanField
@@ -12,6 +10,7 @@ from members.groups.models import Group, Affiliation
 
 class MemberTypeForm(Form):
   member_type = ChoiceField(label='Membership type',choices=Member.MEMBER_TYPES)
+#  captcha = ReCaptchaField(attrs={'theme' : 'clean'}) #doesn't work -> do via email confirmation (!)
 
 class AddressForm(ModelForm):
   organisation 	= CharField(required=False)
@@ -21,7 +20,7 @@ class AddressForm(ModelForm):
 
   class Meta:
     model = Address
-    fields = ( 'first_name', 'last_name', 'email', 'organisation', 'street', 'num', 'postal_code', 'town', 'country', 'c_other', )
+    fields = ( 'first_name', 'last_name', 'email', 'organisation', 'street', 'postal_code', 'town', 'country', 'c_other', )
     labels = {
       'c_other'	: 'Other country',
     }
@@ -50,9 +49,5 @@ class AffiliationForm(Form):
 			queryset=Group.objects.only('acronym','title').exclude(acronym='default').exclude(acronym='board').exclude(acronym__contains='leader').exclude(acronym='clusix'),
 			widget=CheckboxSelectMultiple(),
 			label='Select Group affiliations',
+			required=False,
 		  )
-
-class CaptchaForm(Form):
-#  captcha = ReCaptchaField(attrs={'theme' : 'clean'})
-  captcha = ReCaptchaField(attrs={'theme' : 'clean'})
-

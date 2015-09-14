@@ -12,17 +12,24 @@ from django.contrib.auth.models import Permission
 from cms.functions import show_form, notify_by_email
 
 from accounting.functions import generate_invoice
+from members.functions import get_members_to_validate
 from members.models import Member, Organisation, Address
 from members.groups.models import Group, Affiliation
 
-from .functions import gen_member_id, add_to_groups, gen_fullname
+from .functions import gen_member_id, add_to_groups, gen_fullname, gen_validation_hash, gen_confirmation_link
 
+
+##
+## registration helper functions
+##
 def show_delegate_form(wizard):
   return show_form(wizard,'type','member_type',Member.ORG) and show_form(wizard,'head','delegate',True)
 
 def show_student_proof_form(wizard):
   return show_form(wizard,'type','member_type',Member.STD)
 
+
+###########################
 # registration formwizard #
 ###########################
 class RegistrationWizard(SessionWizardView):
@@ -165,12 +172,9 @@ and add further users (up to 6 in total).
 '''
       message_content = {
         'FULLNAME': gen_fullname(M),
-        'MEMBER_ID': m_id,
         'MEMBER_TYPE': Member.MEMBER_TYPES[ty][1],
 	'ORGANISATION':	org_msg,
-	'LOGIN': U.username,
-#	'DEFAULT_WG': Group.objects.get(acronym='main'),
- 	'WG': Gs,
+	'LINK': gen_confirmation_link(U.email)
       }
 
       # send confirmation
@@ -187,7 +191,43 @@ and add further users (up to 6 in total).
 
       # redirect to thank you page
       return render(self.request,template, { 
-				'mode': 'your Registration', 
-				'message': render_to_string(settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template'],message_content),
+			'mode': 'your Registration', 
+			'message': render_to_string(settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template'],message_content),
 		   })
 
+
+
+###########################
+# registration validation #
+###########################
+def validate(r, val_hash):
+
+  title 	= settings.TEMPLATE_CONTENT['reg']['validate']['title']
+  template	= settings.TEMPLATE_CONTENT['reg']['validate']['template']
+  message	= settings.TEMPLATE_CONTENT['reg']['validate']['message']
+  e_template	= settings.TEMPLATE_CONTENT['reg']['validate']['email_template']
+
+  notify = False
+  for m in get_members_to_validate():
+    if gen_validation_hash(m.head_of_list.email) == val_hash:
+      # it's a member to be validated
+      m.status = Member.ACT
+      m.save()
+      notify=True
+      message = message.format(name=gen_member_fullname(m),member_id=m.member_id,orga=m.organisation)
+    else:
+      # validation code not known, ignore request
+      notify=False
+
+  if notify:
+    #notify by email
+    message_content = {
+        'MESSAGE'	: message,
+    }
+    #send email
+    ok=notify_by_email(title,m.head_of_list.email,e_template,message_content)
+
+  return render(r, template, {
+                   'title'	: title,
+                   'message'	: message,
+               })

@@ -46,15 +46,25 @@ REGISTRATION_TMPL_CONTENT = {
       'desc'   		: '''CLUSIL is an association of active involvement, please choice your prefered working group (topic) you want to contribute to.''',
       'next'            : 'next',
     },
-    'captcha' : {
-      'title'           : 'Catpcha',
-      'desc'   		: '',
-      'next'            : 'submit',
-    },
     'done' : {
       'template'        : 'done.html',
       'title'           : 'Registration successful!',
       'email_template' 	: 'registration.txt',
     },
+  },
+  'validate' : {
+    'template'		: 'done.html',
+    'title'		: 'Membership validation',
+    'message'  		: '''Dear {name} {orga},
+Welcome to the CLUSIL!
+
+Your membership is now validated.
+[MEMBER_ID: {member_id}]
+
+For any further communication please use the above MEMBER_ID.
+
+Looking forward to meet you at one of our next events or working groups.
+''',  
+    'email_template' 	: 'validation.txt',
   },
 }

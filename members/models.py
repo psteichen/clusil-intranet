@@ -22,8 +22,7 @@ class Address(Model):
     (NL	,'The Netherlands'),
     (OTH,'Other'),
   )
-  street 	= CharField(max_length=250)
-  num	 	= CharField(max_length=20,blank=True,null=True)
+  street 	= CharField(verbose_name="Num & street",max_length=250)
   postal_code 	= CharField(max_length=250)
   town 		= CharField(max_length=250)
   country 	= IntegerField(choices=COUNTRIES,default=LU)
@@ -53,18 +52,20 @@ class Member(Model):
     (STD, 'Student'),
   )
 
-  ACT = 0
-  HON = 1
-  STB = 2
+  REG = 0
+  ACT = 1
+  INA = 2
+  HON = 3
   STATUSES = (
+    (REG, 'registered'),
     (ACT, 'active'),
+    (INA, 'inactive'),
     (HON, 'honorary'),
-    (STB, 'standby'), #inactive
   )
 
   id 		= CharField(max_length=25,primary_key=True)
   type 		= IntegerField(choices=MEMBER_TYPES)
-  status      	= IntegerField(choices=STATUSES,default=ACT) 
+  status      	= IntegerField(choices=STATUSES,default=REG) 
   organisation 	= ForeignKey(Organisation,blank=True,null=True)
   address	= ForeignKey(Address,blank=True,null=True)
   head_of_list 	= ForeignKey(User,related_name='head_of_list+',null=True,on_delete=SET_NULL)

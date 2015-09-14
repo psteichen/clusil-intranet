@@ -1,21 +1,13 @@
 {% autoescape off %}
 Dear {{ FULLNAME }}, 
-[Member-ID: {{ MEMBER_ID }}]
 
 Hereby we confirm your registration as CLUSIL Member (type: {{ MEMBER_TYPE }}).
 {{ ORGANISATION }}
-To access the Intranet your login is:
-	{{ LOGIN }}
 
-which gives you immediate access to the default Intranet folder:
-	{{ DEFAULT_WG }}
-
-as well as the Working Group you subscribed for:
-	{{ WG }}
+Please validate your membership via the below confirmation link:
+	{{ LINK }}
 
 {{ QUESTIONS }}
-
-PS: You will get the membership invoice in a seperate e-mail.
 
 {{ SALUTATION }}
 

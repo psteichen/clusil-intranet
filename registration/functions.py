@@ -1,19 +1,46 @@
-from datetime import date
+#coding=utf-8
+
+from datetime import date, datetime
+from hashlib import sha256
+
+from django.conf import settings
 
 from members.models import Member
 from members.groups.models import Affiliation, Group
 
-def gen_member_id():
-  num = 0
-  #member-id model CLUSIL-YYYY-NNNN
-  try:
-    ml = str(Member.objects.filter(id__contains=date.today().strftime('%Y')).latest('id'))
-    id = ml.split('-')[2].split(' ')[0]
-    num = int(id) + 1
-  except Member.DoesNotExist:
-    num = 1
 
-  mid = 'CLUSIL-%(year)s-%(num)04d' % { 'year': date.today().strftime('%Y'), 'num': num }
+##
+## supporting functions
+##
+def gen_hash(salt,message):
+  h = sha256()
+  h.update(unicode(salt))
+  h.update(unicode(message))
+
+  return unicode(h.hexdigest())[:5]
+
+def member_id_exists(mid):
+  try:
+    Member.objects.get(pk=mid)
+    return True
+  except Member.DoesNotExist:
+    return False
+
+
+##
+## functions used in views
+##
+def gen_member_id(add_randomness=False):
+  msg = datetime.today()
+  id_part = gen_hash(settings.MEMBER_ID_SALT,msg)
+  if add_randomness: 
+    msg *= random.uniform(5, 20)
+    id_part = gen_hash(settings.MEMBER_ID_SALT,msg)
+
+  if member_id_exists(id_part):
+    id_part = gen_member_id(True)
+
+  mid = 'CLUSIL-%(year)s-%(id)05s' % { 'year': date.today().strftime('%Y'), 'id': id_part }
   return mid
 
 def add_to_groups(user,groups):
@@ -30,3 +57,18 @@ def gen_fullname(m):
   if m.type == Member.ORG:
     fn += ' (' + unicode(m.organisation) + ')'
   return fn
+
+
+def gen_validation_hash(email):
+  #hash
+  h = sha256()
+  h.update(unicode(email)) #message (email)
+  return unicode(h.hexdigest())
+
+def gen_confirmation_link(email):
+  from os import path
+
+  c_url = path.join(settings.REG_VAL_URL, gen_validation_hash(email))
+
+  return c_url
+

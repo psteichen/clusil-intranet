@@ -8,14 +8,19 @@ from django.core.mail import EmailMessage
 
 def notify_by_email(sender,to,subject,message_content,template='default.txt',attachment=None):
 
-  if not sender: sender = settings.EMAILS['sender']['default']
+  board = settings.EMAILS['sender']['board'] #board
+
+  if not sender: sender = settings.EMAILS['sender']['no-reply'] #default
+  else: sender = settings.EMAILS['sender'][unicode(sender)]
   email = EmailMessage(
-                subject=subject,
-                from_email=sender,
-                to=[to],
-#                cc=[settings.TEMPLATE_CONTENT['email']['cc'][int(dept)]]
+                subject		= '[CLUSIL] ' + subject,
+                from_email	= sender,
+                to		= [to],
+                cc		= [board]
           )
-  message_content['FOOTER'] = settings.EMAILS['footer']
+  message_content['SALUTATION'] = settings.EMAILS['salutation']
+  message_content['DISCLAIMER'] = settings.EMAILS['disclaimer']
+
   email.body = render_to_string(template,message_content)
   if attachment: email.attach(attachment)
   try:

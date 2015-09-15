@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 
+from django.utils import timezone
 from django.conf import settings
 from django.shortcuts import render 
 from django.template.loader import render_to_string
@@ -16,7 +17,8 @@ from members.functions import get_members_to_validate
 from members.models import Member, Organisation, Address
 from members.groups.models import Group, Affiliation
 
-from .functions import gen_member_id, add_to_groups, gen_fullname, gen_validation_hash, gen_confirmation_link
+from .models import Registration
+from .functions import gen_member_id, add_to_groups, gen_member_fullname, gen_hash, gen_confirmation_link
 
 
 ##
@@ -110,6 +112,7 @@ class RegistrationWizard(SessionWizardView):
 				('registration','/reg/'),
                             ) )
 
+    done_title = settings.TEMPLATE_CONTENT['reg']['register']['done']['title']
     done_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['template']
     error_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['error_template']
     email_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template']
@@ -146,12 +149,12 @@ class RegistrationWizard(SessionWizardView):
         sp_f = form_dict['student_proof']
         if sp_f.is_valid():
           M = sp_f.save(commit=False)
-          M.id=m_id
+          M.pk=m_id
           M.type=ty
 
-      if M == None: M = Member(id=m_id,type=ty)
+      if M == None: M = Member(pk=m_id,type=ty)
 
-      # add member_id and head_of_list to Member model
+      # add address, orga and head_of_list to Member model
       if ty == Member.ORG: M.organisation = O
       M.address=A
       M.head_of_list=U
@@ -163,24 +166,21 @@ class RegistrationWizard(SessionWizardView):
         Gs = g_f.cleaned_data['groups']
         add_to_groups(U,Gs)
 
+      reg_hash_code = gen_hash(settings.REG_SALT,M.head_of_list.email,15,M.address)
+      # create registration entry for out-of-bound validation
+      R = Registration(member=M,hash_code=reg_hash_code,date_of_registration=timezone.now())
+      R.save()
+
       # build confirmation mail
-      org_msg = ''
-      if ty == Member.ORG:
-        org_msg += '''
-You are the head-of-list for ''' + unicode(O) + ''' giving you the privilege to manage the Member account 
-and add further users (up to 6 in total).
-'''
       message_content = {
-        'FULLNAME'	: gen_fullname(M),
-        'MEMBER_TYPE'	: Member.MEMBER_TYPES[ty][1],
-	'ORGANISATION'	: org_msg,
-	'LINK'		: gen_confirmation_link(M),
+        'FULLNAME'	: gen_member_fullname(M),
+        'MEMBER_TYPE'	: Member.MEMBER_TYPES[int(M.type)][1],
+	'LINK'		: gen_confirmation_link(reg_hash_code),
       }
       # send confirmation
-      subject = settings.TEMPLATE_CONTENT['reg']['register']['done']['title']
-      ok=notify_by_email(subject,M.head_of_list.email,email_template,message_content)
+      ok=notify_by_email(False,M.head_of_list.email,done_title,message_content,email_template)
       if not ok:
-        return render(self.request,error_template, { 
+        return render(self.request, error_template, { 
 				'mode': 'Error in email confirmation', 
 				'message': settings.TEMPLATE_CONTENT['error']['email'],
 		     })
@@ -188,10 +188,15 @@ and add further users (up to 6 in total).
       # generate invoice (this will send the invoice email implicitly)
 #      generate_invoice(M)
 
-      # redirect to thank you page
-      return render(self.request,template, { 
-			'mode': 'your Registration', 
-			'message': render_to_string(settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template'],message_content),
+      head = False
+      if int(M.type) == int(Member.ORG): head = True
+   
+      # done, redirect to thank you page
+      return render(self.request, done_template, { 
+			'title'	: done_title,
+        		'name'	: gen_member_fullname(M),
+        		'type'	: Member.MEMBER_TYPES[int(M.type)][1],
+		        'head' 	: head,
 		   })
 
 
@@ -203,30 +208,46 @@ def validate(r, val_hash):
 
   title 		= settings.TEMPLATE_CONTENT['reg']['validate']['title']
   template		= settings.TEMPLATE_CONTENT['reg']['validate']['template']
-  message		= settings.TEMPLATE_CONTENT['reg']['validate']['message']
-  email_template	= settings.TEMPLATE_CONTENT['reg']['validate']['email_template']
+  done_message		= settings.TEMPLATE_CONTENT['reg']['validate']['done_message']
+  error_message		= settings.TEMPLATE_CONTENT['reg']['validate']['error_message']
+  email_template	= settings.TEMPLATE_CONTENT['reg']['validate']['email']['template']
+  org_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['org_msg']
 
-  notify = False
-  for m in get_members_to_validate():
-    if gen_validation_hash(m) == val_hash:
-      # it's a member to be validated
-      m.status = Member.ACT
-      m.save()
-      notify=True
-      message = message.format(name=gen_member_fullname(m),member_id=m.member_id,orga=m.organisation)
-    else:
-      # validation code not known, ignore request
-      notify=False
+  try:
+    # if hash code match: it's a member to be validated
+    R = Registration.objects.get(hash_code=val_hash)
+    R.date_of_validation = timezone.now()
+    R.validated = R.OK
+    R.save()
 
-  if notify:
+    M = R.member
+    M.status = Member.ACT
+    M.save()
+
+    message = done_message.format(name=gen_member_fullname(M),member_id=M.pk)
+
     #notify by email
     message_content = {
-        'MESSAGE'	: message,
+        'FULLNAME'	: gen_member_fullname(M),
+        'MEMBER_ID'	: M.pk,
+        'MEMBER_TYPE'	: Member.MEMBER_TYPES[int(M.type)][1],
+        'USERNAME'	: M.head_of_list.username,
+        'CMS_URL'	: 'https://'+settings.ALLOWED_HOSTS[0]+'/',
     }
-    #send email
-    ok=notify_by_email(title,m.head_of_list.email,email_template,message_content)
+    if M.type == Member.ORG: message_content['ORGANISATION']=org_msg.format(orga=M.organisation)
 
-  return render(r, template, {
+    #send email
+    ok=notify_by_email('board',M.head_of_list.email,title,message_content,email_template)
+
+    return render(r, template, {
                    'title'	: title,
                    'message'	: message,
                })
+
+  except:
+    # else: error
+    return render(r, template, {
+                   'title'		: title,
+                   'error_message'	: error_message,
+               })
+    

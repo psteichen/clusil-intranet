@@ -44,11 +44,11 @@ INSTALLED_APPS = (
   'password_reset',
 # my apps
   'cms',
+  'registration',
   'members',
   'members.groups',
   'meetings',
   'events',
-  'webcontent',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -90,6 +90,9 @@ DATABASES = {
   }
 }
 
+FIXTURE_DIRS = (
+    os.path.join(BASE_DIR, 'fixtures/'),
+)
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
@@ -120,6 +123,9 @@ STATICFILES_FINDERS = (
 
 # LOCAL settings
 
+#where to store and get user-uploaded files
+MEDIA_ROOT = '/var/www/clusil.lu/cms/media/'
+
 #login/auth (used by the login_required decorator)
 LOGIN_URL="/login/"
 LOGIN_REDIRECT_URL="/home/"
@@ -131,7 +137,7 @@ TEMPLATE_DIRS = (
   os.path.join(BASE_DIR, 'cms/templates/documentation/'),
 )
 
-#ReCAPTCHA stuff
+#ReCAPTCHA stuff (not used anymore, keeping 'in case of')
 RECAPTCHA_USE_SSL = True
 #NOCAPTCHA = True
 RECAPTCHA_PUBLIC_KEY = "6Lc7twwTAAAAANJUI4eaSt2cBq0gm7U9QTcyXlLM"
@@ -146,19 +152,20 @@ ADMINS = (
 
 EMAILS = {
   'sender' : {
-    'default'	: 'CLUSIL Board <board@clusil.lu>',
+    'board'	: 'CLUSIL Board <board@clusil.lu>',
+    'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },
-  'footer' 	: '''
-Best Regads,
+  'salutation' 	: '''
+Best Regards,
 Your CLUSIL team
+''',
+  'disclaimer' 	: '''
 ''',
 }
 
-MEMBER_ID_SALT     = u']*8/bi83}7te!TJZ(IL!K?&+U'
-REG_VAL_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/reg/validate/'
 
 
-#content for templates and views
+## global content for templates and views
 TEMPLATE_CONTENT = {
   #basic/generic content for all templates/views:
   'meta' : {
@@ -219,7 +226,7 @@ TEMPLATE_CONTENT = {
   },
 }
 
-# home
+## home
 HOME_ACTIONS = (
   {
     'heading'		: 'Membership Management',
@@ -273,7 +280,7 @@ TEMPLATE_CONTENT['home'] = {
   'actions'     : HOME_ACTIONS,
 }
 
-#documentation
+## documentation
 TEMPLATE_CONTENT['documentation'] = {
   'title'     	: 'CLUSIL Intranet Documentation',
   'desc'     	: 'Use the categories/tabs herebelow to view the documentation on how to best use the CLUSIL Intranet:',
@@ -292,14 +299,17 @@ TEMPLATE_CONTENT['documentation'] = {
   ),
 }
 
-#registration
+## registration
 from registration.settings import *
+
+MEMBER_ID_SALT     = u']*8/bi83}7te!TJZ(IL!K?&+U'
+REG_VAL_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/reg/validate/'
+REG_SALT	= u'CLUSIL 1996-2016, 20 years of CHEEBANG!'
+
 TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
 
-#where to store and get user-uploaded files
-MEDIA_ROOT = '/var/www/clusil.lu/cms/media/'
 
-# board
+## board
 BOARD_ACTIONS = (
   {
     'heading'      	: 'Web and online content management applications:',
@@ -344,31 +354,42 @@ TEMPLATE_CONTENT['board'] = {
   'actions'     : BOARD_ACTIONS,
 }
 
-#members
+
+## members
 from members.settings import *
 TEMPLATE_CONTENT['members'] = MEMBERS_TMPL_CONTENT
-#groups
+
+## groups
 from members.groups.settings import *
+
 TEMPLATE_CONTENT['groups'] = GROUPS_TMPL_CONTENT
-#profile
+
+## profile
 from members.profile.settings import *
+
 TEMPLATE_CONTENT['profile'] = PROFILE_TMPL_CONTENT
 
-#meetings
+
+## meetings
 from meetings.settings import *
 TEMPLATE_CONTENT['meetings'] = MEETINGS_TMPL_CONTENT
 
 MEETINGS_ATTENDANCE_URL = 'http://new.intranet.clusil.lu/meetings/attendance/'
 
-#events
+
+## events
 #from events.settings import *
+
+#EVENTS_ATTENDANCE_URL = 'http://new.intranet.clusil.lu/events/attendance/'
+
 #TEMPLATE_CONTENT['events'] = EVENTS_TMPL_CONTENT
 
-EVENTS_ATTENDANCE_URL = 'http://new.intranet.clusil.lu/events/attendance/'
 
-#accounting
+## accounting
 from accounting.settings import *
+
 TEMPLATE_CONTENT['accounting'] = ACCOUNTING_TMPL_CONTENT
+
 INVOICE = {
   'logo'	: STATIC_URL + 'pics/logo.jpg',
   'currency' 	: 'EUR',

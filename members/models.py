@@ -29,7 +29,11 @@ class Address(Model):
   c_other 	= CharField(max_length=250,blank=True,null=True)
  
   def __unicode__(self):
-    return self.street + ' ' + self.num + ' ; ' + self.postal_code + ' ' + self.town + ' ; ' + self.country
+    c = self.COUNTRIES[int(self.country)][1]
+    if self.country == self.OTH:
+      c = unicode(self.c_other)
+
+    return self.street + ' ; ' + self.postal_code + ' ' + self.town + ' ; ' + c
 
 
 # Organisation model

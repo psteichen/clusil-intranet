@@ -1,6 +1,7 @@
 # Application settings for registration app
 # coding=utf-8
 
+
 REGISTRATION_TMPL_CONTENT = {
   'register' : {
     'title'		: 'Registration',
@@ -54,9 +55,9 @@ REGISTRATION_TMPL_CONTENT = {
     },
   },
   'validate' : {
-    'template'		: 'val_done.html',
+    'template'		: 'done.html',
     'title'		: 'Membership validation',
-    'message'  		: '''Dear {name} {orga},
+    'done_message' 	: '''Dear {name},
 Welcome to the CLUSIL!
 
 Your membership is now validated.
@@ -66,6 +67,12 @@ For any further communication please use the above MEMBER_ID.
 
 Looking forward to meet you at one of our next events or working groups.
 ''',  
-    'email_template' 	: 'validation.txt',
+    'error_message' 	: '<strong>[ERROR]</strong> Validation code not known!',
+    'email' : {
+      'template' 	: 'validation.txt',
+      'org_msg'		: u'''
+As \'head-of-list\' for your organisation ({orga}), you have the privilege to manage the Member account and add further users (up to 6 in total). 
+You\'re also our prefered contact person and will get regular information and/or invitations to our events.''',
+    },
   },
 }

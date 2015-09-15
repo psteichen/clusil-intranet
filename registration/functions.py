@@ -12,12 +12,13 @@ from members.groups.models import Affiliation, Group
 ##
 ## supporting functions
 ##
-def gen_mid_hash(salt,message):
+def gen_hash(salt,message,length,salt2=False):
   h = sha256()
-  h.update(unicode(salt))
-  h.update(unicode(message))
+  if salt: h.update(unicode(salt)) #salt
+  if salt2: h.update(unicode(salt2)) #second salt
+  h.update(unicode(message)) #message
 
-  return unicode(h.hexdigest())[:5]
+  return unicode(h.hexdigest())[:int(length)]
 
 def member_id_exists(mid):
   try:
@@ -32,10 +33,10 @@ def member_id_exists(mid):
 ##
 def gen_member_id(add_randomness=False):
   msg = datetime.today()
-  id_part = gen_mid_hash(settings.MEMBER_ID_SALT,msg)
   if add_randomness: 
     msg *= random.uniform(5, 20)
-    id_part = gen_mid_hash(settings.MEMBER_ID_SALT,msg)
+
+  id_part = gen_hash(settings.MEMBER_ID_SALT,msg,5)
 
   if member_id_exists(id_part):
     id_part = gen_member_id(True)
@@ -51,26 +52,15 @@ def add_to_groups(user,groups):
   d = Affiliation(user=user,group=Group(pk='main'))
   d.save()
 
-# gen fullname (including organisation if there)
-def gen_fullname(m):
+# gen fullname (including organisation if there is)
+def gen_member_fullname(m):
   fn = m.head_of_list.first_name + ' ' + unicode.upper(m.head_of_list.last_name)
   if m.type == Member.ORG:
     fn += ' (' + unicode(m.organisation) + ')'
   return fn
 
-
-def gen_validation_hash(member):
-  #hash
-  h = sha256()
-  h.update(unicode(settings.REG_SALT)) #salt
-  h.update(unicode(member.address)) #salt2 (address)
-  h.update(unicode(member.head_of_list.email)) #message (email)
-  return unicode(h.hexdigest())
-
-def gen_confirmation_link(member):
+def gen_confirmation_link(code):
   from os import path
-
-  c_url = path.join(settings.REG_VAL_URL, gen_validation_hash(member))
-
+  c_url = path.join(settings.REG_VAL_URL, code + '/')
   return c_url
 

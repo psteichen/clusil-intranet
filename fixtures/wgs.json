@@ -1,0 +1,32 @@
+[
+  {
+    "model": "groups.group",
+    "pk": 1,
+    "fields": {
+      "acronym"	: "WG-ISM",
+      "title"	: "Information Security Management",
+      "desc"	: "Information Security Management",
+      "type"	: 1
+    }
+  },
+  {
+    "model": "groups.group",
+    "pk": 2,
+    "fields": {
+      "acronym"	: "WG-BCM",
+      "title"	: "Business Continuity Management",
+      "desc"	: "Business Continuity Management",
+      "type"	: 1
+    }
+  },
+  {
+    "model": "groups.group",
+    "pk": 3,
+    "fields": {
+      "acronym"	: "WG-IMP",
+      "title"	: "Incident Management Preparedness",
+      "desc"	: "Incident Management Preparedness",
+      "type"	: 1
+    }
+  }
+]

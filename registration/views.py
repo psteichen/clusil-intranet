@@ -216,6 +216,12 @@ def validate(r, val_hash):
   try:
     # if hash code match: it's a member to be validated
     R = Registration.objects.get(hash_code=val_hash)
+    if R.validated == R.OK:
+      return render(r, template, {
+                   'title'		: title,
+                   'error_message'	: message,
+               })
+
     R.date_of_validation = timezone.now()
     R.validated = R.OK
     R.save()

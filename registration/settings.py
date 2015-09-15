@@ -58,16 +58,18 @@ REGISTRATION_TMPL_CONTENT = {
     'template'		: 'done.html',
     'title'		: 'Membership validation',
     'done_message' 	: '''Dear {name},
-Welcome to the CLUSIL!
-
+<br/><br/>
+Welcome to <strong>CLUSIL</strong>!
+<br/><br/>
 Your membership is now validated.
-[MEMBER_ID: {member_id}]
-
-For any further communication please use the above MEMBER_ID.
-
+<br/>
+<em>[MEMBER_ID: {member_id}]</em>
+<br/><br/>
+For any further communication please use the above MEMBER_ID for best service experience.
+<br/><br/>
 Looking forward to meet you at one of our next events or working groups.
 ''',  
-    'error_message' 	: '<strong>[ERROR]</strong> Validation code not known!',
+    'error_message' 	: '<strong>ERROR!</strong> Validation code not known or already used.',
     'email' : {
       'template' 	: 'validation.txt',
       'org_msg'		: u'''

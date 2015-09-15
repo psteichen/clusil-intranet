@@ -108,11 +108,11 @@ class RegistrationWizard(SessionWizardView):
   def done(self, fl, form_dict, **kwargs):
     self.request.breadcrumbs( ( 
 				('registration','/reg/'),
-                             ) )
+                            ) )
 
-
-    template = settings.TEMPLATE_CONTENT['reg']['register']['done']['template']
-    e_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template']
+    done_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['template']
+    error_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['error_template']
+    email_template = settings.TEMPLATE_CONTENT['reg']['register']['done']['email_template']
 
     m_id = gen_member_id()
 
@@ -171,17 +171,16 @@ You are the head-of-list for ''' + unicode(O) + ''' giving you the privilege to 
 and add further users (up to 6 in total).
 '''
       message_content = {
-        'FULLNAME': gen_fullname(M),
-        'MEMBER_TYPE': Member.MEMBER_TYPES[ty][1],
-	'ORGANISATION':	org_msg,
-	'LINK': gen_confirmation_link(U.email)
+        'FULLNAME'	: gen_fullname(M),
+        'MEMBER_TYPE'	: Member.MEMBER_TYPES[ty][1],
+	'ORGANISATION'	: org_msg,
+	'LINK'		: gen_confirmation_link(M),
       }
-
       # send confirmation
       subject = settings.TEMPLATE_CONTENT['reg']['register']['done']['title']
-      ok=notify_by_email(subject,U.email,e_template,message_content)
+      ok=notify_by_email(subject,M.head_of_list.email,email_template,message_content)
       if not ok:
-        return render(self.request,template, { 
+        return render(self.request,error_template, { 
 				'mode': 'Error in email confirmation', 
 				'message': settings.TEMPLATE_CONTENT['error']['email'],
 		     })
@@ -202,14 +201,14 @@ and add further users (up to 6 in total).
 ###########################
 def validate(r, val_hash):
 
-  title 	= settings.TEMPLATE_CONTENT['reg']['validate']['title']
-  template	= settings.TEMPLATE_CONTENT['reg']['validate']['template']
-  message	= settings.TEMPLATE_CONTENT['reg']['validate']['message']
-  e_template	= settings.TEMPLATE_CONTENT['reg']['validate']['email_template']
+  title 		= settings.TEMPLATE_CONTENT['reg']['validate']['title']
+  template		= settings.TEMPLATE_CONTENT['reg']['validate']['template']
+  message		= settings.TEMPLATE_CONTENT['reg']['validate']['message']
+  email_template	= settings.TEMPLATE_CONTENT['reg']['validate']['email_template']
 
   notify = False
   for m in get_members_to_validate():
-    if gen_validation_hash(m.head_of_list.email) == val_hash:
+    if gen_validation_hash(m) == val_hash:
       # it's a member to be validated
       m.status = Member.ACT
       m.save()
@@ -225,7 +224,7 @@ def validate(r, val_hash):
         'MESSAGE'	: message,
     }
     #send email
-    ok=notify_by_email(title,m.head_of_list.email,e_template,message_content)
+    ok=notify_by_email(title,m.head_of_list.email,email_template,message_content)
 
   return render(r, template, {
                    'title'	: title,

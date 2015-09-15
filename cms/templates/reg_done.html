@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>{{ title }}</h2>
+  <p class="lead">
+    Dear {{ name }} {% if orga %} ({{ orga }}){% endif %},
+  </p>
+  <p class="lead">
+    Thank you for your registration as CLUSIL Member (type: {{ type }}).
+  </p>
+  <p class="lead">
+    You{% if head %}, as <em>head-of-list</em> for your organisation,{% endif %} will get a confirmation email including a link to validate your membership definitely.
+    <br />
+    Please do so as soon as possible, else the registration will be void and deleted from our database.
+  </p>
+  <p class="lead">
+    Yours sincerely,
+    <br />
+    The CLUSIL team
+  </p>
+{% endblock %}
+

@@ -12,7 +12,7 @@ from members.groups.models import Affiliation, Group
 ##
 ## supporting functions
 ##
-def gen_hash(salt,message):
+def gen_mid_hash(salt,message):
   h = sha256()
   h.update(unicode(salt))
   h.update(unicode(message))
@@ -32,10 +32,10 @@ def member_id_exists(mid):
 ##
 def gen_member_id(add_randomness=False):
   msg = datetime.today()
-  id_part = gen_hash(settings.MEMBER_ID_SALT,msg)
+  id_part = gen_mid_hash(settings.MEMBER_ID_SALT,msg)
   if add_randomness: 
     msg *= random.uniform(5, 20)
-    id_part = gen_hash(settings.MEMBER_ID_SALT,msg)
+    id_part = gen_mid_hash(settings.MEMBER_ID_SALT,msg)
 
   if member_id_exists(id_part):
     id_part = gen_member_id(True)
@@ -59,16 +59,18 @@ def gen_fullname(m):
   return fn
 
 
-def gen_validation_hash(email):
+def gen_validation_hash(member):
   #hash
   h = sha256()
-  h.update(unicode(email)) #message (email)
+  h.update(unicode(settings.REG_SALT)) #salt
+  h.update(unicode(member.address)) #salt2 (address)
+  h.update(unicode(member.head_of_list.email)) #message (email)
   return unicode(h.hexdigest())
 
-def gen_confirmation_link(email):
+def gen_confirmation_link(member):
   from os import path
 
-  c_url = path.join(settings.REG_VAL_URL, gen_validation_hash(email))
+  c_url = path.join(settings.REG_VAL_URL, gen_validation_hash(member))
 
   return c_url
 

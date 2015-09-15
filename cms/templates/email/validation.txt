@@ -1,0 +1,19 @@
+{% autoescape off %}
+Dear {{ FULLNAME }}, 
+
+Thank you for you confirmation as CLUSIL Member (type: {{ MEMBER_TYPE }}).
+
+You're membership ID: {{ MEMBER_ID }}
+Please include in any communication with CLUSIL for best service experience.
+
+{{ ORGANISATION }}
+The login ({{ USERNAME }}) you created enables you to manage your membership profile via our CMS (Club Management System) platform, available at {{ CMS_URL }}
+
+{{ QUESTIONS }}
+
+{{ SALUTATION }}
+
+--
+{{ DISCLAIMER }}
+{% endautoescape %}
+

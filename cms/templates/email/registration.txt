@@ -1,17 +1,16 @@
 {% autoescape off %}
-Dear {{ FULLNAME }}, 
+Dear {{ FULLNAME }}, 
 
 Hereby we confirm your registration as CLUSIL Member (type: {{ MEMBER_TYPE }}).
-{{ ORGANISATION }}
 
 Please validate your membership via the below confirmation link:
 	{{ LINK }}
 
 {{ QUESTIONS }}
 
-{{ SALUTATION }}
+{{ SALUTATION }}
 
 --
-{{ DISCLAIMER }}
+{{ DISCLAIMER }}
 {% endautoescape %}
 

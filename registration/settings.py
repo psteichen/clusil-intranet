@@ -47,13 +47,14 @@ REGISTRATION_TMPL_CONTENT = {
       'next'            : 'next',
     },
     'done' : {
-      'template'        : 'done.html',
+      'template'        : 'reg_done.html',
       'title'           : 'Registration successful!',
+      'error_template' 	: 'done.html',
       'email_template' 	: 'registration.txt',
     },
   },
   'validate' : {
-    'template'		: 'done.html',
+    'template'		: 'val_done.html',
     'title'		: 'Membership validation',
     'message'  		: '''Dear {name} {orga},
 Welcome to the CLUSIL!

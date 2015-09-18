@@ -239,7 +239,7 @@ HOME_ACTIONS = (
         'label'         : 'Profile', 
         'glyphicon'     : 'glyphicon-home',
         'desc'          : 'Manage your Membership profile',
-        'url'           : '/members/profile/',
+        'url'           : '/members/profile/{{ user.get_username }}',
         'has_perms'	: 'cms.MEMBER',
       },
       {         
@@ -252,14 +252,21 @@ HOME_ACTIONS = (
     ),
   },
   {
-    'heading'		: 'Collaboration Tools',
+    'heading'		: 'Tools for Working Groups',
     'actions' : (
       {         
-        'label'         : 'Cloud', 
+        'label'         : 'Document Management', 
         'glyphicon'     : 'glyphicon-folder-open',
         'desc'          : 'Filesharing platform (SeaFile based)',
         'url'           : 'https://cloud.clusil.lu/',
       },
+      {         
+        'label'         : 'Team Collaboration', 
+        'glyphicon'     : 'glyphicon-people',
+        'desc'          : 'Wiki, Workflows and Calendar platform (Confluence based)',
+        'url'           : 'https://collab.clusil.lu/',
+      },
+
     ),
   },
   {

@@ -1,6 +1,6 @@
 {% extends "password_reset/base.html" %}
 {% load url from future %}
-{% load boostrap3 %}
+{% load bootstrap3 %}
 
 {% block content %}
 <center>
@@ -12,7 +12,7 @@
   </div>
   <div class="panel-body">
    <div class="col-xs-10">
-    {% boostrap_form form %}
+    {% bootstrap_form form %}
    </div>
    <button class="btn btn-warning" type="submit">{{ pwd.recover.submit }}</button>
   </div>

@@ -2,16 +2,74 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from django_tables2  import RequestConfig
 
 from cms.functions import show_form
 
-from .functions import gen_member_initial, gen_role_initial
+from .functions import gen_member_initial, gen_role_initial, gen_fullname
 from .models import Member, Role
 from .forms import MemberForm, RoleForm
 from .tables  import MemberTable
 
+################
+# MEMBER views #
+################
+
+# profile #
+###########
+@permission_required('clusil.MEMBER')
+def profile(r,login):
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('members','/members/'),
+                       	('user profile','/members/profile/'),
+               ) )
+
+  head = delegate = user = None
+  U = User.objects.get(username=login)
+  try:
+    head = Member.objects.get(head_of_list=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    delegate = Member.objects.get(delegate=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    head = Member.objects.get(users__in=[U])
+  except Member.DoesNotExist:
+    pass
+  title = settings.TEMPLATE_CONTENT['members']['profile']['title'] % { 'name' : gen_fullname(U), }
+  message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['profile']['overview']['template'],U)
+
+  return render(r, settings.TEMPLATE_CONTENT['members']['profile']['template'], {
+                   'title': title,
+                   'actions':settings.TEMPLATE_CONTENT['members']['profile']['actions'],
+                   'message': message,
+                })
+
+
+# users #
+#########
+@permission_required('clusil.MEMBER')
+def users(request):
+  request.breadcrumbs( ( 
+				('home','/home/'),
+                         	('members','/members/'),
+                         	('users','/members/users/'),
+                     ) )
+
+  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
+                        'title': settings.TEMPLATE_CONTENT['members']['title'],
+                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
+                        })
+
+
+###############
+# BOARD views #
+###############
 
 # index #
 #########
@@ -27,39 +85,10 @@ def index(request):
                         })
 
 
-# profile #
-###########
-@login_required
-def profile(request):
-  request.breadcrumbs( ( 
-				('home','/home/'),
-                         	('members','/members/'),
-                         	('profile','/members/profile/'),
-                     ) )
-
-  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['members']['title'],
-                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
-                        })
-
-# users #
-#########
-@login_required
-def users(request):
-  request.breadcrumbs( ( 
-				('home','/home/'),
-                         	('members','/members/'),
-                         	('users','/members/users/'),
-                     ) )
-
-  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['members']['title'],
-                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
-                        })
 
 # list #
 #########
-@login_required
+@permission_required('clusil.BOARD')
 def list(request):
   request.breadcrumbs( ( ('home','/home/'),
                          ('members','/members/'),
@@ -78,7 +107,7 @@ def list(request):
 
 # add #
 #######
-@login_required
+@permission_required('clusil.BOARD')
 def add(r):
   r.breadcrumbs( ( ('home','/home/'),
                    ('members','/members/'),
@@ -194,7 +223,7 @@ class ModifyMemberWizard(SessionWizardView):
 
 # role_add #
 ############
-@login_required
+@permission_required('clusil.BOARD')
 def role_add(r):
   r.breadcrumbs( ( ('home','/home/'),
                    ('members','/members/'),

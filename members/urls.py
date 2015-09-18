@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import ListMembersForm, ModifyMemberForm, RoleForm
 from .views import ModifyMemberWizard, show_role_form
-from .views import index, add, list
+from .views import index, add, list, profile
 from .views import role_add
 
 # modify wizard #
@@ -27,7 +27,7 @@ urlpatterns = patterns('',
   url(r'^$', index, name='index'),
 
   # front-office (members)
-  url(r'^profile/$', include('members.profile.urls')),
+  url(r'^profile/(?P<login>.+?)/$', profile, name="profile"),
 
   # back-office (board)
   url(r'^list/', list, name='list'),

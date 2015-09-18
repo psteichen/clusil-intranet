@@ -72,6 +72,18 @@ MEMBERS_TMPL_CONTENT = {
       'message'     	: 'Details here: ',
     },
   },
+  'profile': {
+    'template'          : 'done.html',
+#    'actions'           : ACTIONS['profile'],
+    'title'             : u'User profile',
+    'overview' : {
+      'template'        : 'overview_member.html',
+      'name'            : u'Nom',
+      'username'        : u'Login',
+      'email'           : u'E-mail',
+      'role'            : u'Rôle',
+    },
+  },
   'modify': {
     'title'     	: ACTIONS[0]['actions'][1]['desc'],
     'first'             : 'first',

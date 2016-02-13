@@ -35,6 +35,7 @@ class MemberForm(forms.ModelForm):
 
   class Meta:
     model = Member
+    exclude = ()
 
 class MemberFormReadOnly(forms.ModelForm):
   member_id = forms.CharField(label='Member-ID',widget=forms.TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))

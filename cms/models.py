@@ -27,3 +27,41 @@ class User(models.Model):
       ('MEMBER'		, 'CLUSIL member'),
     )
 
+
+#LDAP stuff
+from ldapdb.models.fields import CharField, DateField, ImageField, ListField, IntegerField, FloatField
+import ldapdb.models
+
+
+class LdapUser(ldapdb.models.Model):
+    """
+    Class for representing an LDAP user entry.
+    """
+    # LDAP meta-data
+    base_dn = "ou=users,dc=clusil,dc=lu"
+    object_classes = ['inetOrgPerson']
+
+    # inetOrgPerson
+    first_name = CharField(db_column='givenName')
+    last_name = CharField(db_column='sn')
+    email = CharField(db_column='mail')
+    username = CharField(db_column='cn', primary_key=True)
+    password = CharField(db_column='userPassword')
+
+    def __unicode__(self):
+        return self.username
+
+class LdapGroup(ldapdb.models.Model):
+    """
+    Class for representing an LDAP group entry.
+    """
+    # LDAP meta-data
+    base_dn = "ou=groups,dc=clusil,dc=lu"
+    object_classes = ['groupOfNames']
+
+    # posixGroup attributes
+    name = CharField(db_column='cn', max_length=200, primary_key=True)
+    members = ListField(db_column='member')
+
+    def __unicode__(self):
+        return self.name

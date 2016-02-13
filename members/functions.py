@@ -9,7 +9,34 @@ def get_active_members():
   return Member.objects.filter(status=Member.ACT)
 
 def gen_fullname(user):
-  return unicode(user.first_name) + u' ' + unicode.upper(user.last_name)
+  return unicode(user.first_name) + u' ' + unicode.upper(user.last_name) + u' (' + unicode(user.email) + u')'
+
+def create_ldap_user(user):
+  from cms.models import LdapUser
+
+  lu = LdapUser(username=user.username)
+  lu.first_name = u.first_name
+  lu.last_name 	= u.last_name
+  lu.email	= u.email
+  lu.password 	= u.password
+  lu.save()
+  return lu
+
+def add_to_ldap_group(ldap_user,ldap_group_name):
+  from cms.models import LdapGroup
+
+  group = LdapGroup.objects.get(name=ldap_group_name)
+  group.members.add(ldap_user)
+  group.save()
+
+def replicate_to_ldap(member):
+
+  #create and add hol and delegate to 'cms' group
+  add_to_ldap_group(create_ldap_user(member.head_of_list),'cms')
+  add_to_ldap_group(create_ldap_user(member.delagate),'cms')
+
+  for u in member.users.all:
+    create_ldap_user(u)
 
 def gen_member_initial(m):
   initial_data = {}
@@ -54,4 +81,3 @@ def add_group(u,g):
   group.save()
   default = Affiliation(user=u,group=Group(pk='default'))
   default.save()
-

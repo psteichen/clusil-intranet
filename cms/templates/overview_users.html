@@ -1,0 +1,29 @@
+<div class="overview">
+<div class="panel panel-primary">
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-12">
+        <p class="lead">{{ member_id }}</p>
+        <p>{{ organisation }} {{ name }}</p>
+        <p><address>{{ address }}</address>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        {{ overview.users }}
+        <table class="table table-condensed">
+         {% for u in users %}
+         <tr>
+          <td class="lead">{{ u.first_name }}</td>
+          <td class="lead">{{ u.last_name|upper }}</td>
+          <td class="lead">{{ u.email }}</td>
+          <td class="lead">{{ u.username }}</td>
+          <td class="lead">{{ u.role }}</td>
+          <td class="lead">{{ u.wgs }}</td>
+         </tr>
+         {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

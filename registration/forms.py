@@ -29,7 +29,7 @@ class AddressForm(ModelForm):
     }
 
 class RegisterUserForm(UserCreationForm):
-  delegate 	= BooleanField(label='add Delegate?',required=False)
+  delegate 	= BooleanField(label='add Delegate?',help_text='The delegate is the head-of-list\'s alternate for all it\'s roles: point of contact and membership management.',required=False)
   class Meta:
     model = User
     fields = ( 'first_name', 'last_name', 'email', 'username', 'password1', 'password2', )

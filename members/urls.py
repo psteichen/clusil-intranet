@@ -27,12 +27,12 @@ urlpatterns = patterns('',
   url(r'^$', index, name='index'),
 
   # front-office (members)
-  url(r'^profile/(?P<login>.+?)/$', profile, name="profile"),
+  url(r'^profile/$', profile, name="profile"),
 
   # back-office (board)
-  url(r'^list/', list, name='list'),
-  url(r'^add/', add, name='add'),
-  url(r'^modify/', modify_member_wrapper, name='modify'),
+  url(r'^list/$', list, name='list'),
+  url(r'^add/$', add, name='add'),
+  url(r'^modify/$', modify_member_wrapper, name='modify'),
 
-  url(r'^role/add/', role_add, name='role_add'),
+  url(r'^role/add/$', role_add, name='role_add'),
 )

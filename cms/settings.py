@@ -51,6 +51,25 @@ INSTALLED_APPS = (
   'events',
 )
 
+AUTHENTICATION_BACKENDS = (
+#    'django_auth_ldap.backend.LDAPBackend', #won't be needed anymore probably
+    'django.contrib.auth.backends.ModelBackend',
+)
+#LDAP config
+#won't be needed anymore probably
+#AUTH_LDAP_SERVER_URI = 'ldap://localhost'
+#AUTH_LDAP_BIND_DN = "cn=admin,dc=clusil,dc=lu"
+#AUTH_LDAP_BIND_PASSWORD = "DklIBGzcKA4i"
+#
+#AUTH_LDAP_USER_DN_TEMPLATE = "cn=%(user)s,ou=users,dc=clusil,dc=lu"
+#AUTH_LDAP_REQUIRE_GROUP = "cn=cms,ou=groups,dc=clusil,dc=lu"
+#AUTH_LDAP_USER_ATTR_MAP = {
+#	"first_name": "givenName", 
+#	"last_name": "sn", 
+#	"email": "mail"
+#}
+
+
 MIDDLEWARE_CLASSES = (
   'django.contrib.sessions.middleware.SessionMiddleware',
   'django.middleware.common.CommonMiddleware',
@@ -87,8 +106,15 @@ DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': os.path.join(BASE_DIR, 'cms/db.sqlite'),
+  },
+ 'ldap': {
+   'ENGINE': 'ldapdb.backends.ldap',
+   'NAME': 'ldap://localhost/',
+   'USER': 'cn=admin,dc=clusil,dc=lu',
+   'PASSWORD': 'DklIBGzcKA4i',
   }
 }
+DATABASE_ROUTERS = ['ldapdb.router.Router']
 
 FIXTURE_DIRS = (
     os.path.join(BASE_DIR, 'fixtures/'),
@@ -152,7 +178,8 @@ ADMINS = (
 
 EMAILS = {
   'sender' : {
-    'board'	: 'CLUSIL Board <board@clusil.lu>',
+#    'board'	: 'CLUSIL Board <board@clusil.lu>',
+    'board'	: 'TesT <test@clusil.lu>',
     'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },
   'salutation' 	: '''
@@ -174,19 +201,19 @@ TEMPLATE_CONTENT = {
     'title'             : 'Club Management System',
     'logo' : {
       'url'		: "/",
-      'img'		: 'http://clusil.lu/pics/clusil_picto.png',
+      'img'		: 'https://clusil.lu/pics/clusil_picto.png',
     },
     'description'       : '',
     'keywords'          : '',
     'css' : {
-        'bt'            : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css',
-        'bt_theme'      : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css',
+        'bt'            : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css',
+        'bt_theme'      : 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css',
         'jumbotron'	: 'https://clusil.lu/css/jumbotron.css',
         'jt_narrow'	: 'https://clusil.lu/css/jumbotron-narrow.css',
         'own'           : STATIC_URL + 'css/bt-clusil.css',
     },
     'js' : {
-        'bt'       	: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js',
+        'bt'       	: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
         'jq'		: 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
     },
   },
@@ -239,7 +266,7 @@ HOME_ACTIONS = (
         'label'         : 'Profile', 
         'glyphicon'     : 'glyphicon-home',
         'desc'          : 'Manage your Membership profile',
-        'url'           : '/members/profile/{{ user.get_username }}',
+        'url'           : '/members/profile/',
         'has_perms'	: 'cms.MEMBER',
       },
       {         
@@ -253,18 +280,21 @@ HOME_ACTIONS = (
   },
   {
     'heading'		: 'Tools for Working Groups',
+    'has_perms'		: 'cms.MEMBER',
     'actions' : (
       {         
         'label'         : 'Document Management', 
         'glyphicon'     : 'glyphicon-folder-open',
-        'desc'          : 'Filesharing platform (SeaFile based)',
+        'desc'          : 'Filesharing and document management platform (SeaFile based)',
         'url'           : 'https://cloud.clusil.lu/',
+    	'has_perms'	: 'cms.MEMBER',
       },
       {         
         'label'         : 'Team Collaboration', 
-        'glyphicon'     : 'glyphicon-people',
+        'glyphicon'     : 'glyphicon-comment',
         'desc'          : 'Wiki, Workflows and Calendar platform (Confluence based)',
         'url'           : 'https://collab.clusil.lu/',
+    	'has_perms'	: 'cms.MEMBER',
       },
 
     ),
@@ -383,8 +413,7 @@ TEMPLATE_CONTENT['profile'] = PROFILE_TMPL_CONTENT
 ## meetings
 from meetings.settings import *
 TEMPLATE_CONTENT['meetings'] = MEETINGS_TMPL_CONTENT
-
-MEETINGS_ATTENDANCE_URL = 'http://new.intranet.clusil.lu/meetings/attendance/'
+MEETINGS_ATTENDANCE_URL = 'https://cms.clusil.lu/meetings/attendance/'
 
 
 ## events

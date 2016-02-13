@@ -74,13 +74,15 @@ class Member(Model):
   address	= ForeignKey(Address,blank=True,null=True)
   head_of_list 	= ForeignKey(User,related_name='head_of_list+',null=True,on_delete=SET_NULL)
   delegate 	= ForeignKey(User,related_name='delegate+',blank=True,null=True,on_delete=SET_NULL)
-  users 	= ManyToManyField(User, related_name='users+')
+  users 	= ManyToManyField(User, related_name='users+',blank=True,null=True)
   student_proof	= FileField(upload_to='board/registration/students/',blank=True,null=True)
 
   def __unicode__(self):
     o = ''
     if self.type == Member.ORG and self.organisation:
       o += unicode(self.organisation) + ' - head-of-list: ' + gen_fullname(self.head_of_list)
+    else:
+      o += gen_fullname(self.head_of_list)
 
     return self.id + ' [ '+ Member.MEMBER_TYPES[self.type][1] + ' ] ' + o
 
@@ -89,8 +91,8 @@ class Member(Model):
 class Role(Model):
   title		= CharField(max_length=100)
   user      	= ForeignKey(User) 
-  group      	= ForeignKey(Group) 
-  start_date    = DateField()
+  group      	= ForeignKey(Group,blank=True,null=True) 
+  start_date    = DateField(blank=True,null=True)
   end_date      = DateField(blank=True,null=True) 
 
   def __unicode__(self):

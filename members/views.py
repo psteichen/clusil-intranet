@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.conf import settings
@@ -17,54 +18,45 @@ from .tables  import MemberTable
 # MEMBER views #
 ################
 
+def get_member_from_username(username):
+  U = User.objects.get(username=username)
+  M = None
+  try:
+    M = Member.objects.get(head_of_list=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    M = Member.objects.get(delegate=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    M = Member.objects.get(users__in=[U])
+  except Member.DoesNotExist:
+    pass
+
+  return M
+
 # profile #
 ###########
-@permission_required('clusil.MEMBER')
-def profile(r,login):
+@permission_required('cms.MEMBER')
+def profile(r):
   r.breadcrumbs( ( 
 			('home','/home/'),
-                       	('members','/members/'),
-                       	('user profile','/members/profile/'),
+                       	('member profile','/members/profile/'),
                ) )
 
-  head = delegate = user = None
-  U = User.objects.get(username=login)
-  try:
-    head = Member.objects.get(head_of_list=U)
-  except Member.DoesNotExist:
-    pass
-  try:
-    delegate = Member.objects.get(delegate=U)
-  except Member.DoesNotExist:
-    pass
-  try:
-    head = Member.objects.get(users__in=[U])
-  except Member.DoesNotExist:
-    pass
-  title = settings.TEMPLATE_CONTENT['members']['profile']['title'] % { 'name' : gen_fullname(U), }
-  message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['profile']['overview']['template'],U)
+  M = get_member_from_username(r.user.username)
+  title = settings.TEMPLATE_CONTENT['members']['profile']['title'] % { 'member' : M.id, }
+  actions = settings.TEMPLATE_CONTENT['members']['profile']['actions']
+  overview = render_to_string(settings.TEMPLATE_CONTENT['members']['profile']['overview']['template'], { 
+                   		'title'		: title,
+				'member'	: M, 
+				'actions'	: actions, 
+			     })
 
   return render(r, settings.TEMPLATE_CONTENT['members']['profile']['template'], {
-                   'title': title,
-                   'actions':settings.TEMPLATE_CONTENT['members']['profile']['actions'],
-                   'message': message,
+                   'overview'	: overview,
                 })
-
-
-# users #
-#########
-@permission_required('clusil.MEMBER')
-def users(request):
-  request.breadcrumbs( ( 
-				('home','/home/'),
-                         	('members','/members/'),
-                         	('users','/members/users/'),
-                     ) )
-
-  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['members']['title'],
-                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
-                        })
 
 
 ###############

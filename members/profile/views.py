@@ -24,26 +24,23 @@ def initial_data(r):
     'email': r.user.email,
     'username': r.user.username,
   }
-  member = Member.objects.get(users=r.user)
+  member = Member.objects.get(head_of_list=r.user)
   member_data = {
-    'member_id': member.member_id,
-    'member_type': Member.MEMBER_TYPES[member.member_type][1],
-    'lastname': member.lastname,
-    'firstname': member.firstname,
+    'member_id': member.id,
+    'member_type': Member.MEMBER_TYPES[member.type][1],
     'organisation': member.organisation,
-    'email': member.email,
-    'address': member.address,
-    'postal_code': member.postal_code,
-    'town': member.town,
-    'country': member.country,
+    'address': member.address.street,
+    'postal_code': member.address.postal_code,
+    'town': member.address.town,
+    'country': member.address.country,
     'head_of_list': member.head_of_list.first_name + ' ' + unicode.upper(member.head_of_list.last_name),
 #    'delegate': member.delegate.first_name + ' ' + member.delegate.last_name,
-    'users': member.users.all(),
+#    'users': member.users.all(),
     'student_proof': member.student_proof,
   }
   A = Affiliation.objects.filter(user=r.user)
   wg_data = {
-    'wg' : A.values_list('wg',flat=True),
+    'wg' : A.values_list('group',flat=True),
   }
   return { 'member_data': member_data, 'wg_data': wg_data, 'user_data': user_data }
 
@@ -92,23 +89,54 @@ def member_is_full(mid):
   if users >= 6: return True
   else: return False
 
-# index #
-#########
-@login_required
-def index(request):
-  request.breadcrumbs( ( ('home','/home/'),
-                         ('members','/members/'),
-                         ('profile','/members/profile/'),
-                        ) )
+################
+# MEMBER views #
+################
 
-  return render(request, settings.TEMPLATE_CONTENT['profile']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['profile']['title'],
-                        'actions': settings.TEMPLATE_CONTENT['profile']['actions'],
-                        })
+def get_member_from_username(username):
+  U = User.objects.get(username=username)
+  M = None
+  try:
+    M = Member.objects.get(head_of_list=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    M = Member.objects.get(delegate=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    M = Member.objects.get(users__in=[U])
+  except Member.DoesNotExist:
+    pass
+
+  return M
+
+# profile #
+###########
+@permission_required('cms.MEMBER')
+def profile(r):
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('member profile','/profile/'),
+               ) )
+
+  M = get_member_from_username(r.user.username)
+  title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
+  actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
+  overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template'], { 
+                   		'title'		: title,
+				'member'	: M, 
+				'actions'	: actions, 
+			     })
+
+  return render(r, settings.TEMPLATE_CONTENT['profile']['profile']['template'], {
+                   'overview'	: overview,
+                })
+
 
 # modify #
 ###########
-@login_required
+@permission_required('cms.MEMBER')
 def modify(r):
   init_data = initial_data(r)
   m_id = init_data['member_data']['member_id']
@@ -262,9 +290,10 @@ def adduser(r): # only if membership-type is ORG
       return render(r,'profile_org_full.html', {'member_form': ShortMemberFormReadOnly(initial=init_data['member_data']),'wg_form': WGFormRadio(),'adduser_form': UserCreationForm()})
 
 
-# remove user
+# affiliate user
 @permission_required('cms.MEMBER')
-def tiltuser(r):
+def affiluser(r): # only if membership-type is ORG
+#TODO!
   init_data = initial_data(r)
   m_id = init_data['member_data']['member_id']
   m_type = init_data['member_data']['member_type']
@@ -281,21 +310,57 @@ def tiltuser(r):
           'LOGIN': U.username,
           'HOL_D': r.user.first_name + ' ' + unicode.upper(r.user.last_name),
         }
-        subject=settings.MAIL_CONFIRMATION['tiltuser']['subject'] % U.username
+        subject=settings.MAIL_CONFIRMATION['rmuser']['subject'] % U.username
 	to=U.email
 
         #delete user
         U.delete()
 
-        confirm_by_email(subject, to, settings.MAIL_CONFIRMATION['tiltuser']['template'], message_content,None,r.user.email) # copy user that did the action, aka HOL_D
+        confirm_by_email(subject, to, settings.MAIL_CONFIRMATION['rmuser']['template'], message_content,None,r.user.email) # copy user that did the action, aka HOL_D
 
-        return render(r,'done.html', {'mode': 'deactivating a User', 'message': render_to_string(settings.MAIL_CONFIRMATION['tiltuser']['template'], message_content)}) 
+        return render(r,'done.html', {'mode': 'deactivating a User', 'message': render_to_string(settings.MAIL_CONFIRMATION['rmuser']['template'], message_content)}) 
 
       except User.DoesNotExist:
-        return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['tiltuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['tiltuser']['submit'], 'error_message': settings.TEMPLATE_CONTENT['error']['tilt']})
+        return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit'], 'error_message': settings.TEMPLATE_CONTENT['error']['rm']})
   else:
     #no POST data yet -> show user creation form
-    return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['tiltuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['tiltuser']['submit']})
+    return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
+
+
+# remove user
+@permission_required('cms.MEMBER')
+def rmuser(r): # only if membership-type is ORG
+  init_data = initial_data(r)
+  m_id = init_data['member_data']['member_id']
+  m_type = init_data['member_data']['member_type']
+
+  if r.POST:
+    users = r.POST.getlist('users')
+    for u in users:
+      try:
+        #desactivate
+	U = User.objects.get(pk=u)
+ 
+        message_content = {
+          'FULLNAME': U.first_name + ' ' + unicode.upper(U.last_name),
+          'LOGIN': U.username,
+          'HOL_D': r.user.first_name + ' ' + unicode.upper(r.user.last_name),
+        }
+        subject=settings.MAIL_CONFIRMATION['rmuser']['subject'] % U.username
+	to=U.email
+
+        #delete user
+        U.delete()
+
+        confirm_by_email(subject, to, settings.MAIL_CONFIRMATION['rmuser']['template'], message_content,None,r.user.email) # copy user that did the action, aka HOL_D
+
+        return render(r,'done.html', {'mode': 'deactivating a User', 'message': render_to_string(settings.MAIL_CONFIRMATION['rmuser']['template'], message_content)}) 
+
+      except User.DoesNotExist:
+        return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit'], 'error_message': settings.TEMPLATE_CONTENT['error']['rm']})
+  else:
+    #no POST data yet -> show user creation form
+    return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
 
 
 # change head-of-list or delegate
@@ -343,7 +408,7 @@ def chg_hol_d(r):
 @permission_required('cms.MEMBER')
 def invoice(r):
   #no POST data yet -> show user creation form
-  return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['tiltuser']['title'], 'form': MemberUsersForm(), 'submit': settings.TEMPLATE_CONTENT['profile']['tiltuser']['submit']})
+  return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
 
 @login_required
 def password(r):

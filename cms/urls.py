@@ -15,9 +15,7 @@ urlpatterns = patterns('',
   url(r'^$', home, name='home'),
   url(r'^home/$', home, name='home'),
   url(r'^documentation/', documentation, name='documentaion'),
-
   url(r'^reg/', include('registration.urls')),
-
 
   #login stuff
   url(r'^login/', 'django.contrib.auth.views.login', {'template_name': 'auth.html'}, name='login'),
@@ -29,14 +27,14 @@ urlpatterns = patterns('',
   url(r'^pwd/reset/done/$', reset_done, name='password_reset_done'),
   url(r'^pwd/reset/(?P<token>[\w:-]+)/$', reset, name='password_reset_reset'),
 
+  #mback-office (members)
+  url(r'^profile/', include('members.profile.urls')),
 
-  #back-office
+  #back-office (board)
   url(r'^board/', board, name='board'),
 
   url(r'^members/', include('members.urls')),
   url(r'^members/groups/', include('members.groups.urls')),
-  url(r'^profile/', include('members.profile.urls')),
-
   url(r'^meetings/', include('meetings.urls')),
 
   url(r'^accounting/', include('accounting.urls')),

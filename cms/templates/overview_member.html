@@ -10,12 +10,12 @@
 	<ul class="list-group">
 	  <li class="list-group-item list-group-item-success">
     	    <span class="badge">Head of List</span>
-	    {{ member.head_of_list.first_name }} {{ member.head_of_list.last_name }} ({{ member.head_of_list.email }})
+	    {{ member.head_of_list.first_name }} {{ member.head_of_list.last_name|upper }} ({{ member.head_of_list.email }})
   	  </li>
         {% if member.delegate %}
 	  <li class="list-group-item list-group-item-info">
     	    <span class="badge">Delegate</span>
-	    {{ member.delegate.first_name }} {{ member.delegate.last_name }} ({{ member.delegate.email }})
+	    {{ member.delegate.first_name }} {{ member.delegate.last_name|upper }} ({{ member.delegate.email }})
   	  </li>
 	{% endif %}
 	</ul>
@@ -25,6 +25,8 @@
         <address>
           {% if member.organisation %}
 	    <b>{{ member.organisation.name }}</b><br/>
+	  {% else %}
+	    <b>{{ member.head_of_list.first_name }} {{ member.head_of_list.last_name|upper }}</b><br/>
 	  {% endif %}
           {{ member.address.street }}<br/>
           {{ member.address.postal_code }} {{ member.address.town }}<br/>
@@ -40,8 +42,9 @@
     <div class="row">
       <div class="col-sm-12">
     <div class="pull-right">
-      {% for a in actions %}
-        {% if a.url %}<a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<span class="glyphicon glyphicon-{{ a.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
+      <span class="text-muted">Actions:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+     {% for a in actions %}
+        {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<span class="glyphicon glyphicon-{{ a.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
       {% endfor %}
     </div>
         <p>All users registered on this membership:</p>

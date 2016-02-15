@@ -49,7 +49,7 @@ class LdapUser(ldapdb.models.Model):
     password = CharField(db_column='userPassword')
 
     def __unicode__(self):
-        return self.username
+        return u'cn='+self.username+','+self.base_dn
 
 class LdapGroup(ldapdb.models.Model):
     """

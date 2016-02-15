@@ -8,8 +8,8 @@ class LdapGroupAdmin(admin.ModelAdmin):
 
 
 class LdapUserAdmin(admin.ModelAdmin):
-    exclude = ['dn', 'password']
-    list_display = ['username', 'first_name', 'last_name', 'email']
+    exclude = ['dn']
+    list_display = ['username', 'first_name', 'last_name', 'email' ,'password']
     search_fields = ['first_name', 'last_name', 'username']
 
 admin.site.register(LdapGroup, LdapGroupAdmin)

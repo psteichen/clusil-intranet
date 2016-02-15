@@ -14,49 +14,9 @@ from .models import Member, Role
 from .forms import MemberForm, RoleForm
 from .tables  import MemberTable
 
-################
-# MEMBER views #
-################
 
-def get_member_from_username(username):
-  U = User.objects.get(username=username)
-  M = None
-  try:
-    M = Member.objects.get(head_of_list=U)
-  except Member.DoesNotExist:
-    pass
-  try:
-    M = Member.objects.get(delegate=U)
-  except Member.DoesNotExist:
-    pass
-  try:
-    M = Member.objects.get(users__in=[U])
-  except Member.DoesNotExist:
-    pass
 
-  return M
 
-# profile #
-###########
-@permission_required('cms.MEMBER')
-def profile(r):
-  r.breadcrumbs( ( 
-			('home','/home/'),
-                       	('member profile','/members/profile/'),
-               ) )
-
-  M = get_member_from_username(r.user.username)
-  title = settings.TEMPLATE_CONTENT['members']['profile']['title'] % { 'member' : M.id, }
-  actions = settings.TEMPLATE_CONTENT['members']['profile']['actions']
-  overview = render_to_string(settings.TEMPLATE_CONTENT['members']['profile']['overview']['template'], { 
-                   		'title'		: title,
-				'member'	: M, 
-				'actions'	: actions, 
-			     })
-
-  return render(r, settings.TEMPLATE_CONTENT['members']['profile']['template'], {
-                   'overview'	: overview,
-                })
 
 
 ###############
@@ -65,7 +25,7 @@ def profile(r):
 
 # index #
 #########
-@permission_required('clusil.BOARD')
+@permission_required('cms.BOARD')
 def index(request):
   request.breadcrumbs( ( ('home','/home/'),
                          ('members','/members/'),
@@ -80,7 +40,7 @@ def index(request):
 
 # list #
 #########
-@permission_required('clusil.BOARD')
+@permission_required('cms.BOARD')
 def list(request):
   request.breadcrumbs( ( ('home','/home/'),
                          ('members','/members/'),
@@ -99,7 +59,7 @@ def list(request):
 
 # add #
 #######
-@permission_required('clusil.BOARD')
+@permission_required('cms.BOARD')
 def add(r):
   r.breadcrumbs( ( ('home','/home/'),
                    ('members','/members/'),
@@ -151,15 +111,32 @@ class ModifyMemberWizard(SessionWizardView):
   def get_context_data(self, form, **kwargs):
     context = super(ModifyMemberWizard, self).get_context_data(form=form, **kwargs)
 
-    #add breadcrumbs to context
-    self.request.breadcrumbs( ( ('home','/home/'),
-         	                ('member','/members/'),
-	               	        ('modify a member','/members/modify/'),
+    step = self.steps.current
+
+    M = None
+    list_data = self.get_cleaned_data_for_step('list') or {}
+    if list_data != {}:
+      M = Member.objects.get(pk=list_data['members'].id)
+      #add breadcrumbs to context
+      self.request.breadcrumbs( ( 
+					('home','/home/'),
+        	 	                ('member','/members/'),
+	        	       	        ('modify a member','/members/modify/'),
+                            ) )
+    else:
+      M = Member.objects.get(head_of_list=self.request.user)
+      #add breadcrumbs to context
+      self.request.breadcrumbs( ( 
+					('home','/home/'),
+	        	       	        ('member profile','/members/profile/'),
+	        	       	        ('modify member profile','/members/profile/modify/'),
                             ) )
 
-    if self.steps.current != None:
+
+    if step != None:
       context.update({'title': settings.TEMPLATE_CONTENT['members']['modify']['title']})
-      context.update({'step_title': settings.TEMPLATE_CONTENT['members']['modify'][self.steps.current]['title']})
+      if step != 'list': context.update({'step_title': settings.TEMPLATE_CONTENT['members']['modify'][self.steps.current]['title'] + ' - ' + M.id})
+      else : context.update({'step_title': settings.TEMPLATE_CONTENT['members']['modify'][self.steps.current]['title']})
       context.update({'next': settings.TEMPLATE_CONTENT['members']['modify'][self.steps.current]['next']})
 
     return context
@@ -171,18 +148,22 @@ class ModifyMemberWizard(SessionWizardView):
     if step is None:
       step = self.steps.current
 
+    M = None
+    if step != 'list':
+      list_data = self.get_cleaned_data_for_step('list') or {}
+      if list_data != {}:
+        M = Member.objects.get(pk=list_data['members'].id)
+      else:
+        M = Member.objects.get(head_of_list=self.request.user)
+
     if step == 'member':
-      cleaned_data = self.get_cleaned_data_for_step('list') or {}
-      if cleaned_data != {}:
-        form.initial = gen_member_initial(cleaned_data['members'])
-        form.instance = Member.objects.get(pk=cleaned_data['members'].id)
+      form.initial = gen_member_initial(M)
+      form.instance = M
 
     if step == 'role':
-      cleaned_data = self.get_cleaned_data_for_step('list') or {}
-      if cleaned_data != {}:
-        role = Role.objects.get(member=cleaned_data['members'].id)
-        form.initial = gen_role_initial(role)
-        form.instance = role
+      role = Role.objects.get(member=M.id)
+      form.initial = gen_role_initial(role)
+      form.instance = role
 
     return form
 
@@ -215,7 +196,7 @@ class ModifyMemberWizard(SessionWizardView):
 
 # role_add #
 ############
-@permission_required('clusil.BOARD')
+@permission_required('cms.BOARD')
 def role_add(r):
   r.breadcrumbs( ( ('home','/home/'),
                    ('members','/members/'),

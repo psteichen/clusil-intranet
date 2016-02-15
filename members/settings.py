@@ -1,28 +1,7 @@
 # Application settings for members app
 # coding=utf-8
 
-ACTIONS = {
-  'profile': (
-    {
-      'label'	: 'Profile',
-      'icon'	: 'pencil',
-      'grade'	: 'warning',
-      'url'    	: '/members/modify/',
-    },
-    {
-      'label'	: 'Add',
-      'icon'	: 'user',
-      'grade'	: 'success',
-      'url'     : '/members/user/add/',
-    },
-    {
-      'label'	: 'Delete',
-      'icon'	: 'user',
-      'grade'	: 'danger',
-      'url'    	: '/members/user/del/',
-    },
-  ),
-}
+ACTIONS = (
 #
 #  {
 #    'heading'           : 'Choose actions on <strong>members</strong>:',
@@ -77,7 +56,7 @@ ACTIONS = {
 #      },
 #    ),
 #  },
-#)
+)
 
 MEMBERS_TMPL_CONTENT = {
   'title'       	: 'Member Management',
@@ -92,21 +71,6 @@ MEMBERS_TMPL_CONTENT = {
       'template'	: 'done.html',
       'title'     	: 'New Member added.',
       'message'     	: 'Details here: ',
-    },
-  },
-  'profile': {
-    'template'          : 'overview.html',
-    'actions'           : ACTIONS['profile'],
-    'title'             : u'Member profile for <i>%(member)s</i>',
-    'overview' : {
-      'template'        : 'overview_member.html',
-      'managers'       	: u'Managers',
-      'firstname'       : u'Firstname',
-      'name'            : u'Name',
-      'login'        	: u'Login',
-      'email'           : u'E-mail',
-      'role'            : u'Role',
-      'affil'          	: u'Affiliation',
     },
   },
   'modify': {

@@ -1,9 +1,9 @@
 from django.conf.urls import patterns, include, url
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 from .forms import ListMembersForm, ModifyMemberForm, RoleForm
 from .views import ModifyMemberWizard, show_role_form
-from .views import index, add, list, profile
+from .views import index, add, list
 from .views import role_add
 
 # modify wizard #
@@ -21,15 +21,11 @@ modify_member_condition_dict = {
 #view
 modify_member_wizard = ModifyMemberWizard.as_view(modify_member_forms, condition_dict=modify_member_condition_dict)
 #wrapper with specific permissions
-modify_member_wrapper = login_required(modify_member_wizard)
+modify_member_wrapper = permission_required('cms.BOARD')(modify_member_wizard)
 
 urlpatterns = patterns('',
   url(r'^$', index, name='index'),
 
-  # front-office (members)
-  url(r'^profile/$', profile, name="profile"),
-
-  # back-office (board)
   url(r'^list/$', list, name='list'),
   url(r'^add/$', add, name='add'),
   url(r'^modify/$', modify_member_wrapper, name='modify'),

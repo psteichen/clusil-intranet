@@ -22,7 +22,10 @@ class MemberForm(ModelForm):
 
   class Meta:
     model = Member
-    fields = ( 'id', 'head_of_list', 'type', 'status', 'organisation', 'address', 'delegate', 'users', ) 
+    fields = ( 'address', 'head_of_list', 'delegate', ) 
+    widgets = {
+      'address'		: Textarea(attrs={'cols': 20, 'rows': 5, }),
+    }
 
 
 #modify forms

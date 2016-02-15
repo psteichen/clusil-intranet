@@ -265,15 +265,8 @@ HOME_ACTIONS = (
       {         
         'label'         : 'Profile', 
         'glyphicon'     : 'glyphicon-home',
-        'desc'          : 'Manage your Membership profile',
-        'url'           : '/members/profile/',
-        'has_perms'	: 'cms.MEMBER',
-      },
-      {         
-        'label'         : 'Users', 
-        'glyphicon'     : 'glyphicon-user',
-        'desc'          : 'Manage users and their access profile',
-        'url'           : '/members/users/',
+        'desc'          : 'Manage your Membership profile and Users',
+        'url'           : '/profile/',
         'has_perms'	: 'cms.MEMBER',
       },
     ),

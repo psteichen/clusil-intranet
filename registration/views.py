@@ -10,10 +10,10 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib.auth.models import Permission
 
-from cms.functions import show_form, notify_by_email
+from cms.functions import show_form, notify_by_email, replicate_to_ldap
 
 from accounting.functions import generate_invoice
-from members.functions import get_members_to_validate, replicate_to_ldap
+from members.functions import get_members_to_validate
 from members.models import Member, Organisation, Address, Role
 from members.groups.models import Group, Affiliation
 
@@ -136,11 +136,6 @@ class RegistrationWizard(SessionWizardView):
         o = a_f.cleaned_data['organisation']
         O = Organisation(name=o,address=A)
         O.save()
-
-        # add head-of-list permissions
-        is_hol_d = Permission.objects.get(codename='MEMBER')
-        U.user_permissions.add(is_hol_d)
-
         # delegate
         delegate = h_f.cleaned_data['delegate']
         if delegate:
@@ -148,6 +143,7 @@ class RegistrationWizard(SessionWizardView):
           if d_f.is_valid():
             D = d_f.save()
             D.save()
+
             #role for delegate
             Ro = Role(title="Delegate",user=D)
             Ro.save()
@@ -162,11 +158,17 @@ class RegistrationWizard(SessionWizardView):
 
       if M == None: M = Member(pk=m_id,type=ty)
 
-      # add address, orga and head_of_list to Member model
+      # if of type org, add organisation to Member model
       if ty == Member.ORG: M.organisation = O
+
+      # add address and head_of_list to Member model
       M.address=A
       M.head_of_list=U
+
+      # add delegate if exists
       if D != None: M.delegate=D
+
+      # save Member model
       M.save()
 
       g_f = form_dict['group']
@@ -193,7 +195,7 @@ class RegistrationWizard(SessionWizardView):
 				'message': settings.TEMPLATE_CONTENT['error']['email'],
 		     })
 
-      # generate invoice (this will send the invoice email implicitly)
+      # generate invoice (this will generate and send the invoice implicitly)
 #      generate_invoice(M)
 
       head = False
@@ -227,19 +229,27 @@ def validate(r, val_hash):
     if R.validated == R.OK:
       return render(r, template, {
                    'title'		: title,
-                   'error_message'	: message,
+                   'error_message'	: error_message,
                })
 
+    M = R.member
+
+    # set head-of-list (and delegate permissions)
+    is_hol_d = Permission.objects.get(codename='MEMBER')
+    M.head_of_list.user_permissions.add(is_hol_d)
+    if M.delegate: M.delegate.user_permissions.add(is_hol_d)
+
+    # member confirmation Ok -> replicate Users to LDAP
+    replicate_to_ldap(M)
+
+    # save registration as OK
     R.date_of_validation = timezone.now()
     R.validated = R.OK
     R.save()
 
-    M = R.member
+    # save Member as active
     M.status = Member.ACT
     M.save()
-
-    # member confirmation Ok -> replicate Users to LDAP
-    replicate_to_ldap(M)
 
     message = done_message.format(name=gen_member_fullname(M),member_id=M.pk)
 
@@ -261,7 +271,7 @@ def validate(r, val_hash):
                    'message'	: message,
                })
 
-  except:
+  except Registration.DoesNotExist:
     # else: error
     return render(r, template, {
                    'title'		: title,

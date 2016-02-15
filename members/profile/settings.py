@@ -3,56 +3,51 @@
 
 ACTIONS = (
   {
-    'heading'           : 'Membership profile',
-    'has_perms'         : 'cms.MEMBER',
-    'actions'   : (
-      {
-        'label'         : 'Modify Profile',
-        'glyphicon'     : 'glyphicon-user',
-        'desc'          : 'Modify, adjust Membership profile',
-        'url'           : '/profile/modify/',
-    	'has_perms'     : 'cms.MEMBER',
-      },
-      {
-        'label'         : 'Add User',
-        'glyphicon'     : 'glyphicon-user',
-        'desc'          : 'Add a User to your membership',
-        'url'           : '/profile/adduser/',
-    	'has_perms'     : 'cms.MEMBER',
-      },
-      {
-        'label'         : 'Delete User',
-        'glyphicon'     : 'glyphicon-user',
-        'desc'          : 'Delete a User from your membership',
-        'url'           : '/profile/tiltuser/',
-    	'has_perms'     : 'cms.MEMBER',
-      },
-      {
-        'label'         : 'Change Head-of-list',
-        'glyphicon'     : 'glyphicon-user',
-        'desc'          : 'Change Head-of-list or Delegate for your membership',
-        'url'           : '/profile/chg_hol_d/',
-    	'has_perms'     : 'cms.MEMBER',
-      },
-      {
-        'label'         : 'Invoice',
-        'glyphicon'     : 'glyphicon-euro',
-        'desc'          : 'View invoice(s) from your membership',
-        'url'           : '/profile/invoice/',
-    	'has_perms'     : 'cms.MEMBER',
-      },
-    ),
+    'label'	: 'Change Profile',
+    'icon'	: 'pencil',
+    'grade'	: 'warning',
+    'url'    	: '/profile/modify/',
+  },
+  {
+    'label'	: 'Affiliate User',
+    'icon'	: 'th-list',
+    'grade'	: 'info',
+    'url'     : '/profile/affiluser/',
+  },
+  {
+    'label'	: 'Add User',
+    'icon'	: 'plus',
+    'grade'	: 'success',
+    'url'     : '/profile/adduser/',
+  },
+  {
+    'label'	: 'Delete User',
+    'icon'	: 'minus',
+    'grade'	: 'danger',
+    'url'    	: '/profile/rmuser/',
   },
 )
 
 PROFILE_TMPL_CONTENT = {
-  'title'       	: 'Profile Management',
-  'template'    	: 'actions.html',
-  'actions'     	: ACTIONS,
+  'profile': {
+    'template'          : 'overview.html',
+    'actions'           : ACTIONS,
+    'title'             : u'Member profile for <i>%(member)s</i>',
+    'overview' : {
+      'template'        : 'overview_member.html',
+      'managers'       	: u'Managers',
+      'firstname'       : u'Firstname',
+      'name'            : u'Name',
+      'login'        	: u'Login',
+      'email'           : u'E-mail',
+      'role'            : u'Role',
+      'affil'          	: u'Affiliation',
+    },
+  },
   'modify': {
     'template'		: 'form.html',
-    'title'     	: ACTIONS[0]['actions'][0]['label'],
-    'desc'     		: ACTIONS[0]['actions'][0]['desc'],
+    'title'     	: 'Modify Profile',
+    'desc'	     	: 'Modify CLUSIL Membership profile',
     'submit'   		: 'Modify',
     'done' : {
       'template'        : 'done.html',
@@ -61,28 +56,38 @@ PROFILE_TMPL_CONTENT = {
   },
   'adduser': {
     'template'		: 'form.html',
-    'title'     	: ACTIONS[0]['actions'][1]['label'],
-    'desc'     		: ACTIONS[0]['actions'][1]['desc'],
+    'title'     	: 'Add User',
+    'desc' 	    	: 'Add a new User to the Membership',
     'submit'   		: 'Add',
     'done': {
       'template'	: 'done.html',
       'title'     	: 'User added.',
     },
   },
-  'tiltuser': {
+  'affiluser': {
     'template'		: 'form.html',
-    'title'     	: ACTIONS[0]['actions'][2]['label'],
-    'desc'     		: ACTIONS[0]['actions'][2]['desc'],
-    'submit'   		: 'Delete',
+    'title'     	: 'Affiliate User',
+    'desc'     		: 'Affiliate a User to a Working Group or Tool',
+    'submit'   		: 'Affiliate',
     'done': {
       'template'	: 'done.html',
-      'title'     	: 'User deleted.',
+      'title'     	: 'User affiliated.',
+    },
+  },
+  'rmuser': {
+    'template'		: 'form.html',
+    'title'     	: 'Remove User',
+    'desc'     		: 'Remove a User from the CLUSIL Membership',
+    'submit'   		: 'Remove',
+    'done': {
+      'template'	: 'done.html',
+      'title'     	: 'User removed.',
     },
   },
   'invoice': {
     'template'		: 'form.html',
-    'title'     	: ACTIONS[0]['actions'][3]['label'],
-    'desc'     		: ACTIONS[0]['actions'][3]['desc'],
+    'title'     	: 'View Invoices',
+    'desc'     		: 'View Invoices and payment status of the CLUSIL Membership',
     'submit'   		: 'View',
     'done': {
       'template'	: 'done.html',

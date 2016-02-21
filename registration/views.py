@@ -18,7 +18,7 @@ from members.models import Member, Organisation, Address, Role
 from members.groups.models import Group, Affiliation
 
 from .models import Registration
-from .functions import gen_member_id, add_to_groups, gen_member_fullname, gen_hash, gen_confirmation_link
+from .functions import gen_member_id, add_to_groups, gen_member_fullname, gen_username, gen_random_password, gen_hash, gen_confirmation_link
 
 
 ##
@@ -26,6 +26,10 @@ from .functions import gen_member_id, add_to_groups, gen_member_fullname, gen_ha
 ##
 def show_delegate_form(wizard):
   return show_form(wizard,'type','member_type',Member.ORG) and show_form(wizard,'head','delegate',True)
+
+def show_multi_user_form(wizard):
+  return show_form(wizard,'type','member_type',Member.ORG)
+
 
 def show_student_proof_form(wizard):
   return show_form(wizard,'type','member_type',Member.STD)
@@ -78,9 +82,7 @@ class RegistrationWizard(SessionWizardView):
           del form.fields['first_name']
           del form.fields['last_name']
           del form.fields['email']
-        if ty == Member.IND:
-          del form.fields['organisation']
-        if ty == Member.STD:
+        if ty == Member.IND or ty == Member.STD:
           del form.fields['organisation']
 
     if step == 'head':
@@ -100,10 +102,19 @@ class RegistrationWizard(SessionWizardView):
         ty = int(t_data['member_type'])
         if ty == Member.IND or ty == Member.STD:
           del form.fields['delegate']
-
+          del form.fields['more']
 
     if step == 'delegate':
       del form.fields['delegate']
+      del form.fields['more']
+
+    if step == 'more':
+      head_data = self.get_cleaned_data_for_step('head') or False
+      if head_data:
+        ex = int(head_data['more'])
+        del_data = self.get_cleaned_data_for_step('delegate') or False
+	if del_data: form.extra = ex-1
+	else: form.extra = ex
 
     return form
 
@@ -120,6 +131,7 @@ class RegistrationWizard(SessionWizardView):
     m_id = gen_member_id()
 
     M = O = A = U = D = Gs = None
+    Us = []
 
     t_f = form_dict['type']
     ty = int(t_f.cleaned_data['member_type'])
@@ -136,6 +148,7 @@ class RegistrationWizard(SessionWizardView):
         o = a_f.cleaned_data['organisation']
         O = Organisation(name=o,address=A)
         O.save()
+
         # delegate
         delegate = h_f.cleaned_data['delegate']
         if delegate:
@@ -147,6 +160,17 @@ class RegistrationWizard(SessionWizardView):
             #role for delegate
             Ro = Role(title="Delegate",user=D)
             Ro.save()
+
+        #all users for ORG type
+        mu_fs = form_dict['more']
+        if mu_fs.is_valid():
+          for u in mu_fs:
+            user = u.save(commit=False)
+            user.username = gen_username(user.first_name,user.last_name)
+            user.password = gen_random_password()
+            user.save()
+            Us.append(user)
+
 
       #student
       if ty == Member.STD:
@@ -170,6 +194,8 @@ class RegistrationWizard(SessionWizardView):
 
       # save Member model
       M.save()
+      # add all Users for ORG type
+      if Us != []: M.users=Us
 
       g_f = form_dict['group']
       if g_f.is_valid():

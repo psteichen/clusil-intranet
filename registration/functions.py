@@ -4,6 +4,7 @@ from datetime import date, datetime
 from hashlib import sha256
 
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from members.models import Member
 from members.groups.models import Affiliation, Group
@@ -63,4 +64,25 @@ def gen_confirmation_link(code):
   from os import path
   c_url = path.join(settings.REG_VAL_URL, code + '/')
   return c_url
+
+## user creation functions:
+def login_exists(username):
+  try:
+    User.objects.get(username=username)
+    return  True
+  except User.DoesNotExist:
+    return False
+
+def gen_username(fn, ln, pad=0):
+  username = ''
+  i=0
+  while i<=pad:
+    username += fn[i]
+    i += 1
+  username = unicode.lower(username + ln)
+  if login_exists(username): return gen_username(fn, ln, pad+1)
+  else: return username
+
+def gen_random_password():
+  return User.objects.make_random_password(length=10)
 

@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
-from .forms import MemberTypeForm, AddressForm, RegisterUserForm, AffiliationForm, StudentProofForm
-from .views import RegistrationWizard, show_delegate_form, show_student_proof_form
+from .forms import MemberTypeForm, AddressForm, RegisterUserForm, AffiliationForm, StudentProofForm, MultiUserFormSet
+from .views import RegistrationWizard, show_delegate_form, show_multi_user_form, show_student_proof_form
 
 from .views import validate
 
@@ -13,6 +13,7 @@ registration_forms = [
         ('address'	, AddressForm),
         ('head'		, RegisterUserForm),
         ('delegate'	, RegisterUserForm),
+        ('more'		, MultiUserFormSet),
         ('student_proof', StudentProofForm),
         ('group'	, AffiliationForm),
 #        ('captcha'	, CaptchaForm),
@@ -20,6 +21,7 @@ registration_forms = [
 #condition dict
 registration_condition_dict = {
 	'delegate'	: show_delegate_form,
+        'more'		: show_multi_user_form,
 	'student_proof'	: show_student_proof_form,
 }
 #view

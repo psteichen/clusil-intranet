@@ -2,7 +2,8 @@
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import Form, ChoiceField, ModelForm, CharField, FileField,  ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField, BooleanField
+from django.forms import Form, ChoiceField, ModelForm, CharField, FileField,  ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField, BooleanField, RadioSelect
+from django.forms.models import modelformset_factory, BaseModelFormSet
 
 from members.models import Member, Address
 from members.groups.models import Group, Affiliation
@@ -28,8 +29,14 @@ class AddressForm(ModelForm):
       'c_other'	: 'If none from above please specify here',
     }
 
+ORG_NB_USERS = (
+  (5, '6 - 400EUR'),
+  (11, '12 - 700EUR'),
+  (17, '18 - 1000EUR'),
+)
 class RegisterUserForm(UserCreationForm):
   delegate 	= BooleanField(label='add Delegate?',help_text='The delegate is the head-of-list\'s alternate for all it\'s roles: point of contact and membership management.',required=False)
+  more 		= ChoiceField(label='Nb of Users?',choices=ORG_NB_USERS,help_text='Set the number of Users for your membership. Want more Users in your membership? Ccontact us for mass membership: <a href="mailto:membership@clusil.lu?Subject=Mass Membership">membership@clusil.lu</a>.',widget=RadioSelect(),required=False)
   class Meta:
     model = User
     fields = ( 'first_name', 'last_name', 'email', 'username', 'password1', 'password2', )
@@ -38,6 +45,22 @@ class RegisterUserForm(UserCreationForm):
       'password1'	: TextInput(attrs={'type': 'password', }),
       'password2'	: TextInput(attrs={'type': 'password', }),
     }
+
+#multiuser formset
+class UserForm(ModelForm):
+
+  class Meta:
+    model = User
+    fields = ( 'first_name', 'last_name', 'email', )
+
+#this is needed to set the queryset to none by default
+class BaseUserFormSet(BaseModelFormSet):
+    def __init__(self, *args, **kwargs):
+        super(BaseUserFormSet, self).__init__(*args, **kwargs)
+        self.queryset = User.objects.none()
+
+MultiUserFormSet = modelformset_factory(User, form=UserForm, formset=BaseUserFormSet, extra=5)
+
 
 class StudentProofForm(Form):
   class Meta:

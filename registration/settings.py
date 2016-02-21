@@ -14,9 +14,9 @@ REGISTRATION_TMPL_CONTENT = {
       'title'   	: 'Membership',
       'desc'   		: '''CLUSIL memberships come in 3 variants: 
 <ul>
- <li>Individual (1 user - 100€) ;</li>
- <li>Organisation (6 users - 400€) ;</li>
- <li>Student (1 user - 25€ [student proof required])</li>
+ <li>Individual (1 user:  100€) ;</li>
+ <li>Organisation (per group 6 users: 400€) ;</li>
+ <li>Student (1 user: 25€ [student proof required])</li>
 </ul>''',  
       'next'    	: 'next',
     },
@@ -35,6 +35,11 @@ REGISTRATION_TMPL_CONTENT = {
     'delegate' : {
       'title'           : 'Delegate',
       'desc'   		: '''The delegate is the head-of-list's alternate for all it's roles: point of contact and membership management.''',
+      'next'            : 'next',
+    },
+    'more' : {
+      'title'           : 'All Users for membership',
+      'desc'   		: '''Provide the Names and Emails of all Users of your membership.''',
       'next'            : 'next',
     },
     'student_proof' : {

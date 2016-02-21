@@ -9,107 +9,16 @@ from django.template.loader import render_to_string
 
 from cms.functions import notify_by_email
 
-from members.functions import add_group
+from members.functions import add_group, set_cms_perms
 from members.models import Member
 from members.groups.models import Group as WG, Affiliation
 
-from .forms import MemberForm, MemberFormReadOnly, ShortMemberFormReadOnly, WGFormRadio, WGFormCheckBox, UserCreationForm, UserChangeForm, MemberUsersForm, HolForm, DForm
-
-#helper functions
-def initial_data(r):
-  #get initial data to show
-  user_data = {
-    'first_name': r.user.first_name,
-    'last_name': r.user.last_name,
-    'email': r.user.email,
-    'username': r.user.username,
-  }
-  member = Member.objects.get(head_of_list=r.user)
-  member_data = {
-    'member_id': member.id,
-    'member_type': Member.MEMBER_TYPES[member.type][1],
-    'organisation': member.organisation,
-    'address': member.address.street,
-    'postal_code': member.address.postal_code,
-    'town': member.address.town,
-    'country': member.address.country,
-    'head_of_list': member.head_of_list.first_name + ' ' + unicode.upper(member.head_of_list.last_name),
-#    'delegate': member.delegate.first_name + ' ' + member.delegate.last_name,
-#    'users': member.users.all(),
-    'student_proof': member.student_proof,
-  }
-  A = Affiliation.objects.filter(user=r.user)
-  wg_data = {
-    'wg' : A.values_list('group',flat=True),
-  }
-  return { 'member_data': member_data, 'wg_data': wg_data, 'user_data': user_data }
-
-def is_hol_d(mid,u):
-  h = Member.objects.filter(pk=mid, head_of_list=u).exists()
-  d = Member.objects.filter(pk=mid, delegate=u).exists()
-  return h or d
-
-def toggle_wgs(init,current,user):
-  i = set(init)
-  c = set(current)
-  if i!=c: #changes in WG sub
-    # delete all and rebuild new subs
-    Affiliation.objects.filter(user=user).delete()
-    for w in c:
-      try: 
-        Affiliation.objects.get(user=user,wg=WG(pk=w))
-      except Affiliation.DoesNotExist:
-        affil = Affiliation(user=user,wg=WG(pk=w))
-        affil.save()
-    #don't forget to add the default WG: main and board if existed previously
-    for w in i:
-      if w == 'main' or w == 'board' or w == 'clusix':
-        try: 
-          Affiliation.objects.get(user=user,wg=WG(pk=w))
-        except Affiliation.DoesNotExist:
-          affil = Affiliation(user=user,wg=WG(pk=w))
-          affil.save()
-
-def manip_changed_data(c,m=0):
-  if m == 1: output = '  - in Member data: [ '
-  elif m == 2: output = '  - in User data: [ '
-  elif m == 3: output = '  - WG subscriptions: [ '
-  else: output = '[ '
-  if not c: return ''
-  for e in c:
-    if e != 'password': 
-      output += e
-      output += ', '
-  output += ' ]'
-  return output
-
-def member_is_full(mid):
-  m = Member.objects.get(pk=mid)
-  users = m.users.count()
-  if users >= 6: return True
-  else: return False
+from .functions import get_member_from_username, get_country_from_address, member_initial_data, get_user_choice_list
+from .forms import ProfileForm, MemberFormReadOnly, ShortMemberFormReadOnly, WGFormRadio, WGFormCheckBox, UserCreationForm, UserChangeForm, MemberUsersForm, HolForm, DForm
 
 ################
 # MEMBER views #
 ################
-
-def get_member_from_username(username):
-  U = User.objects.get(username=username)
-  M = None
-  try:
-    M = Member.objects.get(head_of_list=U)
-  except Member.DoesNotExist:
-    pass
-  try:
-    M = Member.objects.get(delegate=U)
-  except Member.DoesNotExist:
-    pass
-  try:
-    M = Member.objects.get(users__in=[U])
-  except Member.DoesNotExist:
-    pass
-
-  return M
 
 # profile #
 ###########
@@ -123,9 +32,11 @@ def profile(r):
   M = get_member_from_username(r.user.username)
   title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
   actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
+  if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
   overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template'], { 
                    		'title'		: title,
 				'member'	: M, 
+				'country'	: get_country_from_address(M.address), 
 				'actions'	: actions, 
 			     })
 
@@ -138,161 +49,168 @@ def profile(r):
 ###########
 @permission_required('cms.MEMBER')
 def modify(r):
-  init_data = initial_data(r)
-  m_id = init_data['member_data']['member_id']
-  m_type = init_data['member_data']['member_type']
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('modify','/profile/modify/'),
+               ) )
+ 
+  M = get_member_from_username(r.user.username)
+  title = settings.TEMPLATE_CONTENT['profile']['modify']['title'].format(id=M.id)
 
-  if r.POST: # handle form data & user inputs/mods
-    # mode
-    mode = r.POST['mode']
+  if r.POST:
+ 
+    pf = ProfileForm(r.POST,r.FILES)
+    if pf.is_valid() and pf.has_changed(): 
+      for field in pf.changed_data:
+        O = M.organisation
+        H = M.head_of_list
+        D = M.delegate
+        A = M.address
+        if field == 'orga': #organisation name changed
+          O.name = pf.cleaned_data[field]
+        if field == 'fn': #first_name of head_of_list changed
+          H.first_name = pf.cleaned_data[field]
+        if field == 'ln': #last_name of head_of_list changed
+          H.last_name = pf.cleaned_data[field]
+        if field == 'email': #email of head_of_list changed
+          H.email = pf.cleaned_data[field]
+        if field == 'street': #street changed
+          A.street = pf.cleaned_data[field]
+        if field == 'pc': #postal_code changed
+          A.postal_code = pf.cleaned_data[field]
+        if field == 'town': #town changed
+          A.town = pf.cleaned_data[field]
+        if field == 'country': #country changed
+          A.c_other = pf.cleaned_data[field]
+        if field == 'hol': #head_of_list changed
+          M.head_of_list = pf.cleaned_data[field]
+          M.save()
+          set_cms_perms(M.head_of_list) #set cms permissions from new head
+          M.users.add(H) # add old head to users
+          set_cms_perms(H,True) #remove cms permissions from old head
+        if field == 'd': #delegate changed
+          M.delegate = pf.cleaned_data[field]
+          M.save()
+          set_cms_perms(M.delegate) #set cms permissions from new delegate
+          M.users.add(D) # add old delegate to users
+          set_cms_perms(D,True) #remove cms permissions from old delegate
+        if field == 'sp': #student_proof changed
+          M.student_proof = pf.cleaned_data[field]
+         
+        O.save()
+        H.save()
+        A.save()
+        M.save()
 
-    # init data used afterwards even if not changed
-    m_fn = init_data['member_data']['firstname']
-    m_ln = init_data['member_data']['lastname']
-    m_e = init_data['member_data']['email'] 
+        # all fine: done message
+        return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['done']['template'], {
+			'title'		: title,
+                	'message'	: settings.TEMPLATE_CONTENT['profile']['modify']['done']['message'] + ' ;<br/> '.join([f for f in pf.changed_data]),
+		     })
 
-    u_u = init_data['user_data']['username']
-    u_fn = init_data['user_data']['first_name']
-    u_ln = init_data['user_data']['last_name']
-    u_e = init_data['user_data']['email']
-   
-    # make instances of post forms to check for changed data
-    u = User.objects.get(username=u_u)
-    user = UserChangeForm(r.POST,instance=u)
-    wgs=r.POST.getlist('wg')
-
-    if user.has_changed() and user.is_valid():
-      u_u = user.cleaned_data['username']
-      u_fn = user.cleaned_data['first_name']
-      u_ln = user.cleaned_data['last_name']
-      u_e = user.cleaned_data['email']
-      user.save()
-
-    # link user and WG
-    toggle_wgs(init_data['wg_data']['wg'],wgs,u)
-
-    # build confirmation email
-    message_content = {
-      'FULLNAME': u_fn + ' ' + unicode.upper(u_ln),
-      'USER': u_u,
-      'MEMBER_ID': m_id,
-      'USER_MOD': manip_changed_data(user.changed_data,2),
-      'WG_MOD': manip_changed_data(wgs,3),
-    }
-    subject = settings.MAIL_CONFIRMATION['profile']['subject'] % m_id
-
-    if mode == 'ORG_L': # limited data mod: only user and WG data
-      # add head-of-list in cc to confirmation email & send
-      ok=confirm_by_email(subject,u_e,settings.MAIL_CONFIRMATION['profile']['template'],message_content,None,m_e)
-      if not ok:
-        return render(r,'profile_org_limited.html', {'member_form': MemberFormReadOnly(initial=init_data['member_data']),'wg_form': WGFormCheckBox(initial=init_data['wg_data']), 'user_form': UserChangeForm(initial=init_data['user_data']), 'error_message': settings.TEMPLATE_CONTENT['error']['email']})
         
-    if mode == 'ORG_F' or mode == 'OTHER': # full data mod: member data too
-      # make instances of post forms to check for changed data
-      m = Member.objects.get(pk=m_id)
-      member = MemberForm(r.POST,instance=m)
-
-      if member.has_changed() and member.is_valid():
-        m_e = member.cleaned_data['email'] 
-        member.save()
-
-        # add changed member data to confirmation email
-        message_content['MEMBER_MOD'] = manip_changed_data(member.changed_data,1)
-
-      # send confirmation
-      ok=confirm_by_email(subject,u_e,settings.MAIL_CONFIRMATION['profile']['template'],message_content)
-      if not ok:
-       if mode == 'ORG_F': return render(r,'profile_org_full.html', {'member_form': MemberForm(initial=init_data['member_data']),'wg_form': WGFormCheckBox(initial=init_data['wg_data']), 'user_form': UserChangeForm(initial=init_data['user_data']), 'error_message': settings.TEMPLATE_CONTENT['error']['email']})
-       if mode == 'OTHER': return render(r,'profile_other.html', {'member_form': MemberForm(initial=init_data['member_data']),'wg_form': WGFormCheckBox(initial=init_data['wg_data']), 'user_form': UserChangeForm(initial=init_data['user_data']), 'error_message': settings.TEMPLATE_CONTENT['error']['email']})
-
-    #done
-    return render(r,'done.html', {'mode': 'updating the CMP for Member: ' + m_id, 'message': render_to_string(settings.MAIL_CONFIRMATION['profile']['template'],message_content)})
+    else: #form not valid -> error
+      return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['done']['template'], {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in pf.errors]),
+		   })
+ 
   else: # gen form according to member & user type
-    # check for profile form mode to use: full or limited (for non-head-of-list users)
-    if m_type == Member.MEMBER_TYPES[1][1]: #organisation
-      #check if user is head-of-list or delegate
-      if is_hol_d(m_id,r.user):
-        # head-of-list or delegate -> full(org) profile form
-        return render(r,'profile_org_full.html', {'member_form': MemberForm(initial=init_data['member_data']),'wg_form': WGFormCheckBox(initial=init_data['wg_data']), 'user_form': UserChangeForm(initial=init_data['user_data'])})
-      else:
-        # not head_of_list nor delegate -> limited(org) profile form
-        return render(r,'profile_org_limited.html', {'member_form': MemberFormReadOnly(initial=init_data['member_data']),'wg_form': WGFormCheckBox(initial=init_data['wg_data']), 'user_form': UserChangeForm(initial=init_data['user_data'])})
-    else:
-     # other member type -> full(other) profile form
-     return render(r,'profile_other.html', {'member_form': MemberForm(initial=init_data['member_data']),'wg_form': WGFormCheckBox(initial=init_data['wg_data']), 'user_form': UserChangeForm(initial=init_data['user_data'])})
+
+    form = ProfileForm()
+    form.fields['hol'].choices=get_user_choice_list(M)
+    if M.type == Member.ORG:
+      form.fields['d'].choices=get_user_choice_list(M)
+    if M.type != Member.STD:
+      del form.fields['sp']
+    form.initial = member_initial_data(M)
+
+    return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['template'], {
+			'title'		: title,
+    			'desc'		: settings.TEMPLATE_CONTENT['profile']['modify']['desc'],
+			'form'		: form,
+			'submit'	: settings.TEMPLATE_CONTENT['profile']['modify']['submit'],
+		 })
 
 
+# add user #
+############
 @permission_required('cms.MEMBER')
 def adduser(r): # only if membership-type is ORG
-  init_data = initial_data(r)
-  m_id = init_data['member_data']['member_id']
-  m_type = init_data['member_data']['member_type']
-  if r.POST:
-    user = UserCreationForm(r.POST)
-    wg = WGFormRadio(r.POST)
-    if user.is_valid() and wg.is_valid():
-      m_e = init_data['member_data']['email'] # head-of-list email to send copy
-      fn = user.cleaned_data['first_name']
-      ln = user.cleaned_data['last_name']
-      u = user.cleaned_data['username']
-      e = user.cleaned_data['email']
-      wg = wg.cleaned_data['wg']
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('add user','/profile/adduser/'),
+               ) )
+ 
+  M = get_member_from_username(r.user.username)
+  title = settings.TEMPLATE_CONTENT['profile']['adduser']['title'].format(id=M.id)
+  done_template = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['template']
 
+  if r.POST:
+    uf = UserCreationForm(r.POST)
+    if uf.is_valid():
       #save user
-      U=user.save()
+      U=uf.save(commit=False)
+      U.username = gen_username(user.first_name,user.last_name)
+      U.password = make_password(gen_random_password())
+      U.save()
     
       #add user to member users 
-      M=Member.objects.get(pk=m_id)
       M.save()
       M.users.add(U)
+	
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(user=gen_fullname(U))
+      return render(r,done_template, {
+			'title'		: title,
+			'message'	: message,
+		   })
 
-      #make the affiliation link
-      add_wg(U,wg)
-
-      # build confirmation email
-      message_content = {
-        'FULLNAME': fn + ' ' + unicode.upper(ln),
-        'MEMBER_ID': m_id,
-        'LOGIN': u,
-        'WG': wg,
-      }
-      subject = settings.MAIL_CONFIRMATION['adduser']['subject'] % m_id
-      # send confirmation email
-      ok=confirm_by_email(subject,e,settings.MAIL_CONFIRMATION['adduser']['template'],message_content,None,m_e)
-      if not ok:
-        return render(r,'profile_org_full.html', {'member_form': ShortMemberFormReadOnly(initial=init_data['member_data']),'wg_form': WGFormRadio(r.POST),'adduser_form': UserCreationForm(r.POST), 'error_message': settings.TEMPLATE_CONTENT['error']['email']})
-
-      return render(r,'done.html', {'mode': 'the creation of another user for Member: ' + m_id, 'message': render_to_string(settings.MAIL_CONFIRMATION['adduser']['template'],message_content)})
-    else:
-      return render(r,'profile_org_full.html', {'member_form': ShortMemberFormReadOnly(initial=init_data['member_data']),'wg_form': WGFormRadio(r.POST),'adduser_form': UserCreationForm(r.POST), 'error_message': settings.TEMPLATE_CONTENT['error']['gen']})
+    else: #from not valid -> error
+      return render(r,done_template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in uf.errors]),
+		   })
 
   else: #no POST data yet, do pre-check or send to form if all fine
     OUT=0
-    #prepare "out" message
+    #prepare message
     message_content = {
-      'MEMBER': 'id: ' + m_id + ' - type: ' + m_type,
+      'MEMBER': unicode(M),
       'QUESTIONS': settings.MAIL_CONFIRMATION['default']['questions'],
       'SALUTATION': settings.MAIL_CONFIRMATION['default']['salutation'],
     }
     # if not ORG type -> something phishy -> out!
-    if not m_type == Member.MEMBER_TYPES[1][1]: #organisation
+    if M.type != Member.ORG:
       OUT=1
-      message_content['USERS'] = 'You membership type does only allow one(1) Intrant User.'
+      message_content['MSG'] = 'You membership type does only allow one(1) User.'
 
     # if already 6 users exist -> out!
     if member_is_full(m_id): 
       OUT=1
-      message_content['USERS'] = 'You already hit the maximum of 6 allowed Intranet Users per Membership type "Organisation".'
+      message_content['MSG'] = '''You already have the maximum of allowed Users for your Membership type.
+If you want more Users, you'll have to get the next membership level: <a href="">Upgrade membership</a>.'''
 
-    if OUT == 1: return render(r,'done.html', {'mode': 'using the CLUSIL Member Intranet', 'message': render_to_string(settings.DONE_MSG['adduser']['template'],message_content)})
+    if OUT == 1:
+       message = render_to_string(settings.TEMPLATE_CONTENT['profile']['adduser']['error_template'],message_content)
+      return render(r,done_template, {
+				'title'		: title,
+				'message'	: message,
+			      })
     else:
       #show user creation form
-      return render(r,'profile_org_full.html', {'member_form': ShortMemberFormReadOnly(initial=init_data['member_data']),'wg_form': WGFormRadio(),'adduser_form': UserCreationForm()})
+      return render(r,done_template, {
+			'title'	: title,
+  			'desc'	: settings.TEMPLATE_CONTENT['profile']['adduser']['desc'],
+			'form'	: UserCreationForm(),
+		   })
 
 
-# affiliate user
+# affiliate user #
+##################
 @permission_required('cms.MEMBER')
-def affiluser(r): # only if membership-type is ORG
+def affiluser(r,user): # only if membership-type is ORG
 #TODO!
   init_data = initial_data(r)
   m_id = init_data['member_data']['member_id']
@@ -327,9 +245,10 @@ def affiluser(r): # only if membership-type is ORG
     return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
 
 
-# remove user
+# remove user #
+###############
 @permission_required('cms.MEMBER')
-def rmuser(r): # only if membership-type is ORG
+def rmuser(r,user): # only if membership-type is ORG
   init_data = initial_data(r)
   m_id = init_data['member_data']['member_id']
   m_type = init_data['member_data']['member_type']

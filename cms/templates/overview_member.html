@@ -30,11 +30,7 @@
 	  {% endif %}
           {{ member.address.street }}<br/>
           {{ member.address.postal_code }} {{ member.address.town }}<br/>
-          {% if member.address.country == 5 %}
-            {{ member.address.c_other|upper }}
-	  {% else %}
-            {{ member.address.country|upper }}
-	  {% endif %}
+          {{ country|upper }}
         </address>
         </blockquote>
       </div>
@@ -42,7 +38,7 @@
     <div class="row">
       <div class="col-sm-12">
     <div class="pull-right">
-      <span class="text-muted">Actions:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span class="text-muted">Global Actions:&nbsp;&nbsp;&nbsp;&nbsp;</span>
      {% for a in actions %}
         {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<span class="glyphicon glyphicon-{{ a.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
       {% endfor %}
@@ -55,22 +51,35 @@
           <th>Email</th>
           <th>Login</th>
           <th>Affiliations</th>
+          <th>Actions</th>
          </tr>
  
          <tr class="text-success"> {# head of list #}
-          <td>{{ member.head_of_list.first_name }}</td>
-          <td>{{ member.head_of_list.last_name|upper }}</td>
-          <td>{{ member.head_of_list.email }}</td>
-          <td>{{ member.head_of_list.username }}</td>
-          <td>{{ member.head_of_list.wgs }}</td>
+          <td><em>{{ member.head_of_list.first_name }}</em></td>
+          <td><em>{{ member.head_of_list.last_name|upper }}</em></td>
+          <td><em>{{ member.head_of_list.email }}</em></td>
+          <td><em>{{ member.head_of_list.username }}</em></td>
+          <td><em>{{ member.head_of_list.wgs }}</em></td>
+          <td>
+	    <div class="btn-group">
+	      <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ member.head_of_list.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
+	      <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ member.head_of_list.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
+            </div>
+          </td>
          </tr>
          {% if member.delegate %}
           <tr class="text-info"> {# delegate #}
-           <td>{{ member.delegate.first_name }}</td>
-           <td>{{ member.delegate.last_name|upper }}</td>
-           <td>{{ member.delegate.email }}</td>
-           <td>{{ member.delegate.username }}</td>
-           <td>{{ member.delegate.wgs }}</td>
+           <td><em>{{ member.delegate.first_name }}</em></td>
+           <td><em>{{ member.delegate.last_name|upper }}</em></td>
+           <td><em>{{ member.delegate.email }}</em></td>
+           <td><em>{{ member.delegate.username }}</em></td>
+           <td><em>{{ member.delegate.wgs }}</em></td>
+           <td>
+	     <div class="btn-group">
+	       <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ member.delegate.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
+	       <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ member.delegate.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
+            </div>
+	   </td>
           </tr>
          {% endif %}
          {# all other users #}
@@ -81,6 +90,12 @@
           <td>{{ u.email }}</td>
           <td>{{ u.username }}</td>
           <td>{{ u.wgs }}</td>
+          <td>
+	    <div class="btn-group">
+	      <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ u.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
+	      <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ u.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
+            </div>
+          </td>
          </tr>
          {% endfor %}
         </table>

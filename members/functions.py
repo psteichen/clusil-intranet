@@ -51,3 +51,11 @@ def add_group(u,g):
   group.save()
   default = Affiliation(user=u,group=Group(pk='default'))
   default.save()
+
+
+def set_cms_perms(user,remove=False):
+  is_hol_d = Permission.objects.get(codename='MEMBER')
+  if remove: user.user_permissions.remove(is_hol_d)
+  else: user.user_permissions.add(is_hol_d)
+  user.save()
+

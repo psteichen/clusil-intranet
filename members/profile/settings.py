@@ -8,23 +8,19 @@ ACTIONS = (
     'grade'	: 'warning',
     'url'    	: '/profile/modify/',
   },
+)
+ACTIONS_FULL = (
   {
-    'label'	: 'Affiliate User',
-    'icon'	: 'th-list',
-    'grade'	: 'info',
-    'url'     : '/profile/affiluser/',
+    'label'	: 'Change Profile',
+    'icon'	: 'pencil',
+    'grade'	: 'warning',
+    'url'    	: '/profile/modify/',
   },
   {
     'label'	: 'Add User',
     'icon'	: 'plus',
     'grade'	: 'success',
-    'url'     : '/profile/adduser/',
-  },
-  {
-    'label'	: 'Delete User',
-    'icon'	: 'minus',
-    'grade'	: 'danger',
-    'url'    	: '/profile/rmuser/',
+    'url'	: '/profile/adduser/',
   },
 )
 
@@ -32,6 +28,7 @@ PROFILE_TMPL_CONTENT = {
   'profile': {
     'template'          : 'overview.html',
     'actions'           : ACTIONS,
+    'actions_org'	: ACTIONS_FULL,
     'title'             : u'Member profile for <i>%(member)s</i>',
     'overview' : {
       'template'        : 'overview_member.html',
@@ -46,12 +43,15 @@ PROFILE_TMPL_CONTENT = {
   },
   'modify': {
     'template'		: 'form.html',
-    'title'     	: 'Modify Profile',
-    'desc'	     	: 'Modify CLUSIL Membership profile',
+    'title'     	: 'Modify Profile [{id}]',
+    'desc'  	   	: 'Modify/adjust your Membership Profile',
     'submit'   		: 'Modify',
     'done' : {
       'template'        : 'done.html',
-      'title'           : 'Profile modified.',
+      'title'           : 'Profile [{id}] modified.',
+      'message'         : '''Fields (information) modified:
+{list}
+''',
     },
   },
   'adduser': {

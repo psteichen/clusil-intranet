@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 
 from cms.functions import notify_by_email
 
-from members.functions import add_group, set_cms_perms
+from members.functions import add_group, set_cms_perms, gen_fullname
 from members.models import Member
 from members.groups.models import Group as WG, Affiliation
 
@@ -64,8 +64,6 @@ def modify(r):
     if pf.is_valid() and pf.has_changed(): 
       for field in pf.changed_data:
         O = M.organisation
-        H = M.head_of_list
-        D = M.delegate
         A = M.address
         if field == 'orga': #organisation name changed
           O.name = pf.cleaned_data[field]
@@ -83,23 +81,10 @@ def modify(r):
           A.town = pf.cleaned_data[field]
         if field == 'country': #country changed
           A.c_other = pf.cleaned_data[field]
-        if field == 'hol': #head_of_list changed
-          M.head_of_list = pf.cleaned_data[field]
-          M.save()
-          set_cms_perms(M.head_of_list) #set cms permissions from new head
-          M.users.add(H) # add old head to users
-          set_cms_perms(H,True) #remove cms permissions from old head
-        if field == 'd': #delegate changed
-          M.delegate = pf.cleaned_data[field]
-          M.save()
-          set_cms_perms(M.delegate) #set cms permissions from new delegate
-          M.users.add(D) # add old delegate to users
-          set_cms_perms(D,True) #remove cms permissions from old delegate
         if field == 'sp': #student_proof changed
           M.student_proof = pf.cleaned_data[field]
          
         O.save()
-        H.save()
         A.save()
         M.save()
 
@@ -119,9 +104,6 @@ def modify(r):
   else: # gen form according to member & user type
 
     form = ProfileForm()
-    form.fields['hol'].choices=get_user_choice_list(M)
-    if M.type == Member.ORG:
-      form.fields['d'].choices=get_user_choice_list(M)
     if M.type != Member.STD:
       del form.fields['sp']
     form.initial = member_initial_data(M)
@@ -234,6 +216,77 @@ def affiluser(r,user): # only if membership-type is ORG
   else:
     #no POST data yet -> show user creation form
     return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
+
+
+# make user the head of list #
+##############################
+@permission_required('cms.MEMBER')
+def make_head(r,user):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('make head-of-list','/profile/make_head/'),
+               ) )
+ 
+  M = get_member_from_username(user)
+  old_H = M.head_of_list
+  new_H = User.objects.get(username=user)
+
+  #set new head-of-list
+  M.head_of_list = new_H
+  M.save()
+  M.users.add(old_H) #add old head to users
+  M.users.remove(new_H) #remove new head from users
+
+  #set perms
+  set_cms_perms(new_H) #set perms for new head
+  set_cms_perms(old_H,True) #remove perms for old head
+
+
+  title = settings.TEMPLATE_CONTENT['profile']['make_head']['title'].format(id=M.id)
+  template = settings.TEMPLATE_CONTENT['profile']['make_head']['template']
+  message = settings.TEMPLATE_CONTENT['profile']['make_head']['message'].format(head=gen_fullname(M.head_of_list))
+
+  return render(r,template, {
+			'title'		: title,
+			'message'	: message,
+	       })
+
+
+
+# make user the delegate #
+##########################
+@permission_required('cms.MEMBER')
+def make_delegate(r,user):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('make delegate','/profile/make_delegate/'),
+               ) )
+ 
+  M = get_member_from_username(user)
+  old_D = M.delegate
+  new_D = User.objects.get(username=user)
+
+  #set new delegate
+  M.delegate = new_D
+  M.save()
+  if old_D: M.users.add(old_D) #add old delegate to users
+  M.users.remove(new_D) #remove new delegate from users
+
+  #set perms
+  if old_D: set_cms_perms(old_D,True) #remove perms for old delegate
+  set_cms_perms(new_D) #set perms for new delegate
+
+
+  title = settings.TEMPLATE_CONTENT['profile']['make_delegate']['title'].format(id=M.id)
+  template = settings.TEMPLATE_CONTENT['profile']['make_delegate']['template']
+  message = settings.TEMPLATE_CONTENT['profile']['make_delegate']['message'].format(head=gen_fullname(M.delegate))
+
+  return render(r,template, {
+			'title'		: title,
+			'message'	: message,
+	       })
 
 
 # remove user #

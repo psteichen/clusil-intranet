@@ -54,8 +54,11 @@ def add_group(u,g):
 
 
 def set_cms_perms(user,remove=False):
+  from django.contrib.auth.models import Permission
+
   is_hol_d = Permission.objects.get(codename='MEMBER')
+  user.user_permissions.add(is_hol_d)
+  user.is_active = True
   if remove: user.user_permissions.remove(is_hol_d)
-  else: user.user_permissions.add(is_hol_d)
   user.save()
 

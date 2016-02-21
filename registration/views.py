@@ -171,6 +171,7 @@ class RegistrationWizard(SessionWizardView):
           for u in mu_fs:
             user = u.save(commit=False)
             user.username = gen_username(user.first_name,user.last_name)
+            user.is_active = False
             user.password = make_password(gen_random_password())
             user.save()
             Us.append(user)

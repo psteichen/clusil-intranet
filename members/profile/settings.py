@@ -60,7 +60,7 @@ PROFILE_TMPL_CONTENT = {
     'submit'   		: 'Add',
     'done': {
       'template'	: 'done.html',
-      'title'     	: 'User added.',
+      'title'     	: 'User [{user}] added.',
       'no_org'		: '<p>Your membership type does only allow one(1) User.</p>',
       'max'		: '''<p>You already have the maximum of allowed Users for your Membership type.</p>
 <p>If you want more Users, you'll have to get the next membership level: <a href="/profile/upgrade/">Upgrade membership</a>.</p>''',
@@ -75,6 +75,16 @@ PROFILE_TMPL_CONTENT = {
       'template'	: 'done.html',
       'title'     	: 'User affiliated.',
     },
+  },
+  'make_head': {
+    'template'		: 'done.html',
+    'title'     	: 'Changed Head of List for [{id}]',
+    'message'     	: '{head} is now your new Head of List!',
+  },
+  'make_delegate': {
+    'template'		: 'done.html',
+    'title'     	: 'Changed Delegate for [{id}]',
+    'message'     	: '{head} is now your new Delegate!',
   },
   'rmuser': {
     'template'		: 'form.html',

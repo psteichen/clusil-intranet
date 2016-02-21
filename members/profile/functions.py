@@ -49,9 +49,7 @@ def member_initial_data(member):
     'pc'	: member.address.postal_code,
     'town'	: member.address.town,
     'country'	: get_country_from_address(member.address),
-    'hol'	: member.head_of_list,
   }
-  if member.delegate: member_data['d'] = member.delegate
   if member.type == Member.STD: member_data['sp'] = member.student_proof
 
   return member_data

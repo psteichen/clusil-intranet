@@ -61,10 +61,9 @@
           <td><em>{{ member.head_of_list.username }}</em></td>
           <td><em>{{ member.head_of_list.wgs }}</em></td>
           <td>
-	    <div class="btn-group">
-	      <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ member.head_of_list.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
-	      <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ member.head_of_list.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
-            </div>
+	    <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ member.head_of_list.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
+	    <a class="btn btn-sm btn-warning" role="button" href="/profile/make_delegate/{{ member.head_of_list.username }}/" title="Assign as Delegate"><span class="glyphicon glyphicon-queen"></span></a>
+	    <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ member.head_of_list.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
           </td>
          </tr>
          {% if member.delegate %}
@@ -75,10 +74,9 @@
            <td><em>{{ member.delegate.username }}</em></td>
            <td><em>{{ member.delegate.wgs }}</em></td>
            <td>
-	     <div class="btn-group">
-	       <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ member.delegate.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
-	       <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ member.delegate.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
-            </div>
+	     <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ member.delegate.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
+	    <a class="btn btn-sm btn-success" role="button" href="/profile/make_head/{{ member.delegate.username }}/" title="Assign as Head of List"><span class="glyphicon glyphicon-king"></span></a>
+	     <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ member.delegate.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
 	   </td>
           </tr>
          {% endif %}
@@ -91,10 +89,10 @@
           <td>{{ u.username }}</td>
           <td>{{ u.wgs }}</td>
           <td>
-	    <div class="btn-group">
-	      <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ u.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
-	      <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ u.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
-            </div>
+	    <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ u.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
+	    <a class="btn btn-sm btn-success" role="button" href="/profile/make_head/{{ u.username }}/" title="Assign as Head of List"><span class="glyphicon glyphicon-king"></span></a>
+	    <a class="btn btn-sm btn-warning" role="button" href="/profile/make_delegate/{{ u.username }}/" title="Assign as Delegate"><span class="glyphicon glyphicon-queen"></span></a>
+	    <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ u.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
           </td>
          </tr>
          {% endfor %}

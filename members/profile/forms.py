@@ -15,8 +15,6 @@ class ProfileForm(Form):
   pc		= CharField(label='Address (postal code)',required=False)
   town		= CharField(label='Address (town)',required=False)
   country	= CharField(label='Address (country)',required=False)
-  hol 		= ChoiceField(label='Head of List',choices=(),required=False)
-  d 		= ChoiceField(label='Delegate',choices=(),required=False)
   sp		= FileField(label='Student proof',required=False)
 
 class UserCreationForm(UserCreationForm):

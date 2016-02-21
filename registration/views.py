@@ -131,7 +131,7 @@ class RegistrationWizard(SessionWizardView):
 
     m_id = gen_member_id()
 
-    M = O = A = U = D = Gs = None
+    M = lvl = O = A = U = D = Gs = None
     Us = []
 
     t_f = form_dict['type']
@@ -149,6 +149,9 @@ class RegistrationWizard(SessionWizardView):
         o = a_f.cleaned_data['organisation']
         O = Organisation(name=o,address=A)
         O.save()
+  
+        #get nb of users
+        lvl = int(h_f.cleand_data['more'])+1 #add one for head-of-list
 
         # delegate
         delegate = h_f.cleaned_data['delegate']
@@ -189,6 +192,9 @@ class RegistrationWizard(SessionWizardView):
       # add address and head_of_list to Member model
       M.address=A
       M.head_of_list=U
+
+      #set the level (number of users) for ORG type
+      if lvl: M.lvl=lvl
 
       # add delegate if exists
       if D != None: M.delegate=D

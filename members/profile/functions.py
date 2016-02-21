@@ -74,6 +74,14 @@ def get_user_choice_list(member):
   return tuple(user_list)
 
 
+def member_is_full(member):
+  users = member.users.count() + 1
+  if member.delegate: users += 1
+  if users >= member.lvl: return True
+  else: return False
+
+
+#old stuff
 def is_hol_d(mid,u):
   h = Member.objects.filter(pk=mid, head_of_list=u).exists()
   d = Member.objects.filter(pk=mid, delegate=u).exists()
@@ -113,9 +121,4 @@ def manip_changed_data(c,m=0):
   output += ' ]'
   return output
 
-def member_is_full(mid):
-  m = Member.objects.get(pk=mid)
-  users = m.users.count()
-  if users >= 6: return True
-  else: return False
 

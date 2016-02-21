@@ -10,8 +10,9 @@ urlpatterns = patterns('',
 
   #actions
   url(r'^modify/$', modify, name='modify'),
-  url(r'^adduser/(?P<user>.+?)/$', adduser, name='adduser'),
+  url(r'^chg_hol_d/$', chg_hol_d, name='chg_hol_d'),
+  url(r'^adduser/$', adduser, name='adduser'),
+
   url(r'^affiluser/(?P<user>.+?)/$', affiluser, name='affiluser'),
   url(r'^rmuser/(?P<user>.+?)/$', rmuser, name='rmuser'),
-  url(r'^chg_hol_d/$', chg_hol_d, name='chg_hol_d'),
 )

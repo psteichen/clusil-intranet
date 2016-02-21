@@ -56,6 +56,19 @@ class Member(Model):
     (STD, 'Student'),
   )
 
+  SINGLE 	= 1
+  ORG_6 	= 6
+  ORG_12 	= 12
+  ORG_18 	= 18
+  ORG_OPEN 	= 99
+  MEMBER_LEVELS = (
+    (SINGLE, 	'single'),
+    (ORG_6, 	'6 users'),
+    (ORG_12, 	'12 users'),
+    (ORG_18, 	'18 users'),
+    (ORG_OPEN, 	'more users'),# needs to be set manually
+  )
+
   REG = 0
   ACT = 1
   INA = 2
@@ -69,6 +82,7 @@ class Member(Model):
 
   id 		= CharField(max_length=25,primary_key=True)
   type 		= IntegerField(choices=MEMBER_TYPES)
+  lvl 		= IntegerField(choices=MEMBER_LEVELS,default=SINGLE)
   status      	= IntegerField(choices=STATUSES,default=REG) 
   organisation 	= ForeignKey(Organisation,blank=True,null=True)
   address	= ForeignKey(Address,blank=True,null=True)

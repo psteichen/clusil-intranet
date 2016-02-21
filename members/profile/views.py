@@ -13,7 +13,7 @@ from members.functions import add_group, set_cms_perms
 from members.models import Member
 from members.groups.models import Group as WG, Affiliation
 
-from .functions import get_member_from_username, get_country_from_address, member_initial_data, get_user_choice_list
+from .functions import get_member_from_username, get_country_from_address, member_initial_data, get_user_choice_list, member_is_full
 from .forms import ProfileForm, MemberFormReadOnly, ShortMemberFormReadOnly, WGFormRadio, WGFormCheckBox, UserCreationForm, UserChangeForm, MemberUsersForm, HolForm, DForm
 
 ################
@@ -174,30 +174,21 @@ def adduser(r): # only if membership-type is ORG
 		   })
 
   else: #no POST data yet, do pre-check or send to form if all fine
-    OUT=0
-    #prepare message
-    message_content = {
-      'MEMBER': unicode(M),
-      'QUESTIONS': settings.MAIL_CONFIRMATION['default']['questions'],
-      'SALUTATION': settings.MAIL_CONFIRMATION['default']['salutation'],
-    }
+    message=False
     # if not ORG type -> something phishy -> out!
     if M.type != Member.ORG:
-      OUT=1
-      message_content['MSG'] = 'You membership type does only allow one(1) User.'
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['no_org']
 
-    # if already 6 users exist -> out!
-    if member_is_full(m_id): 
-      OUT=1
-      message_content['MSG'] = '''You already have the maximum of allowed Users for your Membership type.
-If you want more Users, you'll have to get the next membership level: <a href="">Upgrade membership</a>.'''
+    # if max users exist -> out!
+    if member_is_full(M): 
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['max']
 
-    if OUT == 1:
-       message = render_to_string(settings.TEMPLATE_CONTENT['profile']['adduser']['error_template'],message_content)
+    if message:
       return render(r,done_template, {
 				'title'		: title,
 				'message'	: message,
 			      })
+
     else:
       #show user creation form
       return render(r,done_template, {

@@ -15,7 +15,7 @@ REGISTRATION_TMPL_CONTENT = {
       'desc'   		: '''CLUSIL memberships come in 3 variants: 
 <ul>
  <li>Individual (1 user:  100€) ;</li>
- <li>Organisation (per group 6 users: 400€) ;</li>
+ <li>Organisation (per group of 6 users: 400€) ;</li>
  <li>Student (1 user: 25€ [student proof required])</li>
 </ul>''',  
       'next'    	: 'next',
@@ -78,8 +78,11 @@ Looking forward to meet you at one of our next events or working groups.
     'email' : {
       'template' 	: 'validation.txt',
       'org_msg'		: u'''
-As \'head-of-list\' for your organisation ({orga}), you have the privilege to manage the Member account and add further users (up to 6 in total). 
-You\'re also our prefered contact person and will get regular information and/or invitations to our events.''',
-    },
+As \'head-of-list\' for your organisation ({orga}), you\'re our prefered contact person and will get regular information and/or invitations to our events. You (and your delegate, if identified) have the privilege to manage the Member account and registered users.''',
+       'users_msg'	: u'''
+Find herebelow the list of all registered Users for this membership:
+{users}
+''',
+   },
   },
 }

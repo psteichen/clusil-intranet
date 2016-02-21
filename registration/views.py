@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib.auth.models import Permission
+from django.contrib.auth.hashers import make_password
 
 from cms.functions import show_form, notify_by_email, replicate_to_ldap
 
@@ -18,7 +19,7 @@ from members.models import Member, Organisation, Address, Role
 from members.groups.models import Group, Affiliation
 
 from .models import Registration
-from .functions import gen_member_id, add_to_groups, gen_member_fullname, gen_username, gen_random_password, gen_hash, gen_confirmation_link
+from .functions import gen_member_id, add_to_groups, gen_member_fullname, gen_username, gen_random_password, gen_hash, gen_confirmation_link, gen_user_list
 
 
 ##
@@ -82,7 +83,7 @@ class RegistrationWizard(SessionWizardView):
           del form.fields['first_name']
           del form.fields['last_name']
           del form.fields['email']
-        if ty == Member.IND or ty == Member.STD:
+        if ty != Member.ORG:
           del form.fields['organisation']
 
     if step == 'head':
@@ -100,7 +101,7 @@ class RegistrationWizard(SessionWizardView):
       t_data = self.get_cleaned_data_for_step('type') or False
       if t_data:
         ty = int(t_data['member_type'])
-        if ty == Member.IND or ty == Member.STD:
+        if ty != Member.ORG:
           del form.fields['delegate']
           del form.fields['more']
 
@@ -167,7 +168,7 @@ class RegistrationWizard(SessionWizardView):
           for u in mu_fs:
             user = u.save(commit=False)
             user.username = gen_username(user.first_name,user.last_name)
-            user.password = gen_random_password()
+            user.password = make_password(gen_random_password())
             user.save()
             Us.append(user)
 
@@ -221,9 +222,6 @@ class RegistrationWizard(SessionWizardView):
 				'message': settings.TEMPLATE_CONTENT['error']['email'],
 		     })
 
-      # generate invoice (this will generate and send the invoice implicitly)
-#      generate_invoice(M)
-
       head = False
       if int(M.type) == int(Member.ORG): head = True
    
@@ -248,6 +246,7 @@ def validate(r, val_hash):
   error_message		= settings.TEMPLATE_CONTENT['reg']['validate']['error_message']
   email_template	= settings.TEMPLATE_CONTENT['reg']['validate']['email']['template']
   org_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['org_msg']
+  users_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['users_msg']
 
   try:
     # if hash code match: it's a member to be validated
@@ -277,6 +276,9 @@ def validate(r, val_hash):
     M.status = Member.ACT
     M.save()
 
+    # generate invoice (this will generate and send the invoice)
+#      generate_invoice(M)
+
     message = done_message.format(name=gen_member_fullname(M),member_id=M.pk)
 
     #notify by email
@@ -287,7 +289,9 @@ def validate(r, val_hash):
         'USERNAME'	: M.head_of_list.username,
         'CMS_URL'	: 'https://'+settings.ALLOWED_HOSTS[0]+'/',
     }
-    if M.type == Member.ORG: message_content['ORGANISATION']=org_msg.format(orga=M.organisation)
+    if M.type == Member.ORG: 
+      message_content['ORGANISATION']=org_msg.format(orga=M.organisation)
+      message_content['USERS']=users_msg.format(users=gen_user_list(M))
 
     #send email
     ok=notify_by_email('board',M.head_of_list.email,title,message_content,email_template)

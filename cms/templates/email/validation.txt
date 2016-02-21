@@ -8,7 +8,7 @@ Please include this ID in any communication with CLUSIL for best service experie
 
 The login ({{ USERNAME }}) you created enables you to manage your membership profile via our CMS (Club Management System) platform, available at: {{ CMS_URL }}
 {{ ORGANISATION }}
-
+{{ USERS }}
 {{ SALUTATION }}
 
 --

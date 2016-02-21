@@ -60,10 +60,27 @@ def gen_member_fullname(m):
     fn += ' (' + unicode(m.organisation) + ')'
   return fn
 
+# gen fullname for a user
+def gen_user_fullname(u):
+  fn = u.first_name + ' ' + unicode.upper(u.last_name) + ' ('+ u.email + ')'
+  return fn
+
 def gen_confirmation_link(code):
   from os import path
   c_url = path.join(settings.REG_VAL_URL, code + '/')
   return c_url
+
+def gen_user_list(member):
+  out = ''
+  out += '''
+     Head-of-list: '''+gen_user_fullname(member.head_of_list)
+  if member.type == Member.ORG:
+    if member.delegate: out += '''
+     Delegate: '''+gen_user_fullname(member.delegate)
+    for u in member.users.all(): out += '''
+     '''+gen_user_fullname(u)
+  
+  return out
 
 ## user creation functions:
 def login_exists(username):

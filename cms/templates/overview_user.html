@@ -1,0 +1,14 @@
+<div class="overview">
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h4 class="panel-head">Admin profile</h4>
+  </div>
+  <div class="panel-body">
+    <p>{{ user.first_name }} {{ user.last_name|upper }}</p>
+    <p>{{ user.email }}</p>
+    {% if user.is_staff %}
+        <a href="/admin/" target="_blank">Connect to admin-console</a>
+    {% endif %}
+  </div>
+</div>
+</div>

@@ -30,15 +30,20 @@ def profile(r):
                ) )
 
   M = get_member_from_username(r.user.username)
-  title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
-  actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
-  if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
-  overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template'], { 
-                   		'title'		: title,
-				'member'	: M, 
-				'country'	: get_country_from_address(M.address), 
-				'actions'	: actions, 
-			     })
+  if M != None:  
+    title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
+    actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
+    if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
+    overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template'], { 
+                   			'title'		: title,
+					'member'	: M, 
+					'country'	: get_country_from_address(M.address), 
+					'actions'	: actions, 
+				})
+  else: #none-member login, probably an admin
+    overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['user_overview']['template'], { 
+					'user'	: r.user, 
+				})
 
   return render(r, settings.TEMPLATE_CONTENT['profile']['profile']['template'], {
                    'overview'	: overview,
@@ -183,39 +188,17 @@ def adduser(r): # only if membership-type is ORG
 # affiliate user #
 ##################
 @permission_required('cms.MEMBER')
-def affiluser(r,user): # only if membership-type is ORG
+def affiluser(r,user):
 #TODO!
-  init_data = initial_data(r)
-  m_id = init_data['member_data']['member_id']
-  m_type = init_data['member_data']['member_type']
 
   if r.POST:
-    users = r.POST.getlist('users')
-    for u in users:
-      try:
-        #desactivate
-	U = User.objects.get(pk=u)
- 
-        message_content = {
-          'FULLNAME': U.first_name + ' ' + unicode.upper(U.last_name),
-          'LOGIN': U.username,
-          'HOL_D': r.user.first_name + ' ' + unicode.upper(r.user.last_name),
-        }
-        subject=settings.MAIL_CONFIRMATION['rmuser']['subject'] % U.username
-	to=U.email
-
-        #delete user
-        U.delete()
-
-        confirm_by_email(subject, to, settings.MAIL_CONFIRMATION['rmuser']['template'], message_content,None,r.user.email) # copy user that did the action, aka HOL_D
-
-        return render(r,'done.html', {'mode': 'deactivating a User', 'message': render_to_string(settings.MAIL_CONFIRMATION['rmuser']['template'], message_content)}) 
-
-      except User.DoesNotExist:
-        return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit'], 'error_message': settings.TEMPLATE_CONTENT['error']['rm']})
   else:
-    #no POST data yet -> show user creation form
-    return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
+    #no POST data yet -> show working groups form
+    return render(r,done_template, {
+			'title'	: title,
+  			'desc'	: settings.TEMPLATE_CONTENT['profile']['affiluser']['desc'],
+			'form'	: WGFormCheckBox(),
+		   })
 
 
 # make user the head of list #

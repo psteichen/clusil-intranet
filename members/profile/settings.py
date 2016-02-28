@@ -40,6 +40,14 @@ PROFILE_TMPL_CONTENT = {
       'role'            : u'Role',
       'affil'          	: u'Affiliation',
     },
+    'user_overview' : {
+      'template'        : 'overview_user.html',
+      'firstname'       : u'Firstname',
+      'name'            : u'Name',
+      'login'        	: u'Login',
+      'email'           : u'E-mail',
+      'role'            : u'Role',
+    },
   },
   'modify': {
     'template'		: 'form.html',

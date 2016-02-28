@@ -87,7 +87,16 @@ class ShortMemberFormReadOnly(ModelForm):
     fields = ( 'member_id', 'member_type', 'organisation', 'firstname', 'lastname', 'email', )
 
 class WGFormCheckBox(Form):
-  wg = ModelChoiceField(queryset=WG.objects.only('acronym').exclude(acronym='main').exclude(acronym='board').exclude(acronym__contains='leader').exclude(acronym="clusix"),widget=CheckboxSelectMultiple(),label='Working Group',empty_label=None)
+  wg = ModelChoiceField(
+		queryset=WG.objects.only('acronym')
+				.exclude(acronym='main')
+				.exclude(acronym='board')
+				.exclude(acronym__contains='leader')
+				.exclude(acronym="clusix"),
+		widget=CheckboxSelectMultiple(),
+		label='Working Group',
+		empty_label=None
+	)
 
 class WGFormRadio(Form):
   wg = ModelChoiceField(queryset=WG.objects.only('acronym').exclude(acronym='main').exclude(acronym='board').exclude(acronym__contains='leader').exclude(acronym="clusix"),widget=RadioSelect(),label='Working Group',empty_label=None)

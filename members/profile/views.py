@@ -14,7 +14,7 @@ from members.models import Member
 from members.groups.models import Group as WG, Affiliation
 
 from .functions import get_member_from_username, get_country_from_address, member_initial_data, get_user_choice_list, member_is_full
-from .forms import ProfileForm, MemberFormReadOnly, ShortMemberFormReadOnly, WGFormRadio, WGFormCheckBox, UserCreationForm, UserChangeForm, MemberUsersForm, HolForm, DForm
+from .forms import ProfileForm, WGFormRadio, WGFormCheckBox, UserCreationForm, UserChangeForm
 
 ################
 # MEMBER views #
@@ -189,9 +189,34 @@ def adduser(r): # only if membership-type is ORG
 ##################
 @permission_required('cms.MEMBER')
 def affiluser(r,user):
-#TODO!
+
+  M = get_member_from_username(user)
+  title = settings.TEMPLATE_CONTENT['profile']['affiluser']['title'].format(id=M.id)
+  done_template = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['template']
 
   if r.POST:
+    wgf = WGFormCheckBox(r.POST)
+    if wgf.is_valid():
+      # get selected wgs and affiliate to user
+      WGs = wgf.cleaned_data['wg']
+      for wg in WGs: 
+        a = Affiliation(user,wg)
+        a.save()
+
+      #all fine -> show working groups form
+      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(user=gen_fullname(U),wgs=WGsWGs)
+      return render(r,done_template, {
+			'title'		: title,
+			'message'	: message,
+		   })
+
+    else: #from not valid -> error
+      return render(r,done_template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in wgf.errors]),
+		   })
+
+
   else:
     #no POST data yet -> show working groups form
     return render(r,done_template, {

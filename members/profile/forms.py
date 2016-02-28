@@ -23,69 +23,7 @@ class UserCreationForm(UserCreationForm):
     model = User
     fields = ('first_name', 'last_name', 'email', )
 
-
-#old stuff below
-class MultiValueTextarea(Textarea): 
-  def render(self, name, value, attrs=None):
-    if value is None: value = ''
-    else: 
-      out=''
-      for f,l in value.values_list('first_name','last_name'):
-        out += ' ' + f + ' ' + unicode.upper(l) + ' \n'
-      #out = out.strip(';').strip() 
-
-    final_attrs = self.build_attrs(attrs, name=name)
-
-    from django.forms.util import flatatt
-    from django.utils.html import conditional_escape
-    from django.utils.encoding import force_unicode
-    from django.utils.safestring import mark_safe
-
-    return mark_safe(u'<textarea%s>%s</textarea>' % (flatatt(final_attrs),
-                     conditional_escape(force_unicode(out))))
-
   
-class MemberForm(ModelForm):
-  member_id = CharField(label='Member-ID',widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  member_type = CharField(label='Membership-type',widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  head_of_list = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  delegate = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  users = CharField(label='Users:', widget=MultiValueTextarea(attrs={'readonly': 'readonly', 'class': 'readonly', 'cols': 25, 'rows': 8}))
-
-  class Meta:
-    model = Member
-    exclude = ()
-
-class MemberFormReadOnly(ModelForm):
-  member_id = CharField(label='Member-ID',widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  member_type = CharField(label='Membership-type',widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  firstname = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  lastname = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  email = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  organisation = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  address = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  postal_code = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  town = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  country = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  head_of_list = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  delegate = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  student_proof = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  class Meta:
-    model = Member
-    exclude = ( 'users', )
-
-class ShortMemberFormReadOnly(ModelForm):
-  member_id = CharField(label='Member-ID',widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  member_type = CharField(label='Membership-type',widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  organisation = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  firstname = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  lastname = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-  email = CharField(widget=TextInput(attrs={'readonly': 'readonly','class': 'readonly'}))
-
-  class Meta:
-    model = Member
-    fields = ( 'member_id', 'member_type', 'organisation', 'firstname', 'lastname', 'email', )
-
 class WGFormCheckBox(Form):
   wg = ModelChoiceField(
 		queryset=WG.objects.only('acronym')

@@ -44,7 +44,7 @@ class Group(Model):
   status      	= IntegerField(choices=STATUSES,default=ACT) 
 
   def __unicode__(self):
-    return '[' + self.TYPES[self.type][1] +'] ' + unicode.upper(self.acronym) + ' - ' + self.title
+    return '[' + self.TYPES[self.type][1] +'] ' + unicode.upper(self.acronym) + ' (' + self.title + ')'
 
 
 # Affiliation (user to group) model
@@ -55,9 +55,9 @@ class Affiliation(Model):
   def __unicode__(self):
     g=u' - '
     try:
-      g = self.group.acronym
+      g += unicode(self.group)
     except: pass
-    return gen_fullname(self.user) + unicode.upper(g)
+    return gen_fullname(self.user) + g
 
   class Meta:
     unique_together = ( 'user', 'group', )

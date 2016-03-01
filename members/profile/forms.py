@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, User
 from django.contrib.auth.models import User
 
 from members.models import Member
-from members.groups.models import Group as WG
+from members.groups.models import Group
 
 #member profile form for modify view
 class ProfileForm(Form):
@@ -24,20 +24,27 @@ class UserCreationForm(UserCreationForm):
     fields = ('first_name', 'last_name', 'email', )
 
   
-class WGFormCheckBox(Form):
-  wg = ModelChoiceField(
-		queryset=WG.objects.only('acronym')
-				.exclude(acronym='main')
-				.exclude(acronym='board')
-				.exclude(acronym__contains='leader')
-				.exclude(acronym="clusix"),
+class AffiliateForm(Form):
+  wgs = ModelChoiceField(
+		queryset=Group.objects.filter(type=Group.WG).filter(status=Group.ACT),
 		widget=CheckboxSelectMultiple(),
-		label='Working Group',
+		label='Working Groups',
+		empty_label=None
+	)
+  ags = ModelChoiceField(
+		queryset=Group.objects.filter(type=Group.AG).filter(status=Group.ACT),
+		widget=CheckboxSelectMultiple(),
+		label='Ad-hoc Groups',
+		empty_label=None
+	)
+  tools = ModelChoiceField(
+		queryset=Group.objects.filter(type=Group.TL).filter(status=Group.ACT),
+		widget=CheckboxSelectMultiple(),
+		label='Tools',
 		empty_label=None
 	)
 
-class WGFormRadio(Form):
-  wg = ModelChoiceField(queryset=WG.objects.only('acronym').exclude(acronym='main').exclude(acronym='board').exclude(acronym__contains='leader').exclude(acronym="clusix"),widget=RadioSelect(),label='Working Group',empty_label=None)
+
 
 class UserChangeForm(UserChangeForm):
   username = CharField(label='Username',widget=TextInput(attrs={'readonly': 'readonly', 'class': 'readonly'}))

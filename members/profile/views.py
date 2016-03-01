@@ -14,7 +14,7 @@ from members.models import Member
 from members.groups.models import Group as WG, Affiliation
 
 from .functions import get_member_from_username, get_country_from_address, member_initial_data, get_user_choice_list, member_is_full
-from .forms import ProfileForm, WGFormRadio, WGFormCheckBox, UserCreationForm, UserChangeForm
+from .forms import ProfileForm, AffiliateForm, UserCreationForm, UserChangeForm
 
 ################
 # MEMBER views #
@@ -192,19 +192,29 @@ def affiluser(r,user):
 
   M = get_member_from_username(user)
   title = settings.TEMPLATE_CONTENT['profile']['affiluser']['title'].format(id=M.id)
+  template = settings.TEMPLATE_CONTENT['profile']['affiluser']['template']
   done_template = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['template']
 
   if r.POST:
-    wgf = WGFormCheckBox(r.POST)
-    if wgf.is_valid():
+    af = AffiliateForm(r.POST)
+    if af.is_valid():
       # get selected wgs and affiliate to user
-      WGs = wgf.cleaned_data['wg']
+      WGs = af.cleaned_data['wgs']
+      AGs = af.cleaned_data['ags']
+      TLs = af.cleaned_data['tools']
       for wg in WGs: 
         a = Affiliation(user,wg)
         a.save()
+      for ag in AGs: 
+        a = Affiliation(user,ag)
+        a.save()
+      for tl in TLs: 
+        a = Affiliation(user,tl)
+        a.save()
+
 
       #all fine -> show working groups form
-      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(user=gen_fullname(U),wgs=WGsWGs)
+      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(user=gen_fullname(U),affils=af.cleaned_data)
       return render(r,done_template, {
 			'title'		: title,
 			'message'	: message,
@@ -213,16 +223,17 @@ def affiluser(r,user):
     else: #from not valid -> error
       return render(r,done_template, {
 			'title'		: title,
-                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in wgf.errors]),
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in af.errors]),
 		   })
 
 
   else:
     #no POST data yet -> show working groups form
-    return render(r,done_template, {
+    return render(r,template, {
 			'title'	: title,
   			'desc'	: settings.TEMPLATE_CONTENT['profile']['affiluser']['desc'],
-			'form'	: WGFormCheckBox(),
+  			'submit': settings.TEMPLATE_CONTENT['profile']['affiluser']['submit'],
+			'form'	: AffiliateForm(),
 		   })
 
 

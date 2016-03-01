@@ -8,17 +8,31 @@ class Group(Model):
   MG = 0
   WG = 1
   AG = 2
+  TL = 3
   TYPES = (
     (MG, 'Management Group'), #only for specific members
     (WG, 'Working Group'),
     (AG, 'Ad-Hoc Group'),
+    (TL, 'Tool'),
+  )
+
+
+  CMS    = 0
+  CLOUD  = 1
+  COLLAB = 2
+  TOOLS = (
+    (CMS    , 'cms'),
+    (CLOUD  , 'cloud'),
+    (COLLAB , 'collab'),
   )
 
   ACT = 0
-  STB = 1
-  OLD = 2
+  SPL = 1
+  STB = 2
+  OLD = 3
   STATUSES = (
     (ACT, 'active'),
+    (SPL, 'special'), #inactive
     (STB, 'standby'), #inactive
     (OLD, 'archived'), #not used any more
   )

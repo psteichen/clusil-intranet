@@ -76,12 +76,13 @@ PROFILE_TMPL_CONTENT = {
   },
   'affiluser': {
     'template'		: 'form.html',
-    'title'     	: 'Affiliate User',
-    'desc'     		: 'Affiliate a User to a Working Group or Tool',
+    'title'     	: 'Affiliate {name}',
+    'desc'     		: 'Procede to affiliate <i>{name}</i> to a Working Group, Ad-Hoc Group or Tool',
     'submit'   		: 'Affiliate',
     'done': {
       'template'	: 'done.html',
-      'title'     	: 'User affiliated.',
+      'title'     	: '{name} successfully affiliated.',
+      'message'     	: 'User <i>{name}</i> is now affiliated to the following groups: <b>{groups}</b>',
     },
   },
   'make_head': {

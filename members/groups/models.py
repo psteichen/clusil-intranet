@@ -1,7 +1,7 @@
 from django.db.models import Model, IntegerField, CharField, ForeignKey
 from django.contrib.auth.models import User
 
-from members.functions import gen_fullname
+from members.functions import gen_fulluser
 
 # Group (board, working group, etc.) model
 class Group(Model):
@@ -32,7 +32,7 @@ class Group(Model):
   OLD = 3
   STATUSES = (
     (ACT, 'active'),
-    (SPL, 'special'), #inactive
+    (SPL, 'special'), #special
     (STB, 'standby'), #inactive
     (OLD, 'archived'), #not used any more
   )
@@ -57,7 +57,7 @@ class Affiliation(Model):
     try:
       g += unicode(self.group)
     except: pass
-    return gen_fullname(self.user) + g
+    return gen_fulluser(self.user) + g
 
   class Meta:
     unique_together = ( 'user', 'group', )

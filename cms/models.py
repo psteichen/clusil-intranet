@@ -27,6 +27,10 @@ class User(models.Model):
       ('MEMBER'		, 'CLUSIL member'),
     )
 
+  def get_affiliations(self):
+    from groups.models import get_affiliations
+    return get_affiliations(self)
+
 
 #LDAP stuff
 from ldapdb.models.fields import CharField, DateField, ImageField, ListField, IntegerField, FloatField

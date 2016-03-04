@@ -1,5 +1,4 @@
 
-
 def get_members_to_validate():
   from .models import Member
   return Member.objects.filter(status=Member.REG)
@@ -9,6 +8,9 @@ def get_active_members():
   return Member.objects.filter(status=Member.ACT)
 
 def gen_fullname(user):
+  return unicode(user.first_name) + u' ' + unicode.upper(user.last_name)
+
+def gen_fulluser(user):
   return unicode(user.first_name) + u' ' + unicode.upper(user.last_name) + u' (' + unicode(user.email) + u')'
 
 def gen_member_initial(m):
@@ -62,3 +64,28 @@ def set_cms_perms(user,remove=False):
   if remove: user.user_permissions.remove(is_hol_d)
   user.save()
 
+
+def gen_user_line(r,u):
+  from groups.functions import get_affiliations
+  affil = get_affiliations(u)
+  ul = { 
+	 'role'		: r, 
+	 'first_name'	: u.first_name, 
+	 'last_name'	: u.last_name, 
+	 'email'	: u.email, 
+	 'username'	: u.username,
+	 'affil'	: affil,
+       }
+  return ul
+  
+def get_all_users_for_membership(m):
+  users = []
+  users.append(gen_user_line('hol',m.head_of_list))
+  try:
+    users.append(gen_user_line('del',m.delegate))
+    for u in m.users.all():
+      users.append(gen_user_line('u',u))
+  except:
+    pass
+ 
+  return users

@@ -48,6 +48,15 @@ def show_form(wiz,step,field,const):
   d = cleaned_data.get(field) or 666
   return int(d) == const
 
+def gen_form_errors(form):
+  output='<ul>'
+  for f in form:
+    for e in f.errors:
+      output+='<li><i>'+unicode(f.label)+'</i>:   <b>'+e+'</b></li>'
+
+  output+='</ul>'
+  return output
+
 ############################
 # LDAP (for SSO) FUNCTIONS #
 ############################

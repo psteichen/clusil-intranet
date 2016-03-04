@@ -5,3 +5,4 @@ django-password-reset
 reportlab
 django-recaptcha
 django-bootstrap3
+django-ldapdb

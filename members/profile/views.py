@@ -7,11 +7,15 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.template.loader import render_to_string
 
-from cms.functions import notify_by_email
+from django_tables2 import RequestConfig
 
-from members.functions import add_group, set_cms_perms, gen_fullname
+from cms.functions import notify_by_email, gen_form_errors
+
+from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership
 from members.models import Member
-from members.groups.models import Group as WG, Affiliation
+
+from members.groups.functions import affiliate, get_affiliations
+from members.groups.models import Group, Affiliation
 
 from .functions import get_member_from_username, get_country_from_address, member_initial_data, get_user_choice_list, member_is_full
 from .forms import ProfileForm, AffiliateForm, UserCreationForm, UserChangeForm
@@ -34,12 +38,15 @@ def profile(r):
     title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
     actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
     if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
+
     overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template'], { 
                    			'title'		: title,
 					'member'	: M, 
 					'country'	: get_country_from_address(M.address), 
 					'actions'	: actions, 
+					'users'		: get_all_users_for_membership(M), 
 				})
+
   else: #none-member login, probably an admin
     overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['user_overview']['template'], { 
 					'user'	: r.user, 
@@ -189,51 +196,64 @@ def adduser(r): # only if membership-type is ORG
 ##################
 @permission_required('cms.MEMBER')
 def affiluser(r,user):
-
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('affiliate user','/profile/affiluser/'+user),
+               ) )
+ 
   M = get_member_from_username(user)
-  title = settings.TEMPLATE_CONTENT['profile']['affiluser']['title'].format(id=M.id)
+  U = User.objects.get(username=user)
+  title = settings.TEMPLATE_CONTENT['profile']['affiluser']['title'].format(name=gen_fullname(U))
   template = settings.TEMPLATE_CONTENT['profile']['affiluser']['template']
+  done_title = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['title'].format(name=gen_fullname(U))
   done_template = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['template']
 
   if r.POST:
     af = AffiliateForm(r.POST)
-    if af.is_valid():
+    if af.is_valid() and af.has_changed():
       # get selected wgs and affiliate to user
       WGs = af.cleaned_data['wgs']
       AGs = af.cleaned_data['ags']
-      TLs = af.cleaned_data['tools']
+      TLs = af.cleaned_data['tls']
       for wg in WGs: 
-        a = Affiliation(user,wg)
-        a.save()
+        affiliate(U,wg)
       for ag in AGs: 
-        a = Affiliation(user,ag)
-        a.save()
+        affiliate(U,ag)
       for tl in TLs: 
-        a = Affiliation(user,tl)
-        a.save()
+        affiliate(U,tl)
 
 
       #all fine -> show working groups form
-      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(user=gen_fullname(U),affils=af.cleaned_data)
+      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(name=gen_fullname(U),groups=get_affiliations(U))
       return render(r,done_template, {
-			'title'		: title,
+			'title'		: done_title,
 			'message'	: message,
 		   })
 
     else: #from not valid -> error
       return render(r,done_template, {
 			'title'		: title,
-                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in af.errors]),
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ' + gen_form_errors(af),
 		   })
 
 
   else:
     #no POST data yet -> show working groups form
+    form = AffiliateForm()
+    Affils = Affiliation.objects.filter(user=U)
+    init = { 'wgs': [], 'ags': [], 'tls': [], }
+    for a in Affils:
+      if a.group.type == Group.WG: init['wgs'].append(a.group.pk)
+      if a.group.type == Group.AG: init['ags'].append(a.group.pk)
+      if a.group.type == Group.TL: init['tls'].append(a.group.pk)
+    form.initial = init
+
     return render(r,template, {
 			'title'	: title,
-  			'desc'	: settings.TEMPLATE_CONTENT['profile']['affiluser']['desc'],
+  			'desc'	: settings.TEMPLATE_CONTENT['profile']['affiluser']['desc'].format(name=gen_fullname(U)),
   			'submit': settings.TEMPLATE_CONTENT['profile']['affiluser']['submit'],
-			'form'	: AffiliateForm(),
+			'form'	: form,
 		   })
 
 
@@ -244,7 +264,7 @@ def make_head(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('make head-of-list','/profile/make_head/'),
+                       	('make head-of-list','/profile/make_head/'+user),
                ) )
  
   M = get_member_from_username(user)
@@ -280,7 +300,7 @@ def make_delegate(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('make delegate','/profile/make_delegate/'),
+                       	('make delegate','/profile/make_delegate/'+user),
                ) )
  
   M = get_member_from_username(user)
@@ -308,6 +328,7 @@ def make_delegate(r,user):
 	       })
 
 
+#TODO
 # remove user #
 ###############
 @permission_required('cms.MEMBER')
@@ -343,47 +364,6 @@ def rmuser(r,user): # only if membership-type is ORG
   else:
     #no POST data yet -> show user creation form
     return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
-
-
-# change head-of-list or delegate
-@permission_required('cms.MEMBER')
-def chg_hol_d(r):
-  init_data = initial_data(r)
-  m_id = init_data['member_data']['member_id']
-  m_type = init_data['member_data']['member_type']
-
-  if r.POST:
-    M = Member.objects.get(pk=m_id)
-    message_content= {
-      'MEMBER_ID': m_id,
-    }
-
-    hol_f = HolForm(r.POST)
-    d_f = DForm(r.POST)
-    if hol_f.is_valid():
-      H = hol_f.cleaned_data['head_of_list']
-      M.head_of_list=H
-
-      message_content['H_FULLNAME'] = H.first_name + ' ' + unicode.upper(H.last_name)
-      message_content['H_LOGIN'] = H.username
-      subject=settings.MAIL_CONFIRMATION['hol']['subject'] % H.first_name + ' ' + unicode.upper(H.last_name)
-      confirm_by_email(subject, H.email, settings.MAIL_CONFIRMATION['hol']['template'], message_content)
-
-    d_f = DForm(r.POST)
-    if d_f.is_valid():
-      D = d_f.cleaned_data['delegate']
-      M.delegate=D
-
-      message_content['D_FULLNAME'] = D.first_name + ' ' + unicode.upper(D.last_name)
-      message_content['D_LOGIN'] = D.username
-      subject=settings.MAIL_CONFIRMATION['deleg']['subject'] % D.first_name + ' ' + unicode.upper(D.last_name)
-      confirm_by_email(subject, H.email, settings.MAIL_CONFIRMATION['deleg']['template'], message_content)
-
-    M.save()
-    return render(r,'done.html', {'mode': 'changing head-of-list or delegate', 'message': render_to_string(settings.MAIL_CONFIRMATION['hol_d']['template'], message_content)}) 
-  else:
-    #no POST data yet -> show user creation form
-    return render(r,'dual_basic.html', {'title_1': settings.TEMPLATE_CONTENT['profile']['chg_hol_d']['title_1'], 'form_1': HolForm(initial=init_data['member_data']), 'title_2': settings.TEMPLATE_CONTENT['profile']['chg_hol_d']['title_2'], 'form_2': DForm(initial=init_data['member_data']),'submit': settings.TEMPLATE_CONTENT['profile']['chg_hol_d']['submit']})
 
 
 # invoice viewing

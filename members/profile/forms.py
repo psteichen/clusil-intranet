@@ -1,4 +1,4 @@
-from django.forms import  ModelForm, Form, CharField, Select, Textarea, ChoiceField, FileField, TextInput, ModelChoiceField, RadioSelect, CheckboxSelectMultiple
+from django.forms import  ModelForm, Form, CharField, Select, Textarea, ChoiceField, FileField, TextInput, ModelChoiceField, ModelMultipleChoiceField, RadioSelect, CheckboxSelectMultiple
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, UserChangeForm, ReadOnlyPasswordHashField
 from django.contrib.auth.models import User
 
@@ -24,24 +24,44 @@ class UserCreationForm(UserCreationForm):
     fields = ('first_name', 'last_name', 'email', )
 
   
+def gen_choices(ty):
+  choices=[]
+  Gs = None
+  if ty == 'wg': Gs = Group.objects.filter(type=Group.WG).filter(status=Group.ACT)
+  if ty == 'ag': Gs = Group.objects.filter(type=Group.AG).filter(status=Group.ACT)
+  if ty == 'tl': Gs = Group.objects.filter(type=Group.TL).filter(status=Group.ACT)
+  i=0
+  for g in Gs:
+    choices.append((g,unicode(g)))
+    i+=1
+
+  return tuple(choices)
+  
+  
 class AffiliateForm(Form):
-  wgs = ModelChoiceField(
+  wgs = ModelMultipleChoiceField(
 		queryset=Group.objects.filter(type=Group.WG).filter(status=Group.ACT),
 		widget=CheckboxSelectMultiple(),
 		label='Working Groups',
-		empty_label=None
+		required=False
 	)
-  ags = ModelChoiceField(
+#  wgs = ChoiceField(
+#		choices=gen_choices('wg'),
+#		widget=CheckboxSelectMultiple(),
+#		label='Working Groups',
+#		required=False
+#	)
+  ags = ModelMultipleChoiceField(
 		queryset=Group.objects.filter(type=Group.AG).filter(status=Group.ACT),
 		widget=CheckboxSelectMultiple(),
 		label='Ad-hoc Groups',
-		empty_label=None
+		required=False
 	)
-  tools = ModelChoiceField(
+  tls = ModelMultipleChoiceField(
 		queryset=Group.objects.filter(type=Group.TL).filter(status=Group.ACT),
 		widget=CheckboxSelectMultiple(),
 		label='Tools',
-		empty_label=None
+		required=False
 	)
 
 

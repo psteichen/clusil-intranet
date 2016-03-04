@@ -46,6 +46,7 @@
         <p>All users registered on this membership:</p>
         <table class="table table-condensed table-striped">
          <tr> {# headers #}
+          <th>Role</th>
           <th>Firstname</th>
           <th>Name</th>
           <th>Email</th>
@@ -54,45 +55,29 @@
           <th>Actions</th>
          </tr>
  
-         <tr class="text-success"> {# head of list #}
-          <td><em>{{ member.head_of_list.first_name }}</em></td>
-          <td><em>{{ member.head_of_list.last_name|upper }}</em></td>
-          <td><em>{{ member.head_of_list.email }}</em></td>
-          <td><em>{{ member.head_of_list.username }}</em></td>
-          <td><em>{{ member.head_of_list.wgs }}</em></td>
-          <td>
-	    <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ member.head_of_list.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
-	    <a class="btn btn-sm btn-warning" role="button" href="/profile/make_delegate/{{ member.head_of_list.username }}/" title="Assign as Delegate"><span class="glyphicon glyphicon-queen"></span></a>
-	    <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ member.head_of_list.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
-          </td>
-         </tr>
-         {% if member.delegate %}
-          <tr class="text-info"> {# delegate #}
-           <td><em>{{ member.delegate.first_name }}</em></td>
-           <td><em>{{ member.delegate.last_name|upper }}</em></td>
-           <td><em>{{ member.delegate.email }}</em></td>
-           <td><em>{{ member.delegate.username }}</em></td>
-           <td><em>{{ member.delegate.wgs }}</em></td>
-           <td>
-	     <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ member.delegate.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
-	    <a class="btn btn-sm btn-success" role="button" href="/profile/make_head/{{ member.delegate.username }}/" title="Assign as Head of List"><span class="glyphicon glyphicon-king"></span></a>
-	     <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ member.delegate.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
-	   </td>
-          </tr>
-         {% endif %}
-         {# all other users #}
-         {% for u in member.users.all %}
+         {% for u in users %}
          <tr>
+          <td>
+           {% if u.role == 'hol' %}<span class="glyphicon glyphicon-king text-success"></span>{% endif %}
+           {% if u.role == 'del' %}<span class="glyphicon glyphicon-queen text-info"></span>{% endif %}
+           {% if u.role == 'u' %}<span class="glyphicon glyphicon-user"></span>{% endif %}
+          </td>
           <td>{{ u.first_name }}</td>
           <td>{{ u.last_name|upper }}</td>
           <td>{{ u.email }}</td>
           <td>{{ u.username }}</td>
-          <td>{{ u.wgs }}</td>
+          <td>{{ u.affil|safe }}</td>
           <td>
-	    <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ u.username }}/" title="Affiliate User"><span class="glyphicon glyphicon-th-list"></span></a>
-	    <a class="btn btn-sm btn-success" role="button" href="/profile/make_head/{{ u.username }}/" title="Assign as Head of List"><span class="glyphicon glyphicon-king"></span></a>
-	    <a class="btn btn-sm btn-warning" role="button" href="/profile/make_delegate/{{ u.username }}/" title="Assign as Delegate"><span class="glyphicon glyphicon-queen"></span></a>
-	    <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ u.username }}/" title="Delete User"><span class="glyphicon glyphicon-minus"></span></a>
+            <div class="btn-group-vertical" role="group">
+	      <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ u.username }}/" title=""><span class="glyphicon glyphicon-th-list"></span>&nbsp;&nbsp;Affiliate User</a>
+              {% if u.role != 'hol' %}
+	        <a class="btn btn-sm btn-success" role="button" href="/profile/make_head/{{ u.username }}/" title=""><span class="glyphicon glyphicon-king"></span>&nbsp;&nbsp;Assign as Head of List</a>
+              {% endif %}
+              {% if u.role != 'del' %}
+	        <a class="btn btn-sm btn-warning" role="button" href="/profile/make_delegate/{{ u.username }}/" title=""><span class="glyphicon glyphicon-queen"></span>&nbsp;&nbsp;Assign as Delegate</a>
+              {% endif %}
+{#	      <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ u.username }}/" title=""><span class="glyphicon glyphicon-minus"></span>&nbsp;&nbsp;Delete User</a> #}
+            </div>
           </td>
          </tr>
          {% endfor %}

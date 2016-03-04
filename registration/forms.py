@@ -68,9 +68,10 @@ class StudentProofForm(Form):
     fields = ( 'student_proof', )
 
 class AffiliationForm(Form):
-  groups 	= ModelMultipleChoiceField(
-			queryset=Group.objects.only('acronym','title').exclude(acronym='default').exclude(acronym='board').exclude(acronym__contains='leader').exclude(acronym='clusix'),
-			widget=CheckboxSelectMultiple(),
-			label='Select Group affiliations',
-			required=False,
-		  )
+  groups = ModelMultipleChoiceField(
+		queryset=Group.objects.filter(type=Group.WG).filter(status=Group.ACT),
+		widget=CheckboxSelectMultiple(),
+		label='Select Group affiliations',
+		required=False
+	)
+

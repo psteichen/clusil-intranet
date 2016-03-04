@@ -151,7 +151,7 @@ class RegistrationWizard(SessionWizardView):
         O.save()
   
         #get nb of users
-        lvl = int(h_f.cleand_data['more'])+1 #add one for head-of-list
+        lvl = int(h_f.cleaned_data['more'])+1 #add one for head-of-list
 
         # delegate
         delegate = h_f.cleaned_data['delegate']

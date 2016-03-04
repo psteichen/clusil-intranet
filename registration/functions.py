@@ -46,12 +46,9 @@ def gen_member_id(add_randomness=False):
   return mid
 
 def add_to_groups(user,groups):
+  from members.groups.functions import affiliate
   for g in groups:
-    Affiliation(user=user,group=g)
-
-  #add to default group
-  d = Affiliation(user=user,group=Group(pk='main'))
-  d.save()
+    affiliate(user,g)
 
 # gen fullname (including organisation if there is)
 def gen_member_fullname(m):

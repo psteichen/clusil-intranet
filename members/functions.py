@@ -83,6 +83,9 @@ def get_all_users_for_membership(m):
   users.append(gen_user_line('hol',m.head_of_list))
   try:
     users.append(gen_user_line('del',m.delegate))
+  except:
+    pass
+  try:
     for u in m.users.all():
       users.append(gen_user_line('u',u))
   except:

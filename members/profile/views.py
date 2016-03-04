@@ -216,6 +216,7 @@ def affiluser(r,user):
       WGs = af.cleaned_data['wgs']
       AGs = af.cleaned_data['ags']
       TLs = af.cleaned_data['tls']
+#TODO: add ldap sync
       for wg in WGs: 
         affiliate(U,wg)
       for ag in AGs: 

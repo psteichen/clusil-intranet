@@ -3,6 +3,7 @@
 {% block content %}
 <div class="container-fluid">
 {% if title %}<h2>{{ title }}</h2>{% endif %}
+{% if desc %}<p>{{ desc }}</p>{% endif %}
   {% for part in actions %}
   {% if part.has_perms in perms or not part.has_perms %}
   <div class="col-sm-6">
@@ -12,6 +13,7 @@
       </div>
       <div class="panel-body">
         <center>
+        {% if part.desc %}<p class="lead">{{ part.desc }}</p>{% endif %}
         {% for action in part.actions %}
         {% if action.has_perms in perms or not action.has_perms %}
           {% if action.url %}

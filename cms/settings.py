@@ -273,23 +273,24 @@ HOME_ACTIONS = (
   },
   {
     'heading'		: 'Tools for Working Groups',
+    'desc'          	: 'coming soon...',
     'has_perms'		: 'cms.MEMBER',
     'actions' : (
-      {         
-        'label'         : 'Document Management', 
-        'glyphicon'     : 'glyphicon-folder-open',
-        'desc'          : 'Filesharing and document management platform (SeaFile based)',
-        'url'           : 'https://cloud.clusil.lu/',
-    	'has_perms'	: 'cms.MEMBER',
-      },
-      {         
-        'label'         : 'Team Collaboration', 
-        'glyphicon'     : 'glyphicon-comment',
-        'desc'          : 'Wiki, Workflows and Calendar platform (Confluence based)',
-        'url'           : 'https://collab.clusil.lu/',
-    	'has_perms'	: 'cms.MEMBER',
-      },
-
+#      {         
+#        'label'         : 'Document Management', 
+#        'glyphicon'     : 'glyphicon-folder-open',
+#        'desc'          : 'Filesharing and document management platform (SeaFile based)',
+#        'url'           : 'https://cloud.clusil.lu/',
+#    	'has_perms'	: 'cms.MEMBER',
+#      },
+#      {         
+#        'label'         : 'Team Collaboration', 
+#        'glyphicon'     : 'glyphicon-comment',
+#        'desc'          : 'Wiki, Workflows and Calendar platform (Confluence based)',
+#        'url'           : 'https://collab.clusil.lu/',
+#    	'has_perms'	: 'cms.MEMBER',
+#      },
+#
     ),
   },
   {

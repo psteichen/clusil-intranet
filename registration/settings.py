@@ -62,7 +62,7 @@ REGISTRATION_TMPL_CONTENT = {
   'validate' : {
     'template'		: 'done.html',
     'title'		: 'Membership validation',
-    'done_message' 	: '''Dear {name},
+    'done_message' 	: u'''Dear {name},
 <br/><br/>
 Welcome to <strong>CLUSIL</strong>!
 <br/><br/>

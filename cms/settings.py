@@ -178,8 +178,8 @@ ADMINS = (
 
 EMAILS = {
   'sender' : {
-#    'board'	: 'CLUSIL Board <board@clusil.lu>',
-    'board'	: 'TesT <test@clusil.lu>',
+    'board'	: 'CLUSIL Board <board@clusil.lu>',
+#    'board'	: 'TesT <test@clusil.lu>',
     'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },
   'salutation' 	: '''

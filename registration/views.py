@@ -169,12 +169,14 @@ class RegistrationWizard(SessionWizardView):
         mu_fs = form_dict['more']
         if mu_fs.is_valid():
           for u in mu_fs:
-            user = u.save(commit=False)
-            user.username = gen_username(user.first_name,user.last_name)
-            user.is_active = False
-            user.password = make_password(gen_random_password())
-            user.save()
-            Us.append(user)
+            if u.is_valid() and u.has_changed(): 
+              if u.cleaned_data['email']:
+                user = u.save(commit=False)
+                user.username = gen_username(user.first_name,user.last_name)
+                user.is_active = False
+                user.password = make_password(gen_random_password())
+                user.save()
+                Us.append(user)
 
 
       #student

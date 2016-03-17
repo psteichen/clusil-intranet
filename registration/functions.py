@@ -90,8 +90,14 @@ def login_exists(username):
 def gen_username(fn, ln, pad=0):
   username = ''
   i=0
+  j=1
   while i<=pad:
-    username += fn[i]
+    try:
+      username += fn[i]
+    except:
+      username += unicode(j)
+      j += 1
+      
     i += 1
   username = unicode.lower(username + ln)
   if login_exists(username): return gen_username(fn, ln, pad+1)

@@ -427,3 +427,6 @@ INVOICE = {
   'logo'	: STATIC_URL + 'pics/logo.jpg',
   'currency' 	: 'EUR',
 }
+
+#add local settings
+from local_settings import *

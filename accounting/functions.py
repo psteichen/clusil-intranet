@@ -1,9 +1,11 @@
 from datetime import date
 
 from django.conf import settings
+from django.core.files import File
 
 from members.functions import gen_fullname
 
+from .models import Fee
 from .invoice import draw_pdf
 
 # rename a file according to a member profile and mod (being a freely setable modifier)
@@ -23,8 +25,7 @@ def rmf(member, mod, filename=None):
 
 # gen invoice id
 def invoice_id(m):
-  i = 'INV_' + m.id
-
+  i = 'INV_' + m.id + '_'+date.today().strftime('%Y')
   return i
 
 # generate invoice
@@ -50,14 +51,24 @@ def generate_invoice(m):
   draw_pdf(pdf, m, invoice_details)
   pdf.seek(0)
 
+  fn=invoice_details['ID'] + '.pdf'
+
   # create attachement
   from email.mime.application import MIMEApplication
   attachment = MIMEApplication(pdf.read())
-  attachment.add_header("Content-Disposition", "attachment",filename=invoice_details['ID'] + '.pdf')
+  attachment.add_header("Content-Disposition", "attachment",filename=fn)
+
+  #save invoice in Fee model
+  try:
+    F = Fee(member=m,year=date.today().strftime('%Y'))
+    F.invoice.save(fn,File(pdf),save=True)
+  except:
+    F = Fee.objects.get(member=m,year=date.today().strftime('%Y'))
+    F.invoice.save(fn,File(pdf),save=True)
+
   pdf.close()
 
   # send email
   from cms.functions import notify_by_email
   subject = settings.INVOICE['subject'] % m.id
   notify_by_email('board',m.head_of_list.email,subject,invoice_details,settings.INVOICE['mail_template'],attachment)
-

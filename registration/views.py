@@ -278,7 +278,7 @@ def validate(r, val_hash):
 
     # save registration as OK
     R.date_of_validation = timezone.now()
-    R.validated = R.OK
+#    R.validated = R.OK
     R.save()
 
     # save Member as active

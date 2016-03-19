@@ -17,8 +17,11 @@ from members.models import Member
 from members.groups.functions import affiliate, get_affiliations
 from members.groups.models import Group, Affiliation
 
+from accounting.models import Fee
+
 from .functions import get_member_from_username, member_initial_data, get_user_choice_list, member_is_full
 from .forms import ProfileForm, AffiliateForm, UserCreationForm, UserChangeForm
+from .tables import InvoiceTable
 
 ################
 # MEMBER views #
@@ -367,12 +370,41 @@ def rmuser(r,user): # only if membership-type is ORG
     return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
 
 
-# invoice viewing
+# invoice #
+###########
 @permission_required('cms.MEMBER')
 def invoice(r):
-  #no POST data yet -> show user creation form
-  return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('invoice','/profile/invoice/'),
+               ) )
 
+  template = settings.TEMPLATE_CONTENT['profile']['invoice']['template']
+  done_template = settings.TEMPLATE_CONTENT['profile']['invoice']['done']['template']
+  M = get_member_from_username(r.user.username)
+  if M != None:  
+    title = settings.TEMPLATE_CONTENT['profile']['invoice']['title'] % { 'member' : M.id, }
+    desc = settings.TEMPLATE_CONTENT['profile']['invoice']['desc']
+ 
+    table = InvoiceTable(Fee.objects.filter(member=M).order_by('-year'))
+    RequestConfig(r, paginate={"per_page": 75}).configure(table)
+
+    return render(r, template, {
+			'title'		: title,
+			'desc'		: desc,
+       	            	'table'		: table,
+                  })
+
+  else: #none-member login -> error
+    return render(r, done_template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'],
+		   })
+
+
+# password #
+############
 @login_required
 def password(r):
   if r.POST:

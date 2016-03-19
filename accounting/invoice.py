@@ -83,6 +83,8 @@ def draw_pdf(buffer, member, details):
   else:
     textobject.textLine(u'Member: %s' % details['FULLNAME'])
   textobject.textLine(u'Membership type: %s' % Member.MEMBER_TYPES[member.type][1])
+  if member.type == Member.ORG:
+    textobject.textLine(u'Nb of people: %i' % member.lvl)
   canvas.drawText(textobject)
 
   # details

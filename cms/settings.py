@@ -152,6 +152,7 @@ STATICFILES_FINDERS = (
 
 #where to store and get user-uploaded files
 MEDIA_ROOT = '/var/www/clusil.lu/cms/media/'
+MEDIA_URL = '/media/'
 
 #login/auth (used by the login_required decorator)
 LOGIN_URL="/login/"
@@ -180,7 +181,6 @@ ADMINS = (
 EMAILS = {
   'sender' : {
     'board'	: 'CLUSIL Board <board@clusil.lu>',
-#    'board'	: 'TesT <test@clusil.lu>',
     'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },
   'salutation' 	: '''

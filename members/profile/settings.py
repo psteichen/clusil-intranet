@@ -8,14 +8,14 @@ ACTIONS = (
     'grade'	: 'warning',
     'url'    	: '/profile/modify/',
   },
-)
-ACTIONS_FULL = (
   {
-    'label'	: 'Change Profile',
-    'icon'	: 'pencil',
-    'grade'	: 'warning',
-    'url'    	: '/profile/modify/',
+    'label'	: 'Check Invoice',
+    'icon'	: 'euro',
+    'grade'	: 'info',
+    'url'    	: '/profile/invoice/',
   },
+)
+ACTIONS_ORG = (
   {
     'label'	: 'Add User',
     'icon'	: 'plus',
@@ -24,11 +24,12 @@ ACTIONS_FULL = (
   },
 )
 
+
 PROFILE_TMPL_CONTENT = {
   'profile': {
     'template'          : 'overview.html',
     'actions'           : ACTIONS,
-    'actions_org'	: ACTIONS_FULL,
+    'actions_org'	: ACTIONS + ACTIONS_ORG,
     'title'             : u'Member profile for <i>%(member)s</i>',
     'overview' : {
       'template'        : 'overview_member.html',
@@ -106,10 +107,9 @@ PROFILE_TMPL_CONTENT = {
     },
   },
   'invoice': {
-    'template'		: 'form.html',
+    'template'		: 'list.html',
     'title'     	: 'View Invoices',
     'desc'     		: 'View Invoices and payment status of the CLUSIL Membership',
-    'submit'   		: 'View',
     'done': {
       'template'	: 'done.html',
       'title'     	: 'Invoice.',

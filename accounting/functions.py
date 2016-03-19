@@ -4,10 +4,9 @@ from django.conf import settings
 
 from members.functions import gen_fullname
 
-from .models import Fee
 from .invoice import draw_pdf
 
-# rename the uploaded member files
+# rename a file according to a member profile and mod (being a freely setable modifier)
 def rmf(member, mod, filename=None):
   import os
   try:
@@ -24,17 +23,24 @@ def rmf(member, mod, filename=None):
 
 # gen invoice id
 def invoice_id(m):
-  i = rmf(m,'invoice')['name']
+  i = 'INV_' + m.id
 
-  return i + '_' + date.today().strftime('%Y')
+  return i
 
 # generate invoice
 def generate_invoice(m):
+  from members.models import Member
+
+  if m.type == Member.ORG:
+    amount = settings.FEE[m.lvl]
+  else:
+    amount = settings.FEE[m.type]
+
   invoice_details = {
     'ID': invoice_id(m),
     'FULLNAME': gen_fullname(m.head_of_list),
     'DATE': date.today().strftime('%Y-%m-%d'),
-    'AMOUNT': Fee.MEMBER_FEES[m.type][1],
+    'AMOUNT': amount,
     'CURRENCY': settings.INVOICE['currency'],
   } 
 
@@ -51,7 +57,7 @@ def generate_invoice(m):
   pdf.close()
 
   # send email
-  subject = settings.MAIL_CONFIRMATION['invoice']['subject'] % m.member_id
-  confirm_by_email(subject,m.email,settings.MAIL_CONFIRMATION['invoice']['template'],invoice_details,attachment)
-
+  from cms.functions import notify_by_email
+  subject = settings.INVOICE['subject'] % m.id
+  notify_by_email('board',m.head_of_list.email,subject,invoice_details,settings.INVOICE['mail_template'],attachment)
 

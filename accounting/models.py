@@ -11,17 +11,8 @@ def rename_invoice(i,f):
 
 # the "fee" model
 class Fee(Model):
-  IND = 0
-  ORG = 1
-  STD = 2
-  MEMBER_FEES = (
-    (IND, 100),
-    (ORG, 400),
-    (STD, 25),
-  )
-
   member 	= ForeignKey(Member)
-  paid 		= BooleanField()
+  paid 		= BooleanField(default=False)
   year 		= CharField(max_length=4)
   paid_date 	= DateField()
   invoice 	= FileField(upload_to=rename_invoice)

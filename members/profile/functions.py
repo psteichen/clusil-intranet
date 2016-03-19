@@ -31,13 +31,7 @@ def get_member_from_username(username):
   return M
 
 
-def get_country_from_address(address):
-  c = Address.COUNTRIES[int(address.country)][1]
-  if address.country == address.OTH:
-    c = unicode(address.c_other)
 
-  return c
- 
 
 def member_initial_data(member):
   member_data = {

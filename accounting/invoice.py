@@ -6,6 +6,9 @@ from reportlab.lib.units import cm
 
 from django.conf import settings
 
+from members.functions import get_country_from_address
+from members.models import Member
+
 def draw_header(canvas):
     """ Draws the invoice header """
     canvas.setStrokeColorRGB(0.02,0.5,0.3)
@@ -20,8 +23,8 @@ def draw_header(canvas):
 def draw_address(canvas):
     """ Draws the business address """
     business_details = (
-        u'CLUSIL a.s.b.l. co/ CRP Henri Tudor',
-        u'29 av. JF Kennedy L-1855 Luxembourg-Kirchberg',
+        u'CLUSIL a.s.b.l. co/ SMILE g.i.e.',
+        u'41, ave de la gare L-1611 Luxembourg',
         u'info@clusil.lu - www.clusil.lu',
         u'RCS Luxembourg: F3043'
     )
@@ -63,32 +66,47 @@ def draw_pdf(buffer, member, details):
 
   # member address (aka head-of-list contact details)
   textobject = canvas.beginText(13 * cm, -3.5 * cm)
-  textobject.textLine(member.firstname + ' ' + unicode.upper(member.lastname))
-  if member.member_type == 1:
-    textobject.textLine(member.organisation)
-  textobject.textLine(member.address)
-  textobject.textLine(member.postal_code + ' ' + member.town)
-  textobject.textLine(member.country)
+  textobject.textLine(member.head_of_list.first_name + ' ' + unicode.upper(member.head_of_list.last_name))
+  if member.type == Member.ORG:
+    textobject.textLine(member.organisation.name)
+  textobject.textLine(member.address.street)
+  textobject.textLine(member.address.postal_code + ' ' + member.address.town)
+  textobject.textLine(get_country_from_address(member.address))
   canvas.drawText(textobject)
 
   # summary
   textobject = canvas.beginText(1.5 * cm, -6.75 * cm)
   textobject.textLine(u'Invoice ID: %s' % details['ID'])
   textobject.textLine(u'Invoice Date: %s' % details['DATE'])
-  if member.member_type == 1:
+  if member.type == Member.ORG:
     textobject.textLine(u'Member head-of-list: %s' % details['FULLNAME'])
   else:
     textobject.textLine(u'Member: %s' % details['FULLNAME'])
-  textobject.textLine(u'Membership type: %s' % Member.MEMBER_TYPES[member.member_type][1])
+  textobject.textLine(u'Membership type: %s' % Member.MEMBER_TYPES[member.type][1])
   canvas.drawText(textobject)
 
   # details
   data = [[u'Member', u'Fee'], ]
-  for u in member.users.all():
-    data.append([
-        u.first_name + ' ' + unicode.upper(u.last_name),
-        '',
+  #head-of-list:
+  data.append([
+      member.head_of_list.first_name + ' ' + unicode.upper(member.head_of_list.last_name),
+      '',
     ])
+
+  if member.type == Member.ORG:
+    #delegate:
+    if member.delegate:
+      data.append([
+          member.delegate.first_name + ' ' + unicode.upper(member.delegate.last_name),
+          '',
+        ])
+
+    for u in member.users.all():
+      data.append([
+          u.first_name + ' ' + unicode.upper(u.last_name),
+          '',
+        ])
+
   data.append([u'Total:', details['AMOUNT']])
   table = Table(data, colWidths=[11 * cm, 3 * cm])
   table.setStyle([

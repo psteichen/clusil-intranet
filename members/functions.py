@@ -92,3 +92,13 @@ def get_all_users_for_membership(m):
     pass
  
   return users
+
+def get_country_from_address(address):
+  from members.models import Address
+
+  c = Address.COUNTRIES[int(address.country)][1]
+  if address.country == address.OTH:
+    c = unicode(address.c_other)
+
+  return c
+ 

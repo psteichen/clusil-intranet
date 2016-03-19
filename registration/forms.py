@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.forms import Form, ChoiceField, ModelForm, CharField, FileField,  ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField, BooleanField, RadioSelect
 from django.forms.models import modelformset_factory, BaseModelFormSet
 
+from accounting.models import Fee
 from members.models import Member, Address
 from members.groups.models import Group, Affiliation
 

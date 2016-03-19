@@ -49,6 +49,7 @@ INSTALLED_APPS = (
   'members.groups',
   'meetings',
   'events',
+  'accounting',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -423,9 +424,21 @@ from accounting.settings import *
 
 TEMPLATE_CONTENT['accounting'] = ACCOUNTING_TMPL_CONTENT
 
+from members.models import Member
+FEE = {
+  Member.IND	: 100,
+  Member.STD 	: 25,
+  Member.ORG_6	: 400,
+  Member.ORG_12	: 700,
+  Member.ORG_18 : 1000,
+}
+
+
 INVOICE = {
-  'logo'	: STATIC_URL + 'pics/logo.jpg',
-  'currency' 	: 'EUR',
+  'logo'		: STATIC_ROOT + 'pics/logo.jpg',
+  'currency' 		: 'EUR',
+  'subject' 		: '[CLUSIL] Invoice for membership: %s',
+  'mail_template' 	: 'invoice.txt',
 }
 
 #add local settings

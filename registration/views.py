@@ -274,7 +274,7 @@ def validate(r, val_hash):
     if M.delegate: M.delegate.user_permissions.add(is_hol_d)
 
     # member confirmation Ok -> replicate Users to LDAP
-    replicate_to_ldap(M)
+    #replicate_to_ldap(M)
 
     # save registration as OK
     R.date_of_validation = timezone.now()
@@ -286,7 +286,7 @@ def validate(r, val_hash):
     M.save()
 
     # generate invoice (this will generate and send the invoice)
-#      generate_invoice(M)
+    generate_invoice(M)
 
     message = done_message.format(name=gen_member_fullname(M),member_id=M.pk)
 

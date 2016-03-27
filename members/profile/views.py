@@ -1,4 +1,6 @@
 # coding=utf-8
+from datetime import date
+
 from django.shortcuts import render #uses a RequestContext by default
 
 from django.conf import settings
@@ -18,6 +20,7 @@ from members.groups.functions import affiliate, get_affiliations
 from members.groups.models import Group, Affiliation
 
 from accounting.models import Fee
+from accounting.functions import generate_invoice
 
 from .functions import get_member_from_username, member_initial_data, get_user_choice_list, member_is_full
 from .forms import ProfileForm, AffiliateForm, UserCreationForm, UserChangeForm
@@ -377,7 +380,7 @@ def invoice(r):
   r.breadcrumbs( ( 
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('invoice','/profile/invoice/'),
+                       	('invoices','/profile/invoice/'),
                ) )
 
   template = settings.TEMPLATE_CONTENT['profile']['invoice']['template']
@@ -412,8 +415,18 @@ def new_invoice(r):
   r.breadcrumbs( ( 
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('new invoice','/profile/invoice/new/'),
+                       	('invoices','/profile/invoice/'),
                ) )
+  M = get_member_from_username(r.user.username)
+  generate_invoice(M)
+
+  template = settings.TEMPLATE_CONTENT['profile']['newinv']['template']
+  title = settings.TEMPLATE_CONTENT['profile']['newinv']['title'].format(id=M.id)
+  message = settings.TEMPLATE_CONTENT['profile']['newinv']['message'].format(head=gen_fullname(M.head_of_list),year=date.today().strftime('%Y'))
+  return render(r, template, {
+			'title'		: title,
+			'message'	: message,
+	       })
 
 
 # password #

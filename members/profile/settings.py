@@ -9,7 +9,7 @@ ACTIONS = (
     'url'    	: '/profile/modify/',
   },
   {
-    'label'	: 'Check Invoice',
+    'label'	: 'Invoices',
     'icon'	: 'euro',
     'grade'	: 'info',
     'url'    	: '/profile/invoice/',
@@ -124,13 +124,8 @@ PROFILE_TMPL_CONTENT = {
     },
   },
   'newinv': {
-    'template'		: 'form.html',
-    'title'     	: u'Generate a new Invoice',
-    'desc'     		: u'This CLUSIL membershipfee invoice replaces and cancels all previous ones for the same year',
-    'submit'   		: u'Generate',
-    'done': {
-      'template'	: 'done.html',
-      'title'     	: u'View Invoice.',
-    },
+    'template'		: 'done.html',
+    'title'     	: u'New Invoice generated for [{id}]',
+    'message'     		: u'A new invoice for your CLUSIL membership fee for {year} has been generated and sent to the head-of-list. This invoice replaces and cancels all previous ones for the same year.',
   },
 }

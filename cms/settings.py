@@ -437,7 +437,7 @@ FEE = {
 INVOICE = {
   'logo'		: STATIC_ROOT + 'pics/logo.jpg',
   'currency' 		: 'EUR',
-  'subject' 		: '[CLUSIL] Invoice for membership: %s',
+  'subject' 		: 'Invoice for membership: %s',
   'mail_template' 	: 'invoice.txt',
 }
 

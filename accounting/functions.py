@@ -29,7 +29,7 @@ def invoice_id(m):
   return i
 
 # generate invoice
-def generate_invoice(m):
+def generate_invoice(m,year=date.today().strftime('%Y')):
   from members.models import Member
 
   if m.type == Member.ORG:
@@ -60,10 +60,10 @@ def generate_invoice(m):
 
   #save invoice in Fee model
   try:
-    F = Fee(member=m,year=date.today().strftime('%Y'))
+    F = Fee(member=m,year=year)
     F.invoice.save(fn,File(pdf),save=True)
   except:
-    F = Fee.objects.get(member=m,year=date.today().strftime('%Y'))
+    F = Fee.objects.get(member=m,year=year)
     F.invoice.save(fn,File(pdf),save=True)
 
   pdf.close()

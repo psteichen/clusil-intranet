@@ -386,6 +386,7 @@ def invoice(r):
   if M != None:  
     title = settings.TEMPLATE_CONTENT['profile']['invoice']['title'] % { 'member' : M.id, }
     desc = settings.TEMPLATE_CONTENT['profile']['invoice']['desc']
+    actions = settings.TEMPLATE_CONTENT['profile']['invoice']['actions']
  
     table = InvoiceTable(Fee.objects.filter(member=M).order_by('-year'))
     RequestConfig(r, paginate={"per_page": 75}).configure(table)
@@ -393,6 +394,7 @@ def invoice(r):
     return render(r, template, {
 			'title'		: title,
 			'desc'		: desc,
+			'actions'	: actions,
        	            	'table'		: table,
                   })
 
@@ -401,6 +403,17 @@ def invoice(r):
 			'title'		: title,
                 	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'],
 		   })
+
+
+# new invoice #
+###############
+@permission_required('cms.MEMBER')
+def new_invoice(r):
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('new invoice','/profile/invoice/new/'),
+               ) )
 
 
 # password #

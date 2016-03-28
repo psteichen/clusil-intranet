@@ -49,6 +49,7 @@ INSTALLED_APPS = (
   'members.groups',
   'meetings',
   'events',
+  'accounting',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -151,6 +152,7 @@ STATICFILES_FINDERS = (
 
 #where to store and get user-uploaded files
 MEDIA_ROOT = '/var/www/clusil.lu/cms/media/'
+MEDIA_URL = '/media/'
 
 #login/auth (used by the login_required decorator)
 LOGIN_URL="/login/"
@@ -179,7 +181,6 @@ ADMINS = (
 EMAILS = {
   'sender' : {
     'board'	: 'CLUSIL Board <board@clusil.lu>',
-#    'board'	: 'TesT <test@clusil.lu>',
     'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },
   'salutation' 	: '''
@@ -423,7 +424,22 @@ from accounting.settings import *
 
 TEMPLATE_CONTENT['accounting'] = ACCOUNTING_TMPL_CONTENT
 
-INVOICE = {
-  'logo'	: STATIC_URL + 'pics/logo.jpg',
-  'currency' 	: 'EUR',
+from members.models import Member
+FEE = {
+  Member.IND	: 100,
+  Member.STD 	: 25,
+  Member.ORG_6	: 400,
+  Member.ORG_12	: 700,
+  Member.ORG_18 : 1000,
 }
+
+
+INVOICE = {
+  'logo'		: STATIC_ROOT + 'pics/logo.jpg',
+  'currency' 		: 'EUR',
+  'subject' 		: 'Invoice for membership: %s',
+  'mail_template' 	: 'invoice.txt',
+}
+
+#add local settings
+from local_settings import *

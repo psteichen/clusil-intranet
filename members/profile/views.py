@@ -1,4 +1,6 @@
 # coding=utf-8
+from datetime import date
+
 from django.shortcuts import render #uses a RequestContext by default
 
 from django.conf import settings
@@ -11,14 +13,18 @@ from django_tables2 import RequestConfig
 
 from cms.functions import notify_by_email, gen_form_errors
 
-from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership
+from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address
 from members.models import Member
 
 from members.groups.functions import affiliate, get_affiliations
 from members.groups.models import Group, Affiliation
 
-from .functions import get_member_from_username, get_country_from_address, member_initial_data, get_user_choice_list, member_is_full
+from accounting.models import Fee
+from accounting.functions import generate_invoice
+
+from .functions import get_member_from_username, member_initial_data, get_user_choice_list, member_is_full
 from .forms import ProfileForm, AffiliateForm, UserCreationForm, UserChangeForm
+from .tables import InvoiceTable
 
 ################
 # MEMBER views #
@@ -102,8 +108,8 @@ def modify(r):
 
         # all fine: done message
         return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['done']['template'], {
-			'title'		: title,
-                	'message'	: settings.TEMPLATE_CONTENT['profile']['modify']['done']['message'] + ' ;<br/> '.join([f for f in pf.changed_data]),
+			'title'		: settings.TEMPLATE_CONTENT['profile']['modify']['done']['title'].format(id=M.id),
+#                	'message'	: settings.TEMPLATE_CONTENT['profile']['modify']['done']['message'].format(list=' ;<br/> '.join([f for f in pf.changed_data])),
 		     })
 
         
@@ -175,7 +181,7 @@ def adduser(r): # only if membership-type is ORG
 
     # if max users exist -> out!
     if member_is_full(M): 
-      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['max']
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['max'].format(member_id=M.id)
 
     if message:
       return render(r,done_template, {
@@ -199,7 +205,6 @@ def affiluser(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('affiliate user','/profile/affiluser/'+user),
                ) )
  
   M = get_member_from_username(user)
@@ -265,7 +270,6 @@ def make_head(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('make head-of-list','/profile/make_head/'+user),
                ) )
  
   M = get_member_from_username(user)
@@ -301,7 +305,6 @@ def make_delegate(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('make delegate','/profile/make_delegate/'+user),
                ) )
  
   M = get_member_from_username(user)
@@ -367,12 +370,64 @@ def rmuser(r,user): # only if membership-type is ORG
     return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
 
 
-# invoice viewing
+# invoice #
+###########
 @permission_required('cms.MEMBER')
 def invoice(r):
-  #no POST data yet -> show user creation form
-  return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('invoices','/profile/invoice/'),
+               ) )
 
+  template = settings.TEMPLATE_CONTENT['profile']['invoice']['template']
+  done_template = settings.TEMPLATE_CONTENT['profile']['invoice']['done']['template']
+  M = get_member_from_username(r.user.username)
+  if M != None:  
+    title = settings.TEMPLATE_CONTENT['profile']['invoice']['title'] % { 'member' : M.id, }
+    desc = settings.TEMPLATE_CONTENT['profile']['invoice']['desc']
+    actions = settings.TEMPLATE_CONTENT['profile']['invoice']['actions']
+ 
+    table = InvoiceTable(Fee.objects.filter(member=M).order_by('-year'))
+    RequestConfig(r, paginate={"per_page": 75}).configure(table)
+
+    return render(r, template, {
+			'title'		: title,
+			'desc'		: desc,
+			'actions'	: actions,
+       	            	'table'		: table,
+                  })
+
+  else: #none-member login -> error
+    return render(r, done_template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'],
+		   })
+
+
+# new invoice #
+###############
+@permission_required('cms.MEMBER')
+def new_invoice(r):
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('member profile','/profile/'),
+                       	('invoices','/profile/invoice/'),
+               ) )
+  M = get_member_from_username(r.user.username)
+  generate_invoice(M)
+
+  template = settings.TEMPLATE_CONTENT['profile']['newinv']['template']
+  title = settings.TEMPLATE_CONTENT['profile']['newinv']['title'].format(id=M.id)
+  message = settings.TEMPLATE_CONTENT['profile']['newinv']['message'].format(head=gen_fullname(M.head_of_list),year=date.today().strftime('%Y'))
+  return render(r, template, {
+			'title'		: title,
+			'message'	: message,
+	       })
+
+
+# password #
+############
 @login_required
 def password(r):
   if r.POST:

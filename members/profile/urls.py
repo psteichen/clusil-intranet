@@ -1,12 +1,13 @@
 from django.conf.urls import patterns, include, url
 
 from .views import profile, invoice
-from .views import modify, adduser, affiluser, make_head, make_delegate, rmuser, invoice
+from .views import modify, adduser, affiluser, make_head, make_delegate, rmuser, invoice, new_invoice
 
 urlpatterns = patterns('',
   #info
   url(r'^$', profile, name='profile'),
   url(r'^invoice/$', invoice, name='invoice'),
+  url(r'^invoice/new/$', new_invoice, name='new_invoice'),
 
   #actions
   url(r'^modify/$', modify, name='modify'),

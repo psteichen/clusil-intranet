@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 
-from members.functions import add_group, gen_fullname
+from members.functions import add_group, gen_fullname, get_country_from_address
 from members.models import Member, Address
 from members.groups.models import Group as WG, Affiliation
 
@@ -31,13 +31,7 @@ def get_member_from_username(username):
   return M
 
 
-def get_country_from_address(address):
-  c = Address.COUNTRIES[int(address.country)][1]
-  if address.country == address.OTH:
-    c = unicode(address.c_other)
 
-  return c
- 
 
 def member_initial_data(member):
   member_data = {

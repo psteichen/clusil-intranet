@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
@@ -28,20 +30,6 @@ def notify_by_email(sender,to,subject,message_content,template='default.txt',att
     return True
   except:
     return False
-
-# rename uploaded files
-def rmf(instance, mod, filename=None):
-  try:
-    orig_name, orig_ext = os.path.splitext(filename)
-  except:
-    orig_ext = ''
-
-  fn=instance.member_id + os.sep + mod.upper() + '_' + instance.firstname + ' ' + instance.lastname.upper()
-  if instance.member_type == 1: # organisation
-    fn += ' (' + instance.organisation + ')'
-
-  import unicodedata
-  return {'name': unicodedata.normalize('NFKD', fn).encode('ascii','ignore'),'ext': orig_ext}
 
 def show_form(wiz,step,field,const):
   cleaned_data = wiz.get_cleaned_data_for_step(step) or {}

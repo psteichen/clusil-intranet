@@ -48,8 +48,8 @@ REGISTRATION_TMPL_CONTENT = {
       'next'            : 'next',
     },
     'group' : {
-      'title'           : 'Involvement',
-      'desc'   		: '''CLUSIL is an association of active involvement, please choose one or more working groups (topics) you want to contribute to.''',
+      'title'           : 'Your Involvement',
+      'desc'   		: '''CLUSIL is an association of active involvement, please choose one or more working groups (topics) <b>you</b> want to contribute to.''',
       'next'            : 'next',
     },
     'done' : {
@@ -69,6 +69,8 @@ Welcome to <strong>CLUSIL</strong>!
 Your membership is now validated.
 <br/>
 <em>[MEMBER_ID: {member_id}]</em>
+<br/><br/>
+The membership invoice will reach you in a seperate email, please be pay your fee in a timely manner.
 <br/><br/>
 For any further communication please use the above MEMBER_ID for best service experience.
 <br/><br/>

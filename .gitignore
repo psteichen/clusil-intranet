@@ -58,5 +58,6 @@ target/
 db.sqlite
 cms/db.sqlite
 cms/wsgi.py
+cms/local_settings.py
 HERE
 TODO

@@ -2,6 +2,16 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
+  {% block actions %}
+    <div class="pull-right">
+      {% for a in actions %}
+       {% if a.has_perms in perms or not a.has_perms %}
+        {% if a.url %}<a class="btn btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<span class="glyphicon glyphicon-{{ a.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
+       {% endif %}
+      {% endfor %}
+    </div>
+  {% endblock %}
+
   <h2>{{ title }}</h2>
   {% if desc %}<p>{{ desc|safe }}</p>{% endif %}
   {% render_table table "table_with_page_numbers.html" %}

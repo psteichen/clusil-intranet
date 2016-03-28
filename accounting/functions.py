@@ -1,3 +1,5 @@
+# encoding=utf-8
+
 from datetime import date
 
 from django.conf import settings
@@ -7,21 +9,6 @@ from members.functions import gen_fullname
 
 from .models import Fee
 from .invoice import draw_pdf
-
-# rename a file according to a member profile and mod (being a freely setable modifier)
-def rmf(member, mod, filename=None):
-  import os
-  try:
-    orig_name, orig_ext = os.path.splitext(filename)
-  except:
-    orig_ext = ''
-
-  fn=member.id + os.sep + mod.upper() + '_' + member.head_of_list.first_name + ' ' + member.head_of_list.last_name.upper()
-  if member.type == 1: # organisation
-    fn += ' (' + unicode(member.organisation) + ')'
-
-  import unicodedata
-  return {'name': unicodedata.normalize('NFKD', fn).encode('ascii','ignore'),'ext': orig_ext}
 
 # gen invoice id
 def invoice_id(m):
@@ -56,12 +43,10 @@ def generate_invoice(m,year=date.today().strftime('%Y')):
   
   #save invoice in Fee model
   try:
-    F = Fee(member=m,year=year)
-    F.invoice.name=fn
-    F.invoice.save(fn,File(pdf),save=True)
-  except:
     F = Fee.objects.get(member=m,year=year)
-    F.invoice.name=fn
+    F.invoice.save(fn,File(pdf),save=True)
+  except Fee.DoesNotExist:
+    F = Fee(member=m,year=year)
     F.invoice.save(fn,File(pdf),save=True)
 
   # create attachement

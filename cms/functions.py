@@ -31,19 +31,6 @@ def notify_by_email(sender,to,subject,message_content,template='default.txt',att
   except:
     return False
 
-# rename uploaded files
-def rmf(instance, mod, filename=None):
-  from os import sep
-  try:
-    orig_name, orig_ext = os.path.splitext(filename)
-  except:
-    orig_ext = ''
-
-  fn=mod.upper() + sep + instance.id + '_' + date.today().strftime('%Y')
-
-  import unicodedata
-  return {'name': unicodedata.normalize('NFKD', fn).encode('ascii','ignore'),'ext': orig_ext}
-
 def show_form(wiz,step,field,const):
   cleaned_data = wiz.get_cleaned_data_for_step(step) or {}
   d = cleaned_data.get(field) or 666

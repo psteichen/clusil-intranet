@@ -1,13 +1,13 @@
 from django.db.models import Model, ForeignKey, BooleanField, CharField, DateField, FileField
 
-from cms.functions import rmf
 from members.models import Member
 
 from .invoice import draw_pdf
 
 def rename_invoice(i,f):
-  fn = rmf(i.member,'invoice',f)
-  return fn['name']+'.'+fn['ext']
+#  fn = rmf(i.member,'invoice',f)
+#  return fn['name']+'.'+fn['ext']
+  return 'INVOICE/'+f
 
 # the "fee" model
 class Fee(Model):

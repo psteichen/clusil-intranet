@@ -41,6 +41,7 @@ def generate_invoice(m,year=date.today().strftime('%Y')):
     'ID': invoice_id(m),
     'FULLNAME': gen_fullname(m.head_of_list),
     'DATE': date.today().strftime('%Y-%m-%d'),
+    'YEAR': year,
     'AMOUNT': amount,
     'CURRENCY': settings.INVOICE['currency'],
   } 

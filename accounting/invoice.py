@@ -14,22 +14,21 @@ def draw_header(canvas):
     canvas.setStrokeColorRGB(0.02,0.5,0.3)
 #    canvas.setFillColorRGB(0.02,0.5,0.3)
     canvas.setFont('Helvetica', 16)
-    canvas.drawString(18 * cm, -1.2 * cm, 'INVOICE')
-    canvas.drawInlineImage(settings.INVOICE['logo'], 8.5 * cm, -1.8 * cm, 250, 50)
+    canvas.drawString(10 * cm, -1.5 * cm, 'INVOICE')
+    canvas.drawInlineImage(settings.INVOICE['logo'], 17.5 * cm, -2.1 * cm, 75, 50)
     canvas.setLineWidth(4)
-    canvas.line(0, -2 * cm, 21.7 * cm, -2 * cm)
+    canvas.line(0, -2.5 * cm, 21.7 * cm, -2.5 * cm)
 
 
 def draw_address(canvas):
     """ Draws the business address """
     business_details = (
-        u'CLUSIL a.s.b.l. co/ SMILE g.i.e.',
+        u'CLUSIL a.s.b.l.',
         u'41, ave de la gare L-1611 Luxembourg',
         u'info@clusil.lu - www.clusil.lu',
-        u'RCS Luxembourg: F3043'
     )
     canvas.setFont('Helvetica', 9)
-    textobject = canvas.beginText(1 * cm, -0.5 * cm)
+    textobject = canvas.beginText(1 * cm, -1 * cm)
     for line in business_details:
         textobject.textLine(line)
     canvas.drawText(textobject)
@@ -38,7 +37,8 @@ def draw_address(canvas):
 def draw_footer(canvas):
     """ Draws the invoice footer """
     note = (
-        u'IBAN: LUxx xxxx xxxx xxxx xxxx - BIC: BGLLULL',
+        u'RCS Luxembourg: F3043',
+        u'IBAN: LU23 0030 7724 6992 0000 - BIC: BGLLULL',
     )
     textobject = canvas.beginText(1 * cm, -27 * cm)
     for line in note:
@@ -74,17 +74,26 @@ def draw_pdf(buffer, member, details):
   textobject.textLine(get_country_from_address(member.address))
   canvas.drawText(textobject)
 
-  # summary
-  textobject = canvas.beginText(1.5 * cm, -6.75 * cm)
+  # title
+  textobject = canvas.beginText(6.5 * cm, -6.75 * cm)
+  textobject.textLine(u'Invoice for the CLUSIL membership for %s' % details['YEAR'])
+  canvas.drawText(textobject)
+
+  # invoice summary
+  textobject = canvas.beginText(1.5 * cm, -7.75 * cm)
   textobject.textLine(u'Invoice ID: %s' % details['ID'])
   textobject.textLine(u'Invoice Date: %s' % details['DATE'])
-  if member.type == Member.ORG:
-    textobject.textLine(u'Member head-of-list: %s' % details['FULLNAME'])
-  else:
-    textobject.textLine(u'Member: %s' % details['FULLNAME'])
+  canvas.drawText(textobject)
+
+  # membership summary
+  textobject = canvas.beginText(1.5 * cm, -9.5 * cm)
   textobject.textLine(u'Membership type: %s' % Member.MEMBER_TYPES[member.type][1])
   if member.type == Member.ORG:
-    textobject.textLine(u'Nb of people: %i' % member.lvl)
+    textobject.textLine(u'Head-of-list: %s' % details['FULLNAME'])
+  else:
+    textobject.textLine(u'Member: %s' % details['FULLNAME'])
+  if member.type == Member.ORG:
+    textobject.textLine(u'Nb of registered people: %i' % member.lvl)
   canvas.drawText(textobject)
 
   # details
@@ -109,8 +118,8 @@ def draw_pdf(buffer, member, details):
           '',
         ])
 
-  data.append([u'Total:', details['AMOUNT']])
-  table = Table(data, colWidths=[11 * cm, 3 * cm])
+  data.append([u'Total:', unicode(details['AMOUNT']) + u' EUR'])
+  table = Table(data, colWidths=[8 * cm, 3 * cm])
   table.setStyle([
       ('FONT', (0, 0), (-1, -1), 'Helvetica'),
       ('FONTSIZE', (0, 0), (-1, -1), 10),
@@ -120,8 +129,8 @@ def draw_pdf(buffer, member, details):
       ('ALIGN', (-2, 0), (-1, -1), 'RIGHT'),
       ('BACKGROUND', (0, 0), (-1, 0), (0.8, 0.8, 0.8)),
   ])
-  tw, th, = table.wrapOn(canvas, 15 * cm, 19 * cm)
-  table.drawOn(canvas, 1 * cm, -9 * cm - th)
+  tw, th, = table.wrapOn(canvas, 10 * cm, 19 * cm)
+  table.drawOn(canvas, 3 * cm, -13 * cm - th)
 
   canvas.showPage()
   canvas.save()

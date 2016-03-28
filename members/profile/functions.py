@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 
-from members.functions import add_group, gen_fullname
+from members.functions import add_group, gen_fullname, get_country_from_address
 from members.models import Member, Address
 from members.groups.models import Group as WG, Affiliation
 

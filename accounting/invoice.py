@@ -22,12 +22,13 @@ def draw_header(canvas):
 
 def draw_address(canvas):
     """ Draws the business address """
+    canvas.setFont('Helvetica', 9)
     business_details = (
         u'CLUSIL a.s.b.l.',
         u'41, ave de la gare L-1611 Luxembourg',
         u'info@clusil.lu - www.clusil.lu',
+        u'RCS Luxembourg: F3043',
     )
-    canvas.setFont('Helvetica', 9)
     textobject = canvas.beginText(1 * cm, -1 * cm)
     for line in business_details:
         textobject.textLine(line)
@@ -36,12 +37,16 @@ def draw_address(canvas):
 
 def draw_footer(canvas):
     """ Draws the invoice footer """
-    note = (
-        u'RCS Luxembourg: F3043',
-        u'IBAN: LU23 0030 7724 6992 0000 - BIC: BGLLULL',
+    canvas.setFont('Helvetica', 9)
+    canvas.setStrokeColorRGB(0.02,0.5,0.3)
+    canvas.setLineWidth(4)
+    canvas.line(0, -27.5 * cm, 21.7 * cm, -27.5 * cm)
+    footer = (
+        u'IBAN: LU23 0030 7724 6992 0000',
+        u'BIC: BGLLULL',
     )
-    textobject = canvas.beginText(1 * cm, -27 * cm)
-    for line in note:
+    textobject = canvas.beginText(15 * cm, -28.5 * cm)
+    for line in footer:
         textobject.textLine(line)
     canvas.drawText(textobject)
 
@@ -75,12 +80,15 @@ def draw_pdf(buffer, member, details):
   canvas.drawText(textobject)
 
   # title
-  textobject = canvas.beginText(6.5 * cm, -6.75 * cm)
+  canvas.setFont('Helvetica', 14)
+  textobject = canvas.beginText(5.5 * cm, -6.75 * cm)
   textobject.textLine(u'Invoice for the CLUSIL membership for %s' % details['YEAR'])
   canvas.drawText(textobject)
 
+  canvas.setFont('Helvetica', 10)
+
   # invoice summary
-  textobject = canvas.beginText(1.5 * cm, -7.75 * cm)
+  textobject = canvas.beginText(1.5 * cm, -8 * cm)
   textobject.textLine(u'Invoice ID: %s' % details['ID'])
   textobject.textLine(u'Invoice Date: %s' % details['DATE'])
   canvas.drawText(textobject)
@@ -96,41 +104,30 @@ def draw_pdf(buffer, member, details):
     textobject.textLine(u'Nb of registered people: %i' % member.lvl)
   canvas.drawText(textobject)
 
-  # details
-  data = [[u'Member', u'Fee'], ]
+  # list of people
+  textobject = canvas.beginText(2.5 * cm, -11 * cm)
   #head-of-list:
-  data.append([
-      member.head_of_list.first_name + ' ' + unicode.upper(member.head_of_list.last_name),
-      '',
-    ])
-
+  textobject.textLine(' - ' + member.head_of_list.first_name + ' ' + unicode.upper(member.head_of_list.last_name))
   if member.type == Member.ORG:
     #delegate:
     if member.delegate:
-      data.append([
-          member.delegate.first_name + ' ' + unicode.upper(member.delegate.last_name),
-          '',
-        ])
+      textobject.textLine(' - ' + member.delegate.first_name + ' ' + unicode.upper(member.delegate.last_name))
 
     for u in member.users.all():
-      data.append([
-          u.first_name + ' ' + unicode.upper(u.last_name),
-          '',
-        ])
+      textobject.textLine(' - ' + u.first_name + ' ' + unicode.upper(u.last_name))
+  canvas.drawText(textobject)
 
-  data.append([u'Total:', unicode(details['AMOUNT']) + u' EUR'])
-  table = Table(data, colWidths=[8 * cm, 3 * cm])
-  table.setStyle([
-      ('FONT', (0, 0), (-1, -1), 'Helvetica'),
-      ('FONTSIZE', (0, 0), (-1, -1), 10),
-      ('TEXTCOLOR', (0, 0), (-1, -1), (0.2, 0.2, 0.2)),
-      ('GRID', (0, 0), (-1, -2), 1, (0.7, 0.7, 0.7)),
-      ('GRID', (-2, -1), (-1, -1), 1, (0.7, 0.7, 0.7)),
-      ('ALIGN', (-2, 0), (-1, -1), 'RIGHT'),
-      ('BACKGROUND', (0, 0), (-1, 0), (0.8, 0.8, 0.8)),
-  ])
-  tw, th, = table.wrapOn(canvas, 10 * cm, 19 * cm)
-  table.drawOn(canvas, 3 * cm, -13 * cm - th)
+  offset = member.users.count() / 3
+  # fee 
+  textobject = canvas.beginText(2.5 * cm, -(14+offset) * cm)
+  textobject.textLine(u'Total amount of the CLUSIL membership fee: %s' % unicode(details['AMOUNT']) + u' EUR')
+  canvas.drawText(textobject)
+
+  # thank you message 
+  textobject = canvas.beginText(1.5 * cm, -(16+offset) * cm)
+  textobject.textLine(u'Thank you for being a CLUSIL member.')
+  textobject.textLine(u'Please be so kind and pay the membership fee in the next weeks.')
+  canvas.drawText(textobject)
 
   canvas.showPage()
   canvas.save()

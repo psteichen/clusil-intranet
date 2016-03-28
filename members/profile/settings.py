@@ -64,7 +64,7 @@ PROFILE_TMPL_CONTENT = {
     'submit'   		: u'Modify',
     'done' : {
       'template'        : 'done.html',
-      'title'           : u'Profile [{id}] modified.',
+      'title'           : u'Profile [{id}] modified!',
       'message'         : u'''Fields (information) modified:
 {list}
 ''',
@@ -78,8 +78,10 @@ PROFILE_TMPL_CONTENT = {
       'template'	: 'done.html',
       'title'     	: u'User [{user}] added.',
       'no_org'		: u'<p>Your membership type does only allow one(1) User.</p>',
+#      'max'		: u'''<p>You already have the maximum of allowed Users for your Membership type.</p>
+#<p>If you want more Users, you'll have to get the next membership level: <a href="/profile/upgrade/">Upgrade membership</a>.</p>''',
       'max'		: u'''<p>You already have the maximum of allowed Users for your Membership type.</p>
-<p>If you want more Users, you'll have to get the next membership level: <a href="/profile/upgrade/">Upgrade membership</a>.</p>''',
+<p>If you want more Users, you'll have to get the next membership level. Contact us to <a href="mailto:membership@clusil.lu?Subject=Upgrade membership [{member_id}]">upgrade your membership</a>.</p>''',
     },
   },
   'affiluser': {

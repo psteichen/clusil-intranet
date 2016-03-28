@@ -108,8 +108,8 @@ def modify(r):
 
         # all fine: done message
         return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['done']['template'], {
-			'title'		: title,
-                	'message'	: settings.TEMPLATE_CONTENT['profile']['modify']['done']['message'] + ' ;<br/> '.join([f for f in pf.changed_data]),
+			'title'		: settings.TEMPLATE_CONTENT['profile']['modify']['done']['title'].format(id=M.id),
+#                	'message'	: settings.TEMPLATE_CONTENT['profile']['modify']['done']['message'].format(list=' ;<br/> '.join([f for f in pf.changed_data])),
 		     })
 
         
@@ -181,7 +181,7 @@ def adduser(r): # only if membership-type is ORG
 
     # if max users exist -> out!
     if member_is_full(M): 
-      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['max']
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['max'].format(member_id=M.id)
 
     if message:
       return render(r,done_template, {
@@ -205,7 +205,6 @@ def affiluser(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('affiliate user','/profile/affiluser/'+user),
                ) )
  
   M = get_member_from_username(user)
@@ -271,7 +270,6 @@ def make_head(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('make head-of-list','/profile/make_head/'+user),
                ) )
  
   M = get_member_from_username(user)
@@ -307,7 +305,6 @@ def make_delegate(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
                        	('member profile','/profile/'),
-                       	('make delegate','/profile/make_delegate/'+user),
                ) )
  
   M = get_member_from_username(user)

@@ -2,7 +2,7 @@
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import Form, ChoiceField, ModelForm, CharField, FileField,  ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField, BooleanField, RadioSelect
+from django.forms import Form, ChoiceField, ModelForm, CharField, ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField, BooleanField, RadioSelect
 from django.forms.models import modelformset_factory, BaseModelFormSet
 
 from accounting.models import Fee
@@ -64,7 +64,9 @@ class BaseUserFormSet(BaseModelFormSet):
 MultiUserFormSet = modelformset_factory(User, form=UserForm, formset=BaseUserFormSet, extra=5)
 
 
-class StudentProofForm(Form):
+class StudentProofForm(ModelForm):
+  student_proof = FileField(required=True)
+
   class Meta:
     model = Member
     fields = ( 'student_proof', )

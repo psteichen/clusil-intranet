@@ -44,6 +44,8 @@ class Organisation(Model):
   def __unicode__(self):
     return self.name + ' (' + unicode(self.address) + ')'
 
+def rename_sp(i,f):
+  return 'REG/students/'+f
 
 # Member model
 class Member(Model):
@@ -89,7 +91,7 @@ class Member(Model):
   head_of_list 	= ForeignKey(User,related_name='head_of_list+',null=True,on_delete=SET_NULL)
   delegate 	= ForeignKey(User,related_name='delegate+',blank=True,null=True,on_delete=SET_NULL)
   users 	= ManyToManyField(User, related_name='users+',blank=True,null=True)
-  student_proof	= FileField(upload_to='board/registration/students/',blank=True,null=True)
+  student_proof	= FileField(upload_to=rename_sp,blank=True,null=True)
 
   def __unicode__(self):
     o = ''

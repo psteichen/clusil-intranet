@@ -126,7 +126,7 @@ def draw_pdf(buffer, member, details):
   # thank you message 
   textobject = canvas.beginText(1.5 * cm, -(16+offset) * cm)
   textobject.textLine(u'Thank you for being a CLUSIL member.')
-  textobject.textLine(u'Please be so kind and pay the membership fee in the next weeks.')
+  textobject.textLine(u'Please be so kind and pay the membership fee within the next two weeks.')
   canvas.drawText(textobject)
 
   canvas.showPage()

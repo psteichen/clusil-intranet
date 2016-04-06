@@ -15,8 +15,8 @@ from members.groups.models import Affiliation, Group
 ##
 def gen_hash(salt,message,length,salt2=False):
   h = sha256()
-  if salt: h.update(unicode(salt)) #salt
-  if salt2: h.update(unicode(salt2)) #second salt
+  if salt: h.update(unicode(salt).encode('utf-8')) #salt
+  if salt2: h.update(unicode(salt2).encode('utf-8')) #second salt
   h.update(unicode(message)) #message
 
   return unicode(h.hexdigest())[:int(length)]

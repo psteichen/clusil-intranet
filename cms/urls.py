@@ -29,10 +29,10 @@ urlpatterns = patterns('',
   url(r'^pwd/reset/done/$', reset_done, name='password_reset_done'),
   url(r'^pwd/reset/(?P<token>[\w:-]+)/$', reset, name='password_reset_reset'),
 
-  #mback-office (members)
+  #members back-office (members)
   url(r'^profile/', include('members.profile.urls')),
 
-  #back-office (board)
+  #admin back-office (board)
   url(r'^board/', board, name='board'),
 
   url(r'^members/', include('members.urls')),

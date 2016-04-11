@@ -13,7 +13,7 @@ from django_tables2 import RequestConfig
 
 from cms.functions import notify_by_email, gen_form_errors
 
-from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address
+from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username
 from members.models import Member
 
 from members.groups.functions import affiliate, get_affiliations
@@ -22,7 +22,7 @@ from members.groups.models import Group, Affiliation
 from accounting.models import Fee
 from accounting.functions import generate_invoice
 
-from .functions import get_member_from_username, member_initial_data, get_user_choice_list, member_is_full
+from .functions import member_initial_data, get_user_choice_list, member_is_full
 from .forms import ProfileForm, AffiliateForm, UserCreationForm, UserChangeForm
 from .tables import InvoiceTable
 

@@ -48,6 +48,7 @@ INSTALLED_APPS = (
   'members',
   'members.groups',
   'meetings',
+  'attendance',
   'events',
   'accounting',
 )
@@ -124,6 +125,7 @@ FIXTURE_DIRS = (
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-gb'
+LC_ALL = 'en_GB.utf8' #to be used inpython afterwards
 
 TIME_ZONE = 'Europe/Luxembourg'
 
@@ -212,10 +214,13 @@ TEMPLATE_CONTENT = {
         'jumbotron'	: 'https://clusil.lu/css/jumbotron.css',
         'jt_narrow'	: 'https://clusil.lu/css/jumbotron-narrow.css',
         'own'           : STATIC_URL + 'css/bt-clusil.css',
+        'dtpicker'      : '//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css',
     },
     'js' : {
-        'bt'       	: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
-        'jq'		: 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js',
+	'jq'            : '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js',
+        'bt'            : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
+        'momentjs'      : '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js',
+        'dtpicker'      : '//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js',
     },
   },
   'error' : {
@@ -295,15 +300,15 @@ HOME_ACTIONS = (
     ),
   },
   {
-    'heading'   	: 'Board Console',
-    'has_perms'		: 'cms.BOARD',
+    'heading'   	: 'Management Console',
+    'has_perms'		: 'cms.SECR',
     'actions' : (
       {         
         'label'         : 'Dashboard', 
         'glyphicon'     : 'glyphicon-tasks',
         'desc'          : 'Club management tools and functions',
         'url'           : '/board/',
-        'has_perms'	: 'cms.BOARD',
+        'has_perms'	: 'cms.SECR',
       },
     ),
   },
@@ -347,37 +352,56 @@ TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
 ## board
 BOARD_ACTIONS = (
   {
+    'heading'      	: 'Admin and internal management applications:',
+    'has_perms'		: 'cms.SECR',
+    'actions' : (
+      {         
+        'label'         : 'Meeting Management', 
+        'glyphicon'     : 'glyphicon-calendar',
+        'desc'          : 'Manage regular meetings (board, working groups...).',
+        'url'           : '/meetings/',
+	'has_perms'	: 'cms.SECR',
+      },
+      {         
+        'label'         : 'Member Management', 
+        'glyphicon'     : 'glyphicon-user',
+        'desc'          : 'Manage members.',
+        'url'           : '/members/',
+	'has_perms'	: 'cms.SECR',
+      },
+      {         
+        'label'         : 'Treasury', 
+        'glyphicon'     : 'glyphicon-euro',
+        'desc'          : 'Manage and check payments or other financial figures.',
+        'url'           : '/accounting/',
+	'has_perms'	: 'cms.BOARD',
+      },
+      {         
+        'label'         : 'Organisation', 
+        'glyphicon'     : 'glyphicon-home',
+        'desc'          : 'Manage and affiliate board members and admin staff.',
+        'url'           : '/members/board/',
+	'has_perms'	: 'cms.BOARD',
+      },
+    ),
+  },
+  {
     'heading'      	: 'Web and online content management applications:',
+    'has_perms'		: 'cms.SECR',
     'actions' : (
       {         
         'label'         : 'Web Content Management', 
         'glyphicon'     : 'glyphicon-cloud',
         'desc'          : 'Manage the public website content',
         'url'           : '/webcontent/',
+	'has_perms'	: 'cms.SECR',
       },
       {         
         'label'         : 'Event Management', 
         'glyphicon'     : 'glyphicon-glass',
         'desc'          : 'Manage special events or activities',
         'url'           : '/events/',
-      },
-
-    ),
-  },
-  {
-    'heading'      	: 'Admin and internal management applications:',
-    'actions' : (
-      {         
-        'label'         : 'Meeting Management', 
-        'glyphicon'     : 'glyphicon-calendar',
-        'desc'          : 'Manage regular meetings (board working groups...)',
-        'url'           : '/meetings/',
-      },
-      {         
-        'label'         : 'Member Management', 
-        'glyphicon'     : 'glyphicon-user',
-        'desc'          : 'Manage members',
-        'url'           : '/members/',
+	'has_perms'	: 'cms.SECR',
       },
     ),
   },

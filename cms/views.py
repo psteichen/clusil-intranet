@@ -75,7 +75,7 @@ def home(r):
 			'actions': settings.TEMPLATE_CONTENT['home']['actions'], 
 		})
 
-@permission_required('clusil.BOARD')
+@permission_required('cms.BOARD')
 def board(r):
   return render(r, settings.TEMPLATE_CONTENT['board']['template'], { 
 			'title': settings.TEMPLATE_CONTENT['board']['title'], 

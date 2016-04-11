@@ -1,188 +1,126 @@
 #
 # coding=utf-8
 #
+from datetime import date, timedelta, datetime
+
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.conf import settings
+from django.utils import timezone
 
 from django_tables2  import RequestConfig
 
-from cms.functions import notify_by_email
+from cms.functions import notify_by_email, show_form, visualiseDateTime
 
-from members.functions import get_active_members, gen_fullname
+from events.models import Event
+from members.models import Member
+from members.functions import get_active_members, gen_fullname, get_member_from_username
+from members.groups.models import Group
+from members.groups.functions import get_group_members
+from attendance.functions import gen_attendance_hashes, gen_invitation_message
+from attendance.models import Meeting_Attendance
 
-from .functions import gen_invitation_message, gen_hash, gen_meeting_overview, gen_meeting_initial, gen_location_initial
-from .models import Location, Meeting
-from .forms import LocationForm, MeetingForm
-from .tables  import MeetingTable
-
-
-# index #
-#########
-@login_required
-def index(r):
-  r.breadcrumbs( ( ('home','/'),
-                   ('meetings','/meetings/'),
-               ) )
-
-  return render(r, settings.TEMPLATE_CONTENT['meetings']['template'], {
-                   'title': settings.TEMPLATE_CONTENT['meetings']['title'],
-                   'actions': settings.TEMPLATE_CONTENT['meetings']['actions'],
-               })
-
-
-##################
-# LOCATION VIEWS #
-##################
-
-# location_add #
-################
-@login_required
-def location_add(r):
-  r.breadcrumbs( ( ('home','/'),
-                   ('meetings','/meetings/'),
-                   ('add a location','/meetings/location/add/'),
-               ) )
-
-  if r.POST:
-    lf = LocationForm(r.POST)
-    if lf.is_valid():
-      Lo = lf.save()
-      
-      # all fine -> done
-      return render(r, settings.TEMPLATE_CONTENT['meetings']['location']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['meetings']['location']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['meetings']['location']['add']['done']['message'] + unicode(Lo),
-                })
-
-    # form not valid -> error
-    else:
-      return render(r, settings.TEMPLATE_CONTENT['meetings']['location']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['meetings']['location']['add']['done']['title'], 
-                'error_message': settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in lf.errors]),
-                })
-
-  # no post yet -> empty form
-  else:
-    form = LocationForm()
-    return render(r, settings.TEMPLATE_CONTENT['meetings']['location']['add']['template'], {
-                'title': settings.TEMPLATE_CONTENT['meetings']['location']['add']['title'],
-                'desc': settings.TEMPLATE_CONTENT['meetings']['location']['add']['desc'],
-                'submit': settings.TEMPLATE_CONTENT['meetings']['location']['add']['submit'],
-                'form': form,
-                })
-
-# modify_location formwizard #
-##############################
-class ModifyLocationWizard(SessionWizardView):
-
-  def get_template_names(self):
-    return 'wizard.html'
-
-  def get_context_data(self, form, **kwargs):
-    context = super(ModifyLocationWizard, self).get_context_data(form=form, **kwargs)
-
-    #add breadcrumbs to context
-    self.request.breadcrumbs( ( ('home','/'),
-                                ('meetings','/meetings/'),
-                                ('modify a location','/meetings/location/modify/'),
-                            ) )
-
-    if self.steps.current != None:
-      context.update({'title': settings.TEMPLATE_CONTENT['meetings']['location']['modify']['title']})
-      context.update({'first': settings.TEMPLATE_CONTENT['meetings']['location']['modify']['first']})
-      context.update({'prev': settings.TEMPLATE_CONTENT['meetings']['location']['modify']['prev']})
-      context.update({'step_title': settings.TEMPLATE_CONTENT['meetings']['location']['modify'][self.steps.current]['title']})
-      context.update({'next': settings.TEMPLATE_CONTENT['meetings']['location']['modify'][self.steps.current]['next']})
-
-    return context
-
-  def get_form(self, step=None, data=None, files=None):
-    form = super(ModifyLocationWizard, self).get_form(step, data, files)
-
-    # determine the step if not given
-    if step is None:
-      step = self.steps.current
-
-    if step == 'location':
-      cleaned_data = self.get_cleaned_data_for_step('list') or {}
-      if cleaned_data != {}:
-        form.initial = gen_location_initial(cleaned_data['locations'])
-        form.instance = Location.objects.get(pk=cleaned_data['locations'].id)
-
-    return form
-
-  def done(self, fl, **kwargs):
-    self.request.breadcrumbs( ( ('home','/'),
-                                ('meetings','/meetings/'),
-                                ('modify a location','/meetings/location/modify/'),
-                            ) )
-
-    template = settings.TEMPLATE_CONTENT['meetings']['location']['modify']['done']['template']
-
-    L = None
-    lf = fl[1]
-    if lf.is_valid():
-      L = lf.save()
-
-    title = settings.TEMPLATE_CONTENT['meetings']['location']['modify']['done']['title'] % L
-
-    return render(self.request, template, {
-                        'title': title,
-                 })
+from .functions import gen_meeting_overview, gen_meeting_initial, gen_current_attendance, gen_report_message
+from .models import Meeting, Invitation
+from .forms import  MeetingForm, ListMeetingsForm, MeetingReportForm
+from .tables  import MeetingTable, MgmtMeetingTable, MeetingMixin, MeetingListingTable
 
 
 #################
 # MEETING VIEWS #
 #################
 
+# list #
+########
+@permission_required('cms.MEMBER',raise_exception=True)
+def list(r):
+  r.breadcrumbs( ( 
+			('home','/'),
+                   	('meetings','/meetings/'),
+               ) )
+
+  table = MeetingTable(Meeting.objects.filter(group__type=Group.WG).order_by('-when'))
+  if r.user.has_perm('cms.BOARD'):
+    table = MgmtMeetingTable(Meeting.objects.all().order_by('-when'))
+
+  RequestConfig(r, paginate={"per_page": 75}).configure(table)
+
+  return render(r, settings.TEMPLATE_CONTENT['meetings']['template'], {
+                   'title': settings.TEMPLATE_CONTENT['meetings']['title'],
+                   'desc': settings.TEMPLATE_CONTENT['meetings']['desc'],
+                   'actions': settings.TEMPLATE_CONTENT['meetings']['actions'],
+                   'table': table,
+                })
+
+
 # add #
 #######
-@login_required
+@permission_required('cms.BOARD',raise_exception=True)
 def add(r):
-  r.breadcrumbs( ( ('home','/'),
-                   ('meetings','/meetings/'),
-                   ('add a meeting','/meetings/add/'),
+  r.breadcrumbs( ( 	
+			('home','/'),
+                   	('meetings','/meetings/'),
+                   	('add meeting','/meetings/add/'),
                ) )
 
   if r.POST:
     e_template =  settings.TEMPLATE_CONTENT['meetings']['add']['done']['email']['template']
+    done_message = ''
 
-    mf = MeetingForm(r.POST)
+    mf = MeetingForm(r.POST,r.FILES)
     if mf.is_valid():
       Mt = mf.save(commit=False)
       Mt.save()
       
-      email_error = { 'ok': True, 'who': (), }
-      for m in get_active_members():
+      user_member = get_member_from_username(r.user.username)
+      e_subject = settings.TEMPLATE_CONTENT['meetings']['add']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
+
+      if r.FILES:
+        I = Invitation(meeting=Mt,message=mf.cleaned_data['additional_message'],attachement=r.FILES['attachement'])
+      else:
+        I = Invitation(meeting=Mt,message=mf.cleaned_data['additional_message'])
+      I.save()
+      send = mf.cleaned_data['send']
+      if send:
+        I.sent = timezone.now()
+
+      email_error = { 'ok': True, 'who': [], }
+      for m in get_group_members(Mt.group):
+        u = m.user
    
-        #invitation email with "YES/NO button"
-#        subject = settings.TEMPLATE_CONTENT['meetings']['add']['done']['email']['subject'].format(title=unicode(Mt.title)))
-        subject = settings.TEMPLATE_CONTENT['meetings']['add']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
-        invitation_message = gen_invitation_message(e_template,Mt,m)
+        gen_attendance_hashes(Mt,Event.MEET,u)
+        invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,u) + mf.cleaned_data['additional_message']
+        if u == r.user: 
+          done_message = invitation_message
+
         message_content = {
-          'FULLNAME'    : gen_fullname(m),
-          'MESSAGE'     : invitation_message + mf.cleaned_data['additional_message'],
+          'FULLNAME'    : gen_fullname(u),
+          'MESSAGE'     : invitation_message,
         }
         #send email
-        ok=notify_by_email(r.user.email,m.email,subject,message_content)
-        if not ok: 
-          email_error['ok']=False
-          email_error['who'].add(m.email)
+        if send:
+          if I.attachement:
+            ok=notify_by_email(settings.EMAILS['sender']['default'],u.email,e_subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
+          else:
+            ok=notify_by_email(settings.EMAILS['sender']['default'],u.email,e_subject,message_content)
+          if not ok:
+            email_error['ok']=False
+            email_error['who'].append(u.email)
 
-      # error in email -> show error messages
-      if not email_error['ok']:
-        return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                'error_message': settings.TEMPLATE_CONTENT['error']['email'] + ' ; '.join([e for e in email_error['who']]),
-                })
+          # error in email -> show error messages
+          if not email_error['ok']:
+            I.save()
+            return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
+                		'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
+                		'error_message': settings.TEMPLATE_CONTENT['error']['email'] + ' ; '.join([e for e in email_error['who']]),
+			 })
 
       # all fine -> done
-      else:
-        return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
+      I.save()
+      return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] + ' ; '.join([gen_fullname(m) for m in get_active_members()]),
+                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': done_message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(m.user) for m in get_group_members(Mt.group)]), },
                 })
 
     # form not valid -> error
@@ -194,12 +132,6 @@ def add(r):
   # no post yet -> empty form
   else:
     form = MeetingForm()
-    try:
-      latest = Meeting.objects.values().latest('num')
-      next_num = latest['num'] + 1
-      form = MeetingForm(initial={ 'title': str(next_num) + '. réunion statutaire', 'num': next_num, })
-    except Meeting.DoesNotExist:
-      pass
     return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['template'], {
                 'title': settings.TEMPLATE_CONTENT['meetings']['add']['title'],
                 'desc': settings.TEMPLATE_CONTENT['meetings']['add']['desc'],
@@ -207,45 +139,90 @@ def add(r):
                 'form': form,
                 })
 
-# list #
-#########
-@login_required
-def list(r, meeting_num):
-  r.breadcrumbs( ( ('home','/'),
-                   ('meetings','/meetings/'),
-                   ('list meeting n. '+meeting_num,'/meetings/list/'+meeting_num+'/'),
+
+# send #
+########
+@permission_required('cms.BOARD',raise_exception=True)
+def send(r, meeting_id):
+  r.breadcrumbs( ( 
+			('home','/'),
+                   	('meetings','/meetings/'),
+                   	('send meeting invitations','/meetings/send/'),
                ) )
 
-  meeting = Meeting.objects.get(num=meeting_num)
-  title = settings.TEMPLATE_CONTENT['meetings']['list']['title'] % { 'num' : meeting_num, }
-  message = gen_meeting_overview(settings.TEMPLATE_CONTENT['meetings']['list']['overview']['template'],meeting)
+  e_template =  settings.TEMPLATE_CONTENT['meetings']['send']['done']['email']['template']
 
-  return render(r, settings.TEMPLATE_CONTENT['meetings']['list']['template'], {
+  Mt = Meeting.objects.get(id=meeting_id)
+  I = Invitation.objects.get(meeting=Mt)
+
+  title = settings.TEMPLATE_CONTENT['meetings']['send']['done']['title'] % unicode(Mt.title)
+      
+  email_error = { 'ok': True, 'who': [], }
+  for m in get_active_members():
+    #invitation email with "YES/NO button"
+    subject = settings.TEMPLATE_CONTENT['meetings']['send']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
+    invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,m)
+    message_content = {
+        'FULLNAME'    : gen_member_fullname(m),
+        'MESSAGE'     : invitation_message + I.message,
+    }
+    #send email
+    try: #with attachement
+      ok=notify_by_email(settings.EMAILS['sender']['default'],m.email,subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
+    except: #no attachement
+      ok=notify_by_email(settings.EMAILS['sender']['default'],m.email,subject,message_content)
+     
+    if not ok: 
+      email_error['ok']=False
+      email_error['who'].append(m.email)
+
+  # error in email -> show error messages
+  if not email_error['ok']:
+    return render(r, settings.TEMPLATE_CONTENT['meetings']['send']['done']['template'], {
+                	'title': title, 
+       	        	'error_message': settings.TEMPLATE_CONTENT['error']['email'] + ' ; '.join([e for e in email_error['who']]),
+                  })
+
+  # all fine -> done
+  else:
+    I.sent = datetime.now()
+    I.save()
+    return render(r, settings.TEMPLATE_CONTENT['meetings']['send']['done']['template'], {
+	                'title': title, 
+        	        'message': settings.TEMPLATE_CONTENT['meetings']['send']['done']['message'] + ' ; '.join([gen_member_fullname(m) for m in get_active_members()]),
+                  })
+
+
+# details #
+############
+@login_required
+def details(r, meeting_id):
+  meeting = Meeting.objects.get(id=meeting_id)
+  meeting_date = visualiseDateTime(meeting.when)
+
+  r.breadcrumbs( ( 
+			('home','/'),
+                   	('meetings','/meetings/'),
+                   	('details for meeting: '+meeting.title + ' ('+ meeting_date+ ')','/meetings/list/'+meeting_id+'/'),
+               ) )
+
+  title = settings.TEMPLATE_CONTENT['meetings']['details']['title'] % { 'meeting' : meeting.title, 'date': meeting_date, }
+  message = gen_meeting_overview(settings.TEMPLATE_CONTENT['meetings']['details']['overview']['template'],meeting)
+
+  return render(r, settings.TEMPLATE_CONTENT['meetings']['details']['template'], {
                    'title': title,
                    'message': message,
                 })
 
-# list_all #
-#########
-@login_required
-def list_all(r):
-  r.breadcrumbs( ( ('home','/'),
-                   ('meetings','/meetings/'),
-                   ('list meetings','/meetings/list_all/'),
-               ) )
 
-  table = MeetingTable(Meeting.objects.all().order_by('-num'))
-  RequestConfig(r, paginate={"per_page": 75}).configure(table)
+# modify #
+##########
 
-  return render(r, settings.TEMPLATE_CONTENT['meetings']['list_all']['template'], {
-                   'title': settings.TEMPLATE_CONTENT['meetings']['list_all']['title'],
-                   'desc': settings.TEMPLATE_CONTENT['meetings']['list_all']['desc'],
-                   'table': table,
-                })
+#modify helper functions
+def show_attendance_form(wizard):
+  return show_form(wizard,'meeting','attendance',True)
 
-
-# modify formwizard #
-#####################
+#modify formwizard
 class ModifyMeetingWizard(SessionWizardView):
 
   def get_template_names(self):
@@ -261,10 +238,13 @@ class ModifyMeetingWizard(SessionWizardView):
                             ) )
 
     if self.steps.current != None:
+      title = u'réunion'
+      meeting_id = self.kwargs['meeting_id']
+      title = Meeting.objects.get(pk=meeting_id).title
       context.update({'title': settings.TEMPLATE_CONTENT['meetings']['modify']['title']})
       context.update({'first': settings.TEMPLATE_CONTENT['meetings']['modify']['first']})
       context.update({'prev': settings.TEMPLATE_CONTENT['meetings']['modify']['prev']})
-      context.update({'step_title': settings.TEMPLATE_CONTENT['meetings']['modify'][self.steps.current]['title']})
+      context.update({'step_title': settings.TEMPLATE_CONTENT['meetings']['modify'][self.steps.current]['title'] % { 'meeting': title, } })
       context.update({'next': settings.TEMPLATE_CONTENT['meetings']['modify'][self.steps.current]['next']})
 
     return context
@@ -276,15 +256,19 @@ class ModifyMeetingWizard(SessionWizardView):
     if step is None:
       step = self.steps.current
 
+    meeting_id = self.kwargs['meeting_id']
+    M = Meeting.objects.get(pk=meeting_id)
+
     if step == 'meeting':
-      cleaned_data = self.get_cleaned_data_for_step('list') or {}
-      if cleaned_data != {}:
-        form.initial = gen_meeting_initial(cleaned_data['meetings'])
-        form.instance = Meeting.objects.get(pk=cleaned_data['meetings'].id)
+      form.initial = gen_meeting_initial(M)
+      form.instance = M
+
+    if step == 'attendance':
+      form.initial = gen_current_attendance(M)
 
     return form
 
-  def done(self, fl, **kwargs):
+  def done(self, form_list, form_dict, **kwargs):
     self.request.breadcrumbs( ( ('home','/'),
                                 ('meetings','/meetings/'),
                                 ('modify a meeting','/meetings/modify/'),
@@ -293,9 +277,39 @@ class ModifyMeetingWizard(SessionWizardView):
     template = settings.TEMPLATE_CONTENT['meetings']['modify']['done']['template']
 
     M = None
-    mf = fl[1]
+    mf = form_dict['meeting']
     if mf.is_valid():
       M = mf.save()
+
+      attendance = mf.cleaned_data['attendance']
+      if attendance == True: 
+        af = form_dict['attendance']
+        if af.is_valid() and af.has_changed():
+          s_initial = af.initial['subscribed']
+          s_changed = af.cleaned_data['subscribed']
+          for s in s_changed:
+            try:
+              Meeting_Attendance(meeting=M,member=s,timestamp=datetime.now(),present=True).save()
+            except: pass
+#          s_diff = set(s_initial) ^ set(s_changed)
+#          for s_d in s_diff:
+#            try:
+#              Meeting_Attendance.objects.get(meeting=M,member=s_d).delete()
+#            except:
+#              pass
+
+          e_initial = af.initial['excused']
+          e_changed = af.cleaned_data['excused']
+          for e in e_changed:
+            try:
+              Meeting_Attendance(meeting=M,member=e,timestamp=datetime.now(),present=False).save()
+            except: pass
+#          e_diff = set(e_initial) ^ set(e_changed)
+#          for e_d in e_diff:
+#            try:
+#              Meeting_Attendance.objects.get(meeting=M,member=e_d).delete()
+#            except:
+#              pass
 
     title = settings.TEMPLATE_CONTENT['meetings']['modify']['done']['title'] % M
 
@@ -304,44 +318,78 @@ class ModifyMeetingWizard(SessionWizardView):
                  })
 
 
-#############################
-# NONE LOGIN_REQUIRED VIEWS #
-#############################
+# report #
+##########
+@permission_required('cms.BOARD',raise_exception=True)
+def report(r, meeting_id):
+  r.breadcrumbs( ( 	
+			('home','/'),
+                   	('meetings','/meetings/'),
+               ) )
 
-# attendance #
-##############
-def attendance(r, meeting_num, attendance_hash):
-  meeting = Meeting.objects.get(num=meeting_num)
+  Mt = Meeting.objects.get(id=meeting_id)
 
-  title = settings.TEMPLATE_CONTENT['meetings']['attendance']['title'] % { 'meeting': meeting.title, }
-  message = ''
-  notify=False
+  if r.POST:
+    e_template =  settings.TEMPLATE_CONTENT['meetings']['report']['done']['email']['template']
 
-  for m in get_active_members():
-    if gen_hash(meeting,m.email) == attendance_hash:
-      # it's a YES
-      meeting.attendance.add(m)
-      message = settings.TEMPLATE_CONTENT['meetings']['attendance']['yes'] % { 'name': gen_fullname(m), }
-      notify=True
+    mrf = MeetingReportForm(r.POST, r.FILES)
+    if mrf.is_valid():
+      Mt.report = mrf.cleaned_data['report']
+      Mt.save()
 
-    if gen_hash(meeting,m.email,False) == attendance_hash:
-      # it's a NO
-      meeting.excused.add(m)
-      message = settings.TEMPLATE_CONTENT['meetings']['attendance']['no'] % { 'name': gen_fullname(m), }
-      notify=True
+      send = mrf.cleaned_data['send']
+      if send:
+        email_error = { 'ok': True, 'who': [], }
+        for m in get_active_members():
+   
+          #notifiation per email for new report
+          subject = settings.TEMPLATE_CONTENT['meetings']['report']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
+          message_content = {
+            'FULLNAME'    : gen_member_fullname(m),
+            'MESSAGE'     : gen_report_message(e_template,Mt,m),
+          }
+          attachement = settings.MEDIA_ROOT + unicode(Mt.report)
+          #send email
+          ok=notify_by_email(settings.EMAILS['sender']['default'],m.email,subject,message_content,False,attachement)
+          if not ok: 
+            email_error['ok']=False
+            email_error['who'].append(m.email)
 
-  if notify:
-    #notify by email
-    message_content = {
-      'MESSAGE'     : message,
-    }
-    #send email
-    ok=notify_by_email(False,m.email,title,message_content)
+        # error in email -> show error messages
+        if not email_error['ok']:
+          return render(r, settings.TEMPLATE_CONTENT['meetings']['report']['done']['template'], {
+                'title': settings.TEMPLATE_CONTENT['meetings']['report']['done']['title'], 
+                'error_message': settings.TEMPLATE_CONTENT['error']['email'] + ' ; '.join([e for e in email_error['who']]),
+                })
+        else:
+          # done -> with sending
+          return render(r, settings.TEMPLATE_CONTENT['meetings']['report']['done']['template'], {
+				'title': settings.TEMPLATE_CONTENT['meetings']['report']['done']['title_send'], 
+                		'message': settings.TEMPLATE_CONTENT['meetings']['report']['done']['message_send'] + ' ; '.join([gen_member_fullname(m) for m in get_active_members()]),
+                })
+      else:
+        # done -> no sending
+        return render(r, settings.TEMPLATE_CONTENT['meetings']['report']['done']['template'], {
+			'title': settings.TEMPLATE_CONTENT['meetings']['report']['done']['title'], 
+                	'message': settings.TEMPLATE_CONTENT['meetings']['report']['done']['message'],
+                })
 
-  meeting.save()
+    # form not valid -> error
+    else:
+      return render(r, settings.TEMPLATE_CONTENT['meetings']['report']['done']['template'], {
+                'title': settings.TEMPLATE_CONTENT['meetings']['report']['done']['title'], 
+                'error_message': settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in mrf.errors]),
+                })
+  # no post yet -> empty form
+  else:
+    form = MeetingReportForm(initial={ 'id': Mt.id, 'title': Mt.title, 'when': visualiseDateTime(Mt.when), })
+    title = settings.TEMPLATE_CONTENT['meetings']['report']['title'].format(unicode(Mt.id))
+    return render(r, settings.TEMPLATE_CONTENT['meetings']['report']['template'], {
+                'title': title,
+                'desc': settings.TEMPLATE_CONTENT['meetings']['report']['desc'],
+                'submit': settings.TEMPLATE_CONTENT['meetings']['report']['submit'],
+                'form': form,
+                })
 
-  return render(r, settings.TEMPLATE_CONTENT['meetings']['attendance']['template'], {
-                   'title': title,
-                   'message': message,
-               })
+
 

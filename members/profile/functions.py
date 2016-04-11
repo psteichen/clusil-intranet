@@ -12,26 +12,6 @@ from members.groups.models import Group as WG, Affiliation
 ############################
 # PROFILE helper functions #
 ############################
-def get_member_from_username(username):
-  U = User.objects.get(username=username)
-  M = None
-  try:
-    M = Member.objects.get(head_of_list=U)
-  except Member.DoesNotExist:
-    pass
-  try:
-    M = Member.objects.get(delegate=U)
-  except Member.DoesNotExist:
-    pass
-  try:
-    M = Member.objects.get(users__in=[U])
-  except Member.DoesNotExist:
-    pass
-
-  return M
-
-
-
 
 def member_initial_data(member):
   member_data = {

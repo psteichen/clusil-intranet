@@ -1,4 +1,25 @@
 
+def get_member_from_username(username):
+  from django.contrib.auth.models import User
+  from members.models import Member
+
+  U = User.objects.get(username=username)
+  M = None
+  try:
+    M = Member.objects.get(head_of_list=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    M = Member.objects.get(delegate=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    M = Member.objects.get(users__in=[U])
+  except Member.DoesNotExist:
+    pass
+
+  return M
+
 def get_members_to_validate():
   from .models import Member
   return Member.objects.filter(status=Member.REG)

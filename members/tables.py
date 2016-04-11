@@ -12,7 +12,6 @@ from .models import Member, Role
 #table for visualisation via django_tables2
 class MemberTable(Table):
   row_class     = Column(visible=False, empty_values=()) #used to highlight some rows
-  role		= Column(empty_values=())
 
   def render_row_class(self, value, record):
     if record.status == Member.STB:
@@ -33,16 +32,9 @@ class MemberTable(Table):
 #  def render_end_date(self, value):
 #    return format_datetime(value)
 
-  def render_role(self, value, record):
-    try:
-      role = Role.objects.get(member__id=record.id)
-      return unicode(role.title) + ' (depuis ' + unicode(role.start_date) + ')'
-    except:
-      pass
-
   class Meta:
     model = Member
-    fields = ( 'first_name', 'last_name', 'email', 'start_date', 'end_date', 'status', 'role', )
+    fields = ( 'id', 'type', 'head_of_list', 'delegate', 'status', )
     attrs = {"class": "table"}
 
 

@@ -1,4 +1,5 @@
-from datetime import date
+# -*- coding: utf-8 -*-
+from datetime import date, datetime, time
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -44,6 +45,28 @@ def gen_form_errors(form):
 
   output+='</ul>'
   return output
+
+def visualiseDecimal(decIn,currency=''):
+  s = '{:,.12g}'.format(decIn)
+  s = s.replace(',', ' ')
+  s = s.replace('.', ',')
+  if ',' in s:
+    s = s.rstrip('0')
+    s = s.rstrip(',')
+  if not currency:
+    return s
+  elif currency != '' :
+    s = s + ' ' + currency
+  return s
+
+def visualiseDateTime(dtIn):
+  import locale
+  locale.setlocale(locale.LC_ALL, settings.LC_ALL)
+
+  if type(dtIn) is date: return dtIn.strftime('%a le ') + dtIn.strftime('%d %b %Y').lstrip('0')
+  if type(dtIn) is time: return dtIn.strftime('%Hh%M').lstrip('0')
+  if type(dtIn) is datetime: return dtIn.strftime('%a le ') + dtIn.strftime('%d %b %Y').lstrip('0') + u' à ' + dtIn.strftime('%Hh%M').lstrip('0')
+
 
 ############################
 # LDAP (for SSO) FUNCTIONS #

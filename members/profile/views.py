@@ -193,7 +193,6 @@ def adduser(r): # only if membership-type is ORG
       #show user creation form
       return render(r,done_template, {
 			'title'	: title,
-  			'desc'	: settings.TEMPLATE_CONTENT['profile']['adduser']['desc'],
 			'form'	: UserCreationForm(),
 		   })
 

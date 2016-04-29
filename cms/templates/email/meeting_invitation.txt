@@ -1,8 +1,14 @@
 {% autoescape off %}
-J'ai le plaisir de t'inviter à la {{ title }} pour le {{ when }} à {{ time }} au restaurant "{{ location }}".
+Invitation the {{ group }} meeting on {{ when }} starting {{ time }} at {{ location }}.
 
-Merci de t'inscrire/désister via les liens ci-dessous :
+The main topic of discussion will be : {{ title }}
 
-	OUI, je participe : 	{{ attendance.YES }}
-	NON, je m'excuse :	{{ attendance.NO }}
+Please confirm/cancel your attendance herewith:
+
+	YES, I will attend: 	{{ attendance.YES }}
+	NO, I have to cancel:	{{ attendance.NO }}
+
+{{ SALUTATION }}
+
+{{ DISCLAIMER }}
 {% endautoescape %}

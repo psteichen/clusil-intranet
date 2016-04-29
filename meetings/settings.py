@@ -6,6 +6,7 @@ ACTIONS = {
     {
       'label'         	: u'New meeting',
       'icon'     	: 'plus',
+      'grade'     	: 'success',
       'url'           	: '/meetings/add/',
       'has_perms'     	: 'cms.SECR',
     },

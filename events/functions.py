@@ -19,10 +19,9 @@ def gen_event_overview(template,event):
   content['title'] = event.title
   content['when'] = visualiseDateTime(event.when)
   content['time'] = visualiseDateTime(event.time)
-  content['location'] = event.location.name
-  content['address'] = event.location.address
-  content['attendance'] = Event_Attendance.objects.filter(event=event,present=True).only('member')
-  content['excused'] = Event_Attendance.objects.filter(event=event,present=False).only('member')
+  content['location'] = event.location
+  content['attendance'] = Event_Attendance.objects.filter(event=event,present=True).only('user')
+  content['excused'] = Event_Attendance.objects.filter(event=event,present=False).only('user')
 
   return render_to_string(template,content)
 
@@ -39,8 +38,8 @@ def gen_event_initial(e):
 def gen_current_attendance(e):
 
   initial_data = {}
-  initial_data['subscribe'] = Event_Attendance.objects.filter(event=e,present=True).only('member')
-  initial_data['excuse'] = Event_Attendance.objects.filter(event=e,present=False).only('member')
+  initial_data['subscribe'] = Event_Attendance.objects.filter(event=e,present=True).only('user')
+  initial_data['excuse'] = Event_Attendance.objects.filter(event=e,present=False).only('user')
 
   return initial_data
 

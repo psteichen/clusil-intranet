@@ -436,11 +436,9 @@ MEETINGS_ATTENDANCE_URL = 'https://cms.clusil.lu/meetings/attendance/'
 
 
 ## events
-#from events.settings import *
-
-#EVENTS_ATTENDANCE_URL = 'http://new.intranet.clusil.lu/events/attendance/'
-
-#TEMPLATE_CONTENT['events'] = EVENTS_TMPL_CONTENT
+from events.settings import *
+TEMPLATE_CONTENT['events'] = EVENTS_TMPL_CONTENT
+EVENTS_ATTENDANCE_URL = 'http://cms.clusil.lu/events/attendance/'
 
 
 ## accounting

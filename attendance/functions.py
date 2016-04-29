@@ -63,6 +63,7 @@ def gen_invitation_message(template,event,event_type,user):
   content = {}
 
   content['title'] = event.title
+  if event_type == Event.MEET: content['group'] = event.group
   content['when'] = event.when
   content['time'] = event.time
   content['location'] = event.location

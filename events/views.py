@@ -7,13 +7,14 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.conf import settings
+from django.utils import timezone
 
 from django_tables2  import RequestConfig
 
 from cms.functions import notify_by_email
 
 from members.models import Member
-from members.functions import get_active_members, gen_member_fullname
+from members.functions import get_active_members, gen_fullname, get_member_from_username, get_all_users_for_membership
 from attendance.functions import gen_invitation_message, gen_hash
 
 from .functions import gen_event_overview, gen_event_initial
@@ -28,7 +29,7 @@ from .tables  import EventTable
 
 # list #
 ########
-@login_required
+@permission_required('cms.MEMBER',raise_exception=True)
 def list(r):
   r.breadcrumbs( ( 
 			('home','/'),
@@ -48,7 +49,20 @@ def list(r):
 
 # add #
 #######
-@permission_required('cms.COMM',raise_exception=True)
+def send_invitation(event,user,invitation):
+  #invitation email with "YES/NO button"
+  subject = settings.TEMPLATE_CONTENT['events']['add']['done']['email']['subject'] % { 'title': unicode(event.title) }
+  message_content = {
+    'FULLNAME'    : gen_fullname(user),
+    'MESSAGE'     : unicode(invitation.message),
+  }
+  #send email
+  try:
+    return notify_by_email(False,user['email'],subject,message_content,False,settings.MEDIA_ROOT + unicode(invitation.attachement))
+  except:
+    return notify_by_email(False,user['email'],subject,message_content)
+
+@permission_required('cms.SECR',raise_exception=True)
 def add(r):
   r.breadcrumbs( ( 
 			('home','/'),
@@ -59,34 +73,39 @@ def add(r):
   if r.POST:
     e_template =  settings.TEMPLATE_CONTENT['events']['add']['done']['email']['template']
 
-    ef = EventForm(r.POST)
+    ef = EventForm(r.POST,r.FILES)
     if ef.is_valid():
       Ev = ef.save(commit=False)
       Ev.save()
       
-      I = Invitation(event=Ev,message=ef.cleaned_data['additional_message'])
+      user_member = get_member_from_username(r.user.username)
 
+      if r.FILES:
+        I = Invitation(event=Ev,message=ef.cleaned_data['message'],attachement=r.FILES['attachement'])
+      else:
+        I = Invitation(event=Ev,message=ef.cleaned_data['message'])
+      I.save()
       send = ef.cleaned_data['send']
       if send:
-        email_error = { 'ok': True, 'who': (), }
-        for m in get_active_members():
-   
-          #invitation email with "YES/NO button"
-          subject = settings.TEMPLATE_CONTENT['events']['add']['done']['email']['subject'] % { 'title': unicode(Ev.title) }
-          invitation_message = gen_invitation_message(e_template,Ev,Event.OTH,m) + ef.cleaned_data['additional_message']
-          message_content = {
-            'FULLNAME'    : gen_member_fullname(m),
-            'MESSAGE'     : invitation_message,
-          }
-          #send email
-          ok=notify_by_email(r.user.email,m.email,subject,message_content)
+        I.sent = timezone.now()
+
+      email_error = { 'ok': True, 'who': (), }
+      for m in get_active_members():
+        if m.type == Member.ORG:
+          for u in get_all_users_for_membership(m):
+            if send:
+              ok=send_invitation(Ev,u,I)
+              if not ok: 
+                email_error['ok']=False
+                email_error['who'].add(u.email)
+        else:
+          ok=send_invitation(Ev,m.head_of_list,I)
           if not ok: 
             email_error['ok']=False
-            email_error['who'].add(m.email)
+            email_error['who'].add(um.head_of_list.email)
 
         # error in email -> show error messages
         if not email_error['ok']:
-          I.sent = datetime.now()
           I.save()
           return render(r, settings.TEMPLATE_CONTENT['events']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['events']['add']['done']['title'], 
@@ -94,10 +113,8 @@ def add(r):
                 })
 
       # all fine -> done
-      invitation_message = gen_invitation_message(e_template,Ev,Event.OTH,Member(user=r.user)) + ef.cleaned_data['additional_message']
       return render(r, settings.TEMPLATE_CONTENT['events']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['events']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['events']['add']['done']['message'] % { 'email': invitation_message, 'list': ' ; '.join([gen_member_fullname(m) for m in get_active_members()]), },
                 })
 
     # form not valid -> error
@@ -119,7 +136,7 @@ def add(r):
 
 # send #
 ########
-@permission_required('cms.COMM',raise_exception=True)
+@permission_required('cms.SECR',raise_exception=True)
 def send(r,event_id):
   r.breadcrumbs( ( 
 			('home','/'),

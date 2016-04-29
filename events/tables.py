@@ -8,7 +8,7 @@ from django.utils.html import escape
 from django_tables2.tables import Table
 from django_tables2 import Column
 
-from members.functions import gen_member_fullname
+from members.functions import gen_fullname
 from attendance.models import Event_Attendance
 
 from .models import Event

@@ -8,14 +8,14 @@ class Event(Model):
   MEET = 0
   OTH = 1
   TYPES = (
-    (MEET, 'Réunion statutaire'),
-    (OTH,  'Autre Evénement/Rencontre'),
+    (MEET, 'Meeting'),
+    (OTH,  'Other event'),
   )
 
-  title		= CharField(verbose_name='Titre',max_length=100)
+  title		= CharField(verbose_name='Title',max_length=100)
   when		= DateField(verbose_name='Date')
-  time		= TimeField(verbose_name='Heure de début')
-  location	= CharField(verbose_name='Lieu',max_length=500)
+  time		= TimeField(verbose_name='Starting time')
+  location	= CharField(verbose_name='Venue',max_length=500)
   deadline	= DateTimeField(verbose_name='Deadline')
   
   def __unicode__(self):

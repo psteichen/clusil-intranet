@@ -6,7 +6,7 @@ from members.models import Member
 from members.groups.models import Group
 
 def rename_report(i,f):
-  return 'MEETINGS/'+unicode(i.group)+'/'+f
+  return 'MEETINGS/'+unicode(i.group.acronym)+'/'+f
 
 class Meeting(Model):
   title		= CharField(max_length=100)

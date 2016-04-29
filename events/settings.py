@@ -4,46 +4,48 @@
 ACTIONS = {
   'main': (
     {
-      'label'           : u'Ajouter un évènement',
+      'label'           : u'New event',
       'icon'            : 'plus',
+      'grade'           : 'success',
       'url'             : '/events/add/',
-      'has_perms'       : 'cms.COMM',
+      'has_perms'       : 'cms.SECR',
     },
     {
-      'label'           : u'Gestion des Lieux de Rencontre',
+      'label'           : u'Manage locations',
       'icon'            : 'home',
+      'grade'           : 'info',
       'url'             : '/locations/',
-      'has_perms'       : 'cms.COMM',
+      'has_perms'       : 'cms.SECR',
     },
   ),
 }
 
 EVENTS_TMPL_CONTENT = {
-  'title'       	: u'Évènements',
+  'title'       	: u'Events',
   'template'    	: 'list.html',
   'actions'     	: ACTIONS['main'],
   'add': {
     'template'		: 'form.html',
-    'title'     	: u'Créer un évènement',
-    'desc'     		: u'Ceci créé un évènement et prépare les invitations à envoyer.',
-    'submit'   		: u'Ajouter',
+    'title'     	: u'New event',
+    'desc'     		: u'This creates a new event and prepares the invitations to be send.',
+    'submit'   		: u'add',
     'done': {
       'template'	: 'done.html',
-      'title'     	: u'Nouvel évènement créé.',
+      'title'     	: u'New event created.',
       'message'     	: '''
 <pre>
-Message d'invitation : 
+Invitation message: 
 --------------------------------------
 %(email)s
 --------------------------------------
 
-Destinataires : 
+Recipients : 
 %(list)s
 </pre>
 ''',
       'email': {
 	'template'	: 'event_invitation.txt',
-	'subject'	: u'[51 aperta] %(title)s',
+	'subject'	: u'[CLUSIL] %(title)s',
       },
     },
   },

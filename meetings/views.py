@@ -86,8 +86,8 @@ def add(r):
         I.sent = timezone.now()
 
       email_error = { 'ok': True, 'who': [], }
-      for m in get_group_members(Mt.group):
-        u = m.user
+      for a in get_group_members(Mt.group):
+        u = a.user
    
         gen_attendance_hashes(Mt,Event.MEET,u)
         invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,u) + mf.cleaned_data['additional_message']
@@ -101,9 +101,9 @@ def add(r):
         #send email
         if send:
           if I.attachement:
-            ok=notify_by_email(settings.EMAILS['sender']['default'],u.email,e_subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
+            ok=notify_by_email(False,u.email,e_subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
           else:
-            ok=notify_by_email(settings.EMAILS['sender']['default'],u.email,e_subject,message_content)
+            ok=notify_by_email(False,u.email,e_subject,message_content)
           if not ok:
             email_error['ok']=False
             email_error['who'].append(u.email)
@@ -120,7 +120,7 @@ def add(r):
       I.save()
       return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': done_message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(m.user) for m in get_group_members(Mt.group)]), },
+                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': done_message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]), },
                 })
 
     # form not valid -> error

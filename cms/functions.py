@@ -24,7 +24,8 @@ def notify_by_email(sender,to,subject,message_content,template='default.txt',att
   message_content['SALUTATION'] = settings.EMAILS['salutation']
   message_content['DISCLAIMER'] = settings.EMAILS['disclaimer']
 
-  email.body = render_to_string(template,message_content)
+  if not template: email.body = render_to_string('default.txt',message_content)
+  else: email.body = render_to_string(template,message_content)
   if attachment: email.attach(attachment)
   try:
     email.send()

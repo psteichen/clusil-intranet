@@ -7,17 +7,16 @@ from .models import Event
 
 #event form
 class EventForm(ModelForm):
-  additional_message 	= CharField(label='Message supplémentaire',widget=Textarea(attrs={'placeholder': "Message à transmettre dans l'invitation.",}),required=False)
-  send 			= BooleanField(label='Envoi direct des invitations',required=False)
+  message 	= CharField(widget=Textarea(attrs={'placeholder': "Message to add to the invitation.",}),required=True)
+  send 		= BooleanField(label='Send invitations straight away!',required=False)
 
   class Meta:
     model = Event
-    fields = ( 'title', 'when', 'time', 'location', 'deadline', 'additional_message', 'send', )
+    fields = ( 'title', 'when', 'time', 'location', 'deadline', 'message', 'send', )
     widgets = {
-#      'title'	: TextInput(attrs={'readonly': 'readonly', }),
-      'when'	: TextInput(attrs={'type': 'date', }),
-      'time'	: TextInput(attrs={'type': 'time', }),
-      'deadline': TextInput(attrs={'type': 'date', }),
+      'when'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
+      'time'	: TextInput(attrs={'type': 'time', 'id': 'tpicker', }),
+      'deadline': TextInput(attrs={'type': 'datetime', 'id': 'dtpicker', }),
     }
 
 

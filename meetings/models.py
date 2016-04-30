@@ -27,7 +27,7 @@ def rename_attach(i, f):
 class Invitation(Model):
   meeting	= ForeignKey(Meeting)
   message	= CharField(max_length=5000,blank=True,null=True)
-  attachement   = FileField(verbose_name='Annexe(s)', upload_to=rename_attach,blank=True,null=True)
+  attachement   = FileField(upload_to=rename_attach,blank=True,null=True)
   sent		= DateTimeField(blank=True,null=True)
 
   def __unicode__(self):

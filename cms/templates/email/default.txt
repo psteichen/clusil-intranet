@@ -1,5 +1,9 @@
 {% autoescape off %}
-{% if FULLNAME %}{{ FULLNAME }},{% endif %}
+Dear {% if FULLNAME %}{{ FULLNAME }},{% endif %}
+
 {{ MESSAGE }}
-{{ FOOTER }}
+
+{{ SALUTATION }}
+
+{{ DISCLAIMER }}
 {% endautoescape %}

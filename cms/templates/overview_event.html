@@ -12,26 +12,10 @@
     <br/>
     <div class="row">
       <div class="col-sm-6">
-        {{ overview.attendance }} ({{ attendance|length }})
-        <table class="table table-condensed">
-         {% for a in attendance %}
-         <tr>
-          <td class="lead">{{ a.first_name }}</td>
-          <td class="lead">{{ a.last_name|upper }}</td>
-         </tr>
-         {% endfor %}
-        </table>
+        {{ overview.invitation }}<p class="lead">{{ invitation }}</p>
       </div>
       <div class="col-sm-6">
-        {{ overview.excused }} ({{ excused|length }})
-        <table class="table table-condensed">
-         {% for e in excused %}
-         <tr>
-          <td class="lead">{{ e.first_name }}</td>
-          <td class="lead">{{ e.last_name|upper }}</td>
-         </tr>
-         {% endfor %}
-        </table>
+        {{ overview.attachement }}<p class="lead"><a href="{{ attachement.url }}" target="_blank">{{ attachement.name }}</a></p>
       </div>
     </div>
   </div>

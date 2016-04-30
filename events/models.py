@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from django.db.models import Model, CharField, DateField, ForeignKey, TimeField, DateTimeField
+from django.db.models import Model, CharField, DateField, ForeignKey, TimeField, DateTimeField, FileField
 
 from members.models import Member
 
@@ -19,10 +19,21 @@ class Event(Model):
   deadline	= DateTimeField(verbose_name='Deadline')
   
   def __unicode__(self):
-    return unicode(self.title) + ' du ' + unicode(self.when)
+    return unicode(self.title) + ' [ ' + unicode(self.when) + ' ] '
 
+
+def rename_attach(i, f):
+  return 'EVENTS/INVIT/'+unicode(i.event.title)+'/'+f
 
 class Invitation(Model):
   event		= ForeignKey(Event)
   message	= CharField(max_length=5000)
+  attachement   = FileField(upload_to=rename_attach,blank=True,null=True)
   sent		= DateTimeField(blank=True,null=True)
+
+  def __unicode__(self):
+    if self.sent:
+      return u'Invitations for: ' + unicode(self.event) + u' sent on: ' + self.sent.strftime('%Y-%m-%d %H:%M')
+    else:
+      return u'Invitations for: ' + unicode(self.event) + u' not sent yet.'
+

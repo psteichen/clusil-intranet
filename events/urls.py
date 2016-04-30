@@ -11,7 +11,7 @@ from .views import list, add, send, details
 #forms
 modify_event_forms = [
         ('event'	, ModifyEventForm),
-        ('attendance'	, ModifyAttendanceForm),
+#        ('attendance'	, ModifyAttendanceForm),
 ]
 #condition dict
 modify_event_condition_dict = {
@@ -20,7 +20,7 @@ modify_event_condition_dict = {
 #view
 modify_event_wizard = ModifyEventWizard.as_view(modify_event_forms, condition_dict=modify_event_condition_dict)
 #wrapper with specific permissions
-modify_event_wrapper = permission_required('cms.COMM',raise_exception=True)(modify_event_wizard)
+modify_event_wrapper = permission_required('cms.SECR',raise_exception=True)(modify_event_wizard)
 
 urlpatterns = patterns('',
   url(r'^$', list, name='list'),

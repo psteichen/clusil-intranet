@@ -7,8 +7,4 @@ Please confirm/cancel your attendance herewith:
 
 	YES, I will attend: 	{{ attendance.YES }}
 	NO, I have to cancel:	{{ attendance.NO }}
-
-{{ SALUTATION }}
-
-{{ DISCLAIMER }}
 {% endautoescape %}

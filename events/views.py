@@ -90,19 +90,22 @@ def add(r):
         I.sent = timezone.now()
 
       email_error = { 'ok': True, 'who': (), }
+      recipient_list = []
       for m in get_active_members():
         if m.type == Member.ORG:
           for u in get_all_users_for_membership(m):
+            recipient_list.append(u['email'])
             if send:
               ok=send_invitation(Ev,u,I)
               if not ok: 
                 email_error['ok']=False
                 email_error['who'].add(u.email)
         else:
+          recipient_list.append(m.head_of_list.email)
           ok=send_invitation(Ev,m.head_of_list,I)
           if not ok: 
             email_error['ok']=False
-            email_error['who'].add(um.head_of_list.email)
+            email_error['who'].add(m.head_of_list.email)
 
         # error in email -> show error messages
         if not email_error['ok']:
@@ -115,6 +118,7 @@ def add(r):
       # all fine -> done
       return render(r, settings.TEMPLATE_CONTENT['events']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['events']['add']['done']['title'], 
+                'message': settings.TEMPLATE_CONTENT['events']['add']['done']['message'] % { 'email': I.message, 'attachement': I.attachement, 'list': ' ; '.join([e for e in recipient_list]), },
                 })
 
     # form not valid -> error

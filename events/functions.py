@@ -9,6 +9,8 @@ from cms.functions import visualiseDateTime
 from attendance.models import Event_Attendance
 from members.functions import get_active_members
 
+from .models import Invitation
+
 ###############################
 # EVENTS SUPPORTING FUNCTIONS #
 ###############################
@@ -20,8 +22,9 @@ def gen_event_overview(template,event):
   content['when'] = visualiseDateTime(event.when)
   content['time'] = visualiseDateTime(event.time)
   content['location'] = event.location
-  content['attendance'] = Event_Attendance.objects.filter(event=event,present=True).only('user')
-  content['excused'] = Event_Attendance.objects.filter(event=event,present=False).only('user')
+  I = Invitation.objects.get(event=event)
+  content['invitation'] = I.message
+  if I.attachement: content['attachement'] = I.attachement
 
   return render_to_string(template,content)
 

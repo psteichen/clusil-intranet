@@ -13,7 +13,7 @@ from .models import Meeting
 #meeting form
 class MeetingForm(ModelForm):
   additional_message 	= CharField(label='Additional message',widget=Textarea(attrs={'placeholder': "Message to add to the invitation email.",}),required=False)
-  attachement 		= FileField(label='Annex(s)',required=False)
+  attachement 		= FileField(required=False)
   send 			= BooleanField(label='Send invitations straight away!',required=False)
 
   class Meta:
@@ -25,6 +25,7 @@ class MeetingForm(ModelForm):
     widgets = {
       'when'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
       'time'	: TextInput(attrs={'type': 'time', 'id': 'tpicker', }),
+      'location': Textarea(attrs={'placeholder': "Provide full address details.",}),
       'deadline': TextInput(attrs={'type': 'datetime', 'id': 'dtpicker', }),
     }
 

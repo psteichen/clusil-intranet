@@ -10,13 +10,6 @@ ACTIONS = {
       'url'             : '/events/add/',
       'has_perms'       : 'cms.SECR',
     },
-    {
-      'label'           : u'Manage locations',
-      'icon'            : 'home',
-      'grade'           : 'info',
-      'url'             : '/locations/',
-      'has_perms'       : 'cms.SECR',
-    },
   ),
 }
 
@@ -45,13 +38,13 @@ Recipients :
 ''',
       'email': {
 	'template'	: 'event_invitation.txt',
-	'subject'	: u'[CLUSIL] %(title)s',
+	'subject'	: u'%(title)s',
       },
     },
   },
   'send': {
     'template'		: 'form.html',
-    'title'     	: u'(R)Envoyer Invitations',
+    'title'     	: u'(R)Send invitations',
     'desc'              : u'Envoie ou renvoie les invitations pour l\'évènement choisie, par e-mail.',
     'submit'            : u'Envoyer',
     'done': {
@@ -60,7 +53,7 @@ Recipients :
       'message'         : u'Destinataires : ',
       'email': {
 	'template'	: 'event_invitation.txt',
-	'subject'	: u'[51 aperta] %(title)s',
+	'subject'	: u'%(title)s',
       },
     },
   },
@@ -73,7 +66,7 @@ Recipients :
       'title'           : u'Choisir l\'évènement à modifier',
       'next'            : 'suivant',
     },
-    'meeting' : {
+    'event' : {
       'title'           : u'Modifier l\'évènement %(event)s',
       'next'            : 'suivant',
     },
@@ -88,14 +81,14 @@ Recipients :
   },
   'details': {
     'template'          : 'done.html',
-    'title'             : u'Détail de l\'évènement %(event)s',
+    'title'             : u'Detail of the event: %(event)s',
     'overview' : {
       'template'        : 'overview_event.html',
-      'modify'          : u'Modifier',
-      'date'            : u'Date et heure',
-      'location'        : u'Lieu de rencontre',
-      'attendance'      : u'Présent(s)',
-      'excused'         : u'Excusé(s)',
+      'modify'          : u'Modify',
+      'date'            : u'Date and starting time',
+      'location'        : u'Venue',
+      'invitation'      : u'Invitation',
+      'attachement'     : u'Attachement',
     },
   },
 }

@@ -39,6 +39,7 @@ urlpatterns = patterns('',
   url(r'^members/groups/', include('members.groups.urls')),
   url(r'^meetings/', include('meetings.urls')),
   url(r'^events/', include('events.urls')),
+  url(r'^locations/', include('events.urls')),
 
   url(r'^accounting/', include('accounting.urls')),
 

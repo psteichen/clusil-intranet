@@ -1,21 +1,23 @@
 # coding=utf-8
 
 from django.conf import settings
-from django.forms import Form, ModelForm, TextInput, Textarea, HiddenInput, CharField, ModelChoiceField, BooleanField, DateField
+from django.forms import Form, ModelForm, TextInput, Textarea, HiddenInput, CharField, ModelChoiceField, BooleanField, DateField, FileField
 
 from .models import Event
 
 #event form
 class EventForm(ModelForm):
   message 	= CharField(widget=Textarea(attrs={'placeholder': "Message to add to the invitation.",}),required=True)
+  attachement 	= FileField(required=False)
   send 		= BooleanField(label='Send invitations straight away!',required=False)
 
   class Meta:
     model = Event
-    fields = ( 'title', 'when', 'time', 'location', 'deadline', 'message', 'send', )
+    fields = ( 'title', 'when', 'time', 'location', 'deadline', 'message', 'attachement', 'send', )
     widgets = {
       'when'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
       'time'	: TextInput(attrs={'type': 'time', 'id': 'tpicker', }),
+      'location': Textarea(attrs={'placeholder': "Provide full address details.",}),
       'deadline': TextInput(attrs={'type': 'datetime', 'id': 'dtpicker', }),
     }
 

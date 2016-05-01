@@ -16,9 +16,6 @@ from .tables  import MemberTable
 
 
 
-
-
-
 ###############
 # BOARD views #
 ###############
@@ -34,9 +31,9 @@ def list(request):
   table = MemberTable(Member.objects.all().order_by('status'))
   RequestConfig(request, paginate={"per_page": 75}).configure(table)
 
-  return render(request, settings.TEMPLATE_CONTENT['members']['list']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['members']['list']['title'],
-                        'desc': settings.TEMPLATE_CONTENT['members']['list']['desc'],
+  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
+                        'title': settings.TEMPLATE_CONTENT['members']['title'],
+                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
                         'table': table,
                         })
 

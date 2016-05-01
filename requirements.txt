@@ -6,3 +6,4 @@ reportlab
 django-recaptcha
 django-bootstrap3
 django-ldapdb
+django-import-export

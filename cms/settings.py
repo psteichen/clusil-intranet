@@ -42,6 +42,7 @@ INSTALLED_APPS = (
   'breadcrumbs',
   'captcha',
   'password_reset',
+  'import_export',
 # my apps
   'cms',
   'registration',

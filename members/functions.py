@@ -1,3 +1,14 @@
+# coding=utf-8
+
+from django.conf import settings
+from django.template.loader import render_to_string
+
+from cms.functions import visualiseDateTime
+
+
+################################
+# MEMBERS SUPPORTING FUNCTIONS #
+################################
 
 def get_member_from_username(username):
   from django.contrib.auth.models import User
@@ -126,3 +137,16 @@ def get_country_from_address(address):
 
   return c
  
+def gen_member_overview(template,member,actions=False):
+
+  content = { 'overview' : settings.TEMPLATE_CONTENT['members']['details']['overview'] }
+
+  content['title'] = member.id
+  content['member'] = member
+  content['country'] = get_country_from_address(member.address)
+  if actions: content['actions'] = actions
+  content['users'] = get_all_users_for_membership(member)
+
+  return render_to_string(template,content)
+
+

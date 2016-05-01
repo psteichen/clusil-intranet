@@ -9,11 +9,10 @@ from django_tables2  import RequestConfig
 
 from cms.functions import show_form
 
-from .functions import gen_member_initial, gen_role_initial, gen_fullname
+from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview
 from .models import Member, Role
 from .forms import MemberForm, RoleForm
 from .tables  import MemberTable
-
 
 
 ###############
@@ -73,6 +72,26 @@ def add(r):
                 'desc': settings.TEMPLATE_CONTENT['members']['add']['desc'],
                 'submit': settings.TEMPLATE_CONTENT['members']['add']['submit'],
                 'form': form,
+                })
+
+# details #
+###########
+@login_required
+def details(r, member_id):
+  member = Member.objects.get(id=member_id)
+
+  r.breadcrumbs( ( 
+			('home','/'),
+                   	('members','/members/'),
+                   	('details of member: '+unicode(member),'/members/list/'+member_id+'/'),
+               ) )
+
+  title = settings.TEMPLATE_CONTENT['members']['details']['title'] % { 'member' : unicode(member), }
+  message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member)
+
+  return render(r, settings.TEMPLATE_CONTENT['members']['details']['template'], {
+                   'title': title,
+                   'message': message,
                 })
 
 

@@ -54,6 +54,14 @@ MEMBERS_TMPL_CONTENT = {
       'message'     	: 'Details here: ',
     },
   },
+  'details': {
+    'template'  	: 'done.html',
+    'title'     	: u'Details of member: %(member)s',
+    'overview' : {
+      'template'	: 'overview_member.html',
+      'modify'		: u'Modify',
+    },
+  },
   'modify': {
     'title'     	: 'Modify member profile',
     'first'             : 'first',

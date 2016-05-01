@@ -51,7 +51,7 @@ def list(r):
 #######
 def send_invitation(event,user,invitation):
   #invitation email with "YES/NO button"
-  subject = settings.TEMPLATE_CONTENT['events']['add']['done']['email']['subject'] % { 'title': unicode(event.title) }
+  subject = settings.TEMPLATE_CONTENT['events']['email']['subject'] % { 'title': unicode(event.title) }
   message_content = {
     'FULLNAME'    : gen_fullname(user),
     'MESSAGE'     : unicode(invitation.message),
@@ -148,43 +148,39 @@ def send(r,event_id):
                    	('send event invitations','/events/send/'),
                ) )
 
-  e_template =  settings.TEMPLATE_CONTENT['events']['send']['done']['email']['template']
-
   Ev = Event.objects.get(id=event_id)
   I = Invitation.objects.get(event=Ev)
-
-  title = settings.TEMPLATE_CONTENT['events']['send']['done']['title'] % unicode(Ev.title)
       
   email_error = { 'ok': True, 'who': (), }
+  recipient_list = []
   for m in get_active_members():
-   
-    #invitation email with "YES/NO button"
-    subject = settings.TEMPLATE_CONTENT['events']['send']['done']['email']['subject'] % { 'title': unicode(Ev.title) }
-    invitation_message = gen_invitation_message(e_template,Ev,Event.OTH,m)
-    message_content = {
-      'FULLNAME'    : gen_member_fullname(m),
-      'MESSAGE'     : invitation_message,
-    }
-    #send email
-    ok=notify_by_email(r.user.email,m.email,subject,message_content)
-    if not ok: 
-      email_error['ok']=False
-      email_error['who'].add(m.email)
+    if m.type == Member.ORG:
+      for u in get_all_users_for_membership(m):
+        recipient_list.append(u['email'])
+        ok=send_invitation(Ev,u,I)
+        if not ok: 
+          email_error['ok']=False
+          email_error['who'].add(u.email)
+    else:
+      recipient_list.append(m.head_of_list.email)
+      ok=send_invitation(Ev,m.head_of_list,I)
+      if not ok: 
+        email_error['ok']=False
+        email_error['who'].add(m.head_of_list.email)
 
-  # error in email -> show error messages
-  if not email_error['ok']:
-    return render(r, settings.TEMPLATE_CONTENT['events']['send']['done']['template'], {
-	                'title': title, 
-        	        'error_message': settings.TEMPLATE_CONTENT['error']['email'] + ' ; '.join([e for e in email_error['who']]),
+    # error in email -> show error messages
+    if not email_error['ok']:
+      I.save()
+      return render(r, settings.TEMPLATE_CONTENT['events']['send']['done']['template'], {
+                	'title': settings.TEMPLATE_CONTENT['events']['send']['done']['title'] % { 'event': Ev.title, }, 
+                	'error_message': settings.TEMPLATE_CONTENT['error']['email'] + ' ; '.join([e for e in email_error['who']]),
                   })
 
   # all fine -> done
-  else:
-    return render(r, settings.TEMPLATE_CONTENT['events']['send']['done']['template'], {
-	                'title': title, 
-        	        'message': settings.TEMPLATE_CONTENT['events']['send']['done']['message'] + ' ; '.join([gen_member_fullname(m) for m in get_active_members()]),
-                  })
- 
+  return render(r, settings.TEMPLATE_CONTENT['events']['send']['done']['template'], {
+                	'title': settings.TEMPLATE_CONTENT['events']['send']['done']['title'] % { 'event': Ev.title, }, 
+                	'message': settings.TEMPLATE_CONTENT['events']['send']['done']['message'] % { 'email': I.message, 'attachement': I.attachement, 'list': ' ; '.join([e for e in recipient_list]), },
+              })
 
 # details #
 ###########

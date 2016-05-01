@@ -17,7 +17,26 @@ ACTIONS = {
       'url'           	: '/members/groups/',
       'has_perms'	: 'cms.SECR',
     },
-
+  ),
+  'details' : (
+    {
+      'label'	: 'Change Member',
+      'icon'	: 'pencil',
+      'grade'	: 'warning',
+      'url'    	: '/profile/modify/',
+    },
+    {
+      'label'	: 'View Invoices',
+      'icon'	: 'euro',
+      'grade'	: 'info',
+      'url'    	: '/profile/invoice/',
+    },
+    {
+      'label'	: 'Add User',
+      'icon'	: 'plus',
+      'grade'	: 'success',
+      'url'	: '/profile/adduser/',
+    },
   ),
   'roles' : (
     { 
@@ -56,10 +75,9 @@ MEMBERS_TMPL_CONTENT = {
   },
   'details': {
     'template'  	: 'done.html',
-    'title'     	: u'Details of member: %(member)s',
     'overview' : {
       'template'	: 'overview_member.html',
-      'modify'		: u'Modify',
+      'actions'     	: ACTIONS['details'],
     },
   },
   'modify': {

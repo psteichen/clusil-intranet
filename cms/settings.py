@@ -271,7 +271,8 @@ HOME_ACTIONS = (
     'actions' : (
       {         
         'label'         : 'Profile', 
-        'glyphicon'     : 'glyphicon-home',
+        'icon'     	: 'home',
+        'grade'     	: 'success',
         'desc'          : 'Manage your Membership profile and Users',
         'url'           : '/profile/',
         'has_perms'	: 'cms.MEMBER',
@@ -284,17 +285,19 @@ HOME_ACTIONS = (
     'has_perms'		: 'cms.MEMBER',
     'actions' : (
 #      {         
-#        'label'         : 'Document Management', 
-#        'glyphicon'     : 'glyphicon-folder-open',
-#        'desc'          : 'Filesharing and document management platform (SeaFile based)',
-#        'url'           : 'https://cloud.clusil.lu/',
+#        'label'        : 'Document Management', 
+#        'icon'  	: 'folder-open',
+#        'grade'  	: 'success',
+#        'desc'         : 'Filesharing and document management platform (SeaFile based)',
+#        'url'          : 'https://cloud.clusil.lu/',
 #    	'has_perms'	: 'cms.MEMBER',
 #      },
 #      {         
-#        'label'         : 'Team Collaboration', 
-#        'glyphicon'     : 'glyphicon-comment',
-#        'desc'          : 'Wiki, Workflows and Calendar platform (Confluence based)',
-#        'url'           : 'https://collab.clusil.lu/',
+#        'label'        : 'Team Collaboration', 
+#        'icon'     	: 'comment',
+#        'grade'  	: 'success',
+#        'desc'         : 'Wiki, Workflows and Calendar platform (Confluence based)',
+#        'url'          : 'https://collab.clusil.lu/',
 #    	'has_perms'	: 'cms.MEMBER',
 #      },
 #
@@ -303,10 +306,12 @@ HOME_ACTIONS = (
   {
     'heading'   	: 'Management Console',
     'has_perms'		: 'cms.SECR',
+    'cols'		: '12',
     'actions' : (
       {         
         'label'         : 'Dashboard', 
-        'glyphicon'     : 'glyphicon-tasks',
+        'icon'     	: 'tasks',
+        'grade'  	: 'success',
         'desc'          : 'Club management tools and functions',
         'url'           : '/board/',
         'has_perms'	: 'cms.SECR',
@@ -358,28 +363,32 @@ BOARD_ACTIONS = (
     'actions' : (
       {         
         'label'         : 'Meeting Management', 
-        'glyphicon'     : 'glyphicon-calendar',
+        'icon'     	: 'calendar',
+        'grade'     	: 'success',
         'desc'          : 'Manage regular meetings (board, working groups...).',
         'url'           : '/meetings/',
 	'has_perms'	: 'cms.SECR',
       },
       {         
         'label'         : 'Member Management', 
-        'glyphicon'     : 'glyphicon-user',
+        'icon'     	: 'user',
+        'grade'     	: 'success',
         'desc'          : 'Manage members.',
         'url'           : '/members/',
 	'has_perms'	: 'cms.SECR',
       },
       {         
         'label'         : 'Treasury', 
-        'glyphicon'     : 'glyphicon-euro',
+        'icon'     	: 'euro',
+        'grade'     	: 'danger',
         'desc'          : 'Manage and check payments or other financial figures.',
         'url'           : '/accounting/',
 	'has_perms'	: 'cms.BOARD',
       },
       {         
         'label'         : 'Organisation', 
-        'glyphicon'     : 'glyphicon-home',
+        'icon'     	: 'home',
+        'grade'     	: 'danger',
         'desc'          : 'Manage and affiliate board members and admin staff.',
         'url'           : '/members/board/',
 	'has_perms'	: 'cms.BOARD',
@@ -392,14 +401,16 @@ BOARD_ACTIONS = (
     'actions' : (
       {         
         'label'         : 'Web Content Management', 
-        'glyphicon'     : 'glyphicon-cloud',
+        'icon'     	: 'cloud',
+        'grade'     	: 'danger',
         'desc'          : 'Manage the public website content',
         'url'           : '/webcontent/',
 	'has_perms'	: 'cms.SECR',
       },
       {         
         'label'         : 'Event Management', 
-        'glyphicon'     : 'glyphicon-glass',
+        'icon'     	: 'glass',
+        'grade'     	: 'success',
         'desc'          : 'Manage special events or activities',
         'url'           : '/events/',
 	'has_perms'	: 'cms.SECR',

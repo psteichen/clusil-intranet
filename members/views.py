@@ -83,14 +83,12 @@ def details(r, member_id):
   r.breadcrumbs( ( 
 			('home','/'),
                    	('members','/members/'),
-                   	('details of member: '+unicode(member),'/members/list/'+member_id+'/'),
+                   	('details of member: '+unicode(member_id),'/members/list/'+member_id+'/'),
                ) )
 
-  title = settings.TEMPLATE_CONTENT['members']['details']['title'] % { 'member' : unicode(member), }
-  message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member)
+  message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,settings.TEMPLATE_CONTENT['members']['details']['overview']['actions'])
 
   return render(r, settings.TEMPLATE_CONTENT['members']['details']['template'], {
-                   'title': title,
                    'message': message,
                 })
 

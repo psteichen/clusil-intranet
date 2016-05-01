@@ -17,6 +17,10 @@ EVENTS_TMPL_CONTENT = {
   'title'       	: u'Events',
   'template'    	: 'list.html',
   'actions'     	: ACTIONS['main'],
+  'email': {
+    'template'	: 'event_invitation.txt',
+    'subject'	: u'%(title)s',
+  },
   'add': {
     'template'		: 'form.html',
     'title'     	: u'New event',
@@ -36,25 +40,23 @@ Recipients :
 %(list)s
 </pre>
 ''',
-      'email': {
-	'template'	: 'event_invitation.txt',
-	'subject'	: u'%(title)s',
-      },
     },
   },
   'send': {
-    'template'		: 'form.html',
-    'title'     	: u'(R)Send invitations',
-    'desc'              : u'Envoie ou renvoie les invitations pour l\'évènement choisie, par e-mail.',
-    'submit'            : u'Envoyer',
     'done': {
       'template'	: 'done.html',
-      'title'     	: u'Invitations pour la : %s envoyées',
-      'message'         : u'Destinataires : ',
-      'email': {
-	'template'	: 'event_invitation.txt',
-	'subject'	: u'%(title)s',
-      },
+      'title'     	: u'Invitations for: "%(event)s" sent',
+      'message'         : u'''
+<p>Invitation message:</p>
+<ul>
+%(email)s
+</ul>
+
+<p>Recipients: </p>
+<ul>
+%(list)s
+</ul>
+''',
     },
   },
   'modify' : {

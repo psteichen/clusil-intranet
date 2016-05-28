@@ -96,6 +96,39 @@
    <!-- Latest compiled and minified JavaScript -->
    <script src="{{ meta.js.bt }}"></script>
 
+   <!-- momentjs //-->
+   <script src="{{ meta.js.momentjs }}"></script>
+
+   <!-- datetimepicker jquery //-->
+   <script src="{{ meta.js.dtpicker }}"></script>
+   <script>
+    $(function () {
+     $('#dtpicker').datetimepicker({
+       locale: 'fr',
+       format:'YYYY-MM-DD HH:mm',
+       sideBySide: true,
+     });
+    });
+    $(function () {
+     $('#dpicker').datetimepicker({
+       locale: 'fr',
+       format:'YYYY-MM-DD',
+     });
+    });
+    $(function () {
+     $('#tpicker').datetimepicker({
+       locale: 'fr',
+       format:'HH:mm',
+     });
+    });
+    $(function () {
+     $('#ypicker').datetimepicker({
+       locale: 'fr',
+       format:'YYYY',
+     });
+    });
+   </script>
+
   </body>
 </html>
 

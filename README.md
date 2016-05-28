@@ -1,4 +1,4 @@
-clusil-intranet
+clusil-cms
 ===============
 
-CLUSIL CMS (based on aperta-cms)
+Club Managment System for CLUSIL

@@ -4,20 +4,24 @@
 <div class="container-fluid">
 {% if title %}<h2>{{ title }}</h2>{% endif %}
 {% if desc %}<p>{{ desc }}</p>{% endif %}
-  {% for part in actions %}
-  {% if part.has_perms in perms or not part.has_perms %}
-  <div class="col-sm-6">
-    <div class="panel panel-success">
-      <div class="panel-heading">
+{% for part in actions %}
+ {% if part.has_perms in perms or not part.has_perms %}
+  {% if part.cols %}
+   <div class="col-sm-{{ part.cols }}">
+  {% else %}
+   <div class="col-sm-6">
+  {% endif %}
+   <div class="panel panel-success">
+     <div class="panel-heading">
         {% if part.heading %}<h2 class="panel-title lead">{{ part.heading }}</h2>{% endif %}
-      </div>
-      <div class="panel-body">
-        <center>
+     </div>
+     <div class="panel-body">
+       <center>
         {% if part.desc %}<p class="lead">{{ part.desc }}</p>{% endif %}
         {% for action in part.actions %}
         {% if action.has_perms in perms or not action.has_perms %}
           {% if action.url %}
-            <a class="btn btn-success" href="{{ action.url }}" role="button">{% if action.glyphicon %}<span class="glyphicon {{ action.glyphicon }}"></span>{% endif %}&nbsp;&nbsp;{{ action.label }}&nbsp;</a>
+            <a class="btn btn-{{ action.grade }}" href="{{ action.url }}" role="button">{% if action.icon %}<span class="glyphicon glyphicon-{{ action.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ action.label }}&nbsp;</a>
      	    <br />
      	    {% if action.desc %}<span class="btn-footer">( {{ action.desc }} )</span>{% endif %}
      	    <br />
@@ -25,12 +29,11 @@
           {% endif %}
         {% endif %}
         {% endfor %}
-        </center>
-      </div>
-    </div>
+       </center>
+     </div>
+   </div>
   </div>
-  {% endif %}
-  {% endfor %}
+ {% endif %}
+{% endfor %}
 </div>
 {% endblock %}
-

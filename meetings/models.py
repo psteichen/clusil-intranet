@@ -1,25 +1,38 @@
 # coding=utf-8
 
-from django.db.models import Model, CharField, DateField, ForeignKey, ManyToManyField, IntegerField, TimeField
+from django.db.models import Model, CharField, DateField, ForeignKey, TimeField, DateTimeField, IntegerField, FileField, EmailField
 
-from members.models import Member#, Group
+from members.models import Member
+from members.groups.models import Group
 
-class Location(Model):
-  name		= CharField(verbose_name='Nom',max_length=100)
-  address	= CharField(verbose_name='Adresse',max_length=500)
-
-  def __unicode__(self):
-    return unicode(self.name)
+def rename_report(i,f):
+  return 'MEETINGS/'+unicode(i.group.acronym)+'/'+f
 
 class Meeting(Model):
   title		= CharField(max_length=100)
+  group		= ForeignKey(Group)
   when		= DateField(verbose_name='Date')
-  time		= TimeField()
-#  group		= ForeignKey(Group)
-  location	= ForeignKey(Location)
-  attendance	= ManyToManyField(Member,related_name='attendance',blank=True,null=True)
-  excused	= ManyToManyField(Member,related_name='excused',blank=True,null=True)
+  time		= TimeField(verbose_name='Start time')
+  location	= CharField(max_length=500)
+  deadline	= DateTimeField()
+  report        = FileField(verbose_name='Minutes', upload_to=rename_report,blank=True,null=True)
   
   def __unicode__(self):
-    return unicode(self.title) + ' - ' + unicode(self.when)
+    return unicode(self.title) + ' du ' + unicode(self.when)
+
+
+def rename_attach(i, f):
+  return 'MEETINGS/INVIT/'+unicode(i.meeting.group)+'/'+f
+
+class Invitation(Model):
+  meeting	= ForeignKey(Meeting)
+  message	= CharField(max_length=5000,blank=True,null=True)
+  attachement   = FileField(upload_to=rename_attach,blank=True,null=True)
+  sent		= DateTimeField(blank=True,null=True)
+
+  def __unicode__(self):
+    if self.sent:
+      return u'Invitations pour: ' + unicode(self.meeting) + u' envoyées à: ' + self.sent.strftime('%Y-%m-%d %H:%M')
+    else:
+      return u'Invitations pour: ' + unicode(self.meeting) + u' non encore envoyées.'
 

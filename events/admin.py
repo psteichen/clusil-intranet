@@ -1,5 +1,6 @@
 from django.contrib import admin
 
-#from .models import 
+from .models import Event, Invitation
 
-#admin.site.register(Meeting)
+admin.site.register(Event)
+admin.site.register(Invitation)

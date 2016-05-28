@@ -2,52 +2,55 @@
 
 from datetime import date
 
-from django.forms import Form, ModelForm, TextInput, Textarea, HiddenInput, CharField, ModelChoiceField
 from django.conf import settings
+from django.forms import Form, ModelForm, TextInput, Textarea, HiddenInput, CharField, ModelChoiceField, BooleanField, DateField, ModelMultipleChoiceField, CheckboxSelectMultiple, FileField, IntegerField
+from django.forms.models import modelformset_factory, BaseModelFormSet
 
-from .models import Meeting, Location
+from members.functions import get_active_members
 
-#location form
-class LocationForm(ModelForm):
-
-  class Meta:
-    model = Location
-    fields = ( 'name', 'address', )
-    widgets = {
-      'address'         : Textarea(),
-    }
-
-#modify location wizard forms
-class ListLocationsForm(Form):
-  locations = ModelChoiceField(queryset=Location.objects.all())
-
+from .models import Meeting
 
 #meeting form
 class MeetingForm(ModelForm):
-  additional_message = CharField(label='Message supplémentaire',widget=Textarea(attrs={'placeholder': "Message à transmettre dans l'inviation.",}),required=False)
+  additional_message 	= CharField(label='Additional message',widget=Textarea(attrs={'placeholder': "Message to add to the invitation email.",}),required=False)
+  attachement 		= FileField(required=False)
+  send 			= BooleanField(label='Send invitations straight away!',required=False)
 
   class Meta:
     model = Meeting
-    fields = ( 'title', 'when', 'time', 'location', 'additional_message', )
+    fields = ( 'title', 'group', 'when', 'time', 'location', 'deadline', 'additional_message', 'attachement', 'send', )
+    labels = {
+      'title'	: 'Meeting Topic',
+    }
     widgets = {
-      'title'	: TextInput(attrs={'readonly': 'readonly', }),
-      'when'	: TextInput(attrs={'type': 'date', }),
-      'time'	: TextInput(attrs={'type': 'time', }),
+      'when'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
+      'time'	: TextInput(attrs={'type': 'time', 'id': 'tpicker', }),
+      'location': Textarea(attrs={'placeholder': "Provide full address details.",}),
+      'deadline': TextInput(attrs={'type': 'datetime', 'id': 'dtpicker', }),
     }
 
 
 #modify wizard forms
 class ListMeetingsForm(Form):
-  meetings = ModelChoiceField(queryset=Meeting.objects.all().order_by('when'))
+  meetings = ModelChoiceField(queryset=Meeting.objects.all().order_by('-num'))
 
 class ModifyMeetingForm(ModelForm):
+  attendance = BooleanField(label='Inscrire/excuser un membre',required=False)
 
   class Meta:
     model = Meeting
-    fields = ( 'title', 'when', 'time', 'location', )
+    fields = ( 'title', 'when', 'time', 'location', 'deadline', 'attendance', )
     widgets = {
-      'when'	: TextInput(attrs={'type': 'date', }),
-      'time'	: TextInput(attrs={'type': 'time', }),
+      'when'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
+      'time'	: TextInput(attrs={'type': 'time', 'id': 'tpicker', }),
+      'deadline': TextInput(attrs={'type': 'datetime', 'id': 'dtpicker', }),
     }
 
+
+#report form
+class MeetingReportForm(Form):
+  title		= CharField(label=u'Titre',widget=TextInput(attrs={'readonly': 'readonly', }))
+  when		= CharField(label=u'Date',widget=TextInput(attrs={'readonly': 'readonly', }))
+  report	= FileField(label='Compte rendu')
+  send 		= BooleanField(label='Envoi du compte rendu aux membres',required=False)
 

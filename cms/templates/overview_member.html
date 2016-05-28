@@ -1,5 +1,5 @@
 <div class="overview">
-<div class="panel panel-default">
+<div class="panel panel-success">
   <div class="panel-heading">
     <center><h2>{{ title|safe }}</h2></center>
   </div>
@@ -39,7 +39,7 @@
       <div class="col-sm-12">
     <div class="pull-right">
       <span class="text-muted">Global Actions:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-     {% for a in actions %}
+      {% for a in actions %}
         {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<span class="glyphicon glyphicon-{{ a.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
       {% endfor %}
     </div>

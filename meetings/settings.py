@@ -1,141 +1,109 @@
 # Application settings for meetngs app
 # coding=utf-8
 
-ACTIONS = (
-  {
-    'heading'           : 'Choose actions on <strong>meetings</strong>:',
-    'has_perms'         : 'clusil.SECR',
-    'actions' : (
-      {
-        'label'         : 'Add Meeting',
-        'glyphicon'     : 'glyphicon-calendar',
-        'desc'          : 'Add a new meeting',
-        'url'           : '/meetings/add/',
-    	'has_perms'     : 'clusil.SECR',
-      },
-      {
-        'label'         : 'Modify Meeting',
-        'glyphicon'     : 'glyphicon-calendar',
-        'desc'          : 'Modify a meeting',
-        'url'           : '/meetings/modify/',
-    	'has_perms'     : 'clusil.SECR',
-      },
-      {
-        'label'         : 'List Meetings',
-        'glyphicon'     : 'glyphicon-calendar',
-        'desc'          : 'List all meetings',
-        'url'           : '/meetings/list_all/',
-    	'has_perms'     : 'clusil.SECR',
-      },
-    ),
-  },
-  {
-    'heading'           : 'Choose actions on <strong>locations</strong>:',
-    'has_perms'         : 'clusil.SECR',
-    'actions' : (
-      { 
-        'label'         : 'Add Location', 
-        'glyphicon'     : 'glyphicon-calendar',
-        'desc'          : 'Add a Meeting Location.', 
-        'url'           : '/meetings/location/add/', 
-    	'has_perms'     : 'clusil.SECR',
-      },
-      {
-        'label'         : 'Modify Location',
-        'glyphicon'     : 'glyphicon-calendar',
-        'desc'          : 'Modify a location',
-        'url'           : '/meetings/location/modify/',
-    	'has_perms'     : 'clusil.SECR',
-      },
-    ),
-  },
-)
+ACTIONS = {
+  'main': (
+    {
+      'label'         	: u'New meeting',
+      'icon'     	: 'plus',
+      'grade'     	: 'success',
+      'url'           	: '/meetings/add/',
+      'has_perms'     	: 'cms.SECR',
+    },
+  ),
+}
 
 MEETINGS_TMPL_CONTENT = {
-  'title'       : 'Meeting Management',
-  'template'    : 'actions.html',
-  'actions'     : ACTIONS,
+  'title'       	: u'Meetings',
+  'template'    	: 'list.html',
+  'desc'       		: u'',
+  'actions'     	: ACTIONS['main'],
   'add': {
-    'template'	: 'form.html',
-    'title'     : ACTIONS[0]['actions'][0]['desc'],
-    'desc'     	: 'Create Meeting & Send Invitations',
-    'submit'   	: 'GO',
+    'template'		: 'form.html',
+    'title'     	: u'New Meeting',
+    'desc'          	: u'Create new meeting and prepare email invitations.',
+    'submit'   		: u'Add',
     'done': {
       'template'	: 'done.html',
-      'title'     	: 'New Meeting added',
-      'message'     	: 'and invitations sent to: ',
+      'title'     	: u'New Meeting created',
+      'message'     	: u'''
+<pre>
+Invitation message: 
+--------------------------------------
+%(email)s
+--------------------------------------
+
+Recipients: 
+%(list)s
+</pre>
+''',
       'email': {
 	'template'	: 'meeting_invitation.txt',
-	'subject'	: '[51 aperta] %(title)s',
+	'subject'	: u'[CLUSIL] %(title)s',
       },
     },
   },
-  'attendance': {
-    'template'	: 'done.html',
-    'title'     : u'Participation à la %(meeting)s',
-    'yes'  	: u'%(name)s, par la présente ta participation est confirmé(e)!',
-    'no'  	: u'%(name)s, merci de nous avoir notifier ton désistement, tu sera excusé(e)!',
-  },
-  'list_all': {
-    'template'  : 'list.html',
-    'title'     : 'Liste des réunions',
-    'desc'     	: ACTIONS[0]['actions'][2]['desc'],
-  },
-  'list': {
-    'template'  : 'done.html',
-    'title'     : u'Détail de la %(num)s. réunion statutaire',
-    'overview' : {
-      'template'	: 'overview_meeting.html',
-      'date'		: u'Date et heure',
-      'location'	: u'Lieu',
-      'attendance'	: u'Présent(s)',
-      'excused'		: u'Excusé(s)',
+  'send': {
+    'template'		: 'form.html',
+    'title'         	: u'(R)Envoyer Invitations',
+    'desc'          	: u'Envoie ou renvoie les invitations pour la réunion statutaire choisie, par e-mail.',
+    'submit'   		: u'Envoyer',
+    'done': {
+      'template'	: 'done.html',
+      'title'     	: u'Invitations pour la : %s envoyées',
+      'message'     	: u'Destinataires : ',
+      'email': {
+	'template'	: 'meeting_invitation.txt',
+	'subject'	: u'[51 aperta] %(title)s',
+      },
     },
   },
   'modify' : {
-    'title'     : ACTIONS[0]['actions'][1]['label'],
-    'first'	: 'first',
-    'prev'	: 'back',
+    'title'         	: u'Modify a Meeting',
+    'desc'		: u'Modify the details of a meeting.',
+    'first'		: u'start',
+    'prev'		: u'end',
     'list' : {
-      'title'   : 'Choose Meeting to modify',
-      'next'    : 'next',
+      'title'   	: u'Choose meeting to modify',
+      'next'    	: 'next',
     },
     'meeting' : {
-      'title'   : 'Modify Meeting',
-      'next'    : 'submit',
+      'title'   	: u'Modify %(meeting)s',
+      'next'    	: 'next',
     },
     'done' : {
       'template'        : 'done.html',
-      'title'           : 'Meeting [%s] modified!',
+      'title'           : u'Meeting [%s] has been modified!',
     },
   },
-  'location' : {
-    'add': {
-      'template'	: 'form.html',
-      'title'     	: ACTIONS[1]['actions'][0]['label'],
-      'desc'     	: ACTIONS[1]['actions'][0]['desc'],
-      'submit'   	: 'Create Meeting Location',
-      'done': {
-        'template'	: 'done.html',
-        'title'     	: 'New Meeting Location added',
-        'message'     	: 'Details here: ',
-      },
+  'details': {
+    'template'  	: 'done.html',
+    'title'     	: u'Details of meeting: %(meeting)s (%(date)s)',
+    'overview' : {
+      'template'	: 'overview_meeting.html',
+      'modify'		: u'Modify',
+      'date'		: u'Date and time',
+      'attach'		: u'Supplementary information',
+      'location'	: u'Location (venue)',
+      'report'		: u'Minutes',
+      'attendance'	: u'Present',
+      'excused'		: u'Excused',
     },
-    'modify' : {
-      'title'     	: ACTIONS[1]['actions'][1]['label'],
-      'first'           : 'first',
-      'prev'            : 'back',
-      'list' : {
-        'title'         : 'Choose Location to modify',
-        'next'          : 'next',
-      },
-      'location' : {
-        'title'         : 'Modify Location',
-        'next'          : 'submit',
-      },
-      'done' : {
-        'template'      : 'done.html',
-        'title'         : 'Location [%s] modified!',
+  },
+  'report': {
+    'template'		: 'form.html',
+    'title'         	: u'Minutes of meeting: {meeting}',
+    'desc'          	: u'Save minutes and send it automatically to the meeting attendees (optional).',
+    'submit'   		: u'Upload',
+    'done': {
+      'template'	: 'done.html',
+      'title'     	: u'Minutes uploaded.',
+      'title_send'     	: u'Minutes uploaded and sent to attendees.',
+      'message'     	: u'',
+      'message_send'   	: u'Reciepients : ',
+      'email': {
+	'template'	: 'meeting_report.txt',
+	'subject'	: u'[CLUSIL] Minutes of meeting: %(title)s',
       },
     },
   },

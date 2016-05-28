@@ -9,50 +9,30 @@ from django_tables2  import RequestConfig
 
 from cms.functions import show_form
 
-from .functions import gen_member_initial, gen_role_initial, gen_fullname
+from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview
 from .models import Member, Role
 from .forms import MemberForm, RoleForm
 from .tables  import MemberTable
-
-
-
-
 
 
 ###############
 # BOARD views #
 ###############
 
-# index #
-#########
-@permission_required('cms.BOARD')
-def index(request):
-  request.breadcrumbs( ( ('home','/home/'),
-                         ('members','/members/'),
-                        ) )
-
-  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['members']['title'],
-                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
-                        })
-
-
-
 # list #
 #########
 @permission_required('cms.BOARD')
 def list(request):
-  request.breadcrumbs( ( ('home','/home/'),
+  request.breadcrumbs( ( ('board','/board/'),
                          ('members','/members/'),
-                         ('list members','/members/list/'),
                         ) )
 
-  table = MemberTable(Member.objects.all().order_by('status', 'last_name'))
+  table = MemberTable(Member.objects.all().order_by('status'))
   RequestConfig(request, paginate={"per_page": 75}).configure(table)
 
-  return render(request, settings.TEMPLATE_CONTENT['members']['list']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['members']['list']['title'],
-                        'desc': settings.TEMPLATE_CONTENT['members']['list']['desc'],
+  return render(request, settings.TEMPLATE_CONTENT['members']['template'], {
+                        'title': settings.TEMPLATE_CONTENT['members']['title'],
+                        'actions': settings.TEMPLATE_CONTENT['members']['actions'],
                         'table': table,
                         })
 
@@ -61,7 +41,7 @@ def list(request):
 #######
 @permission_required('cms.BOARD')
 def add(r):
-  r.breadcrumbs( ( ('home','/home/'),
+  r.breadcrumbs( ( ('board','/board/'),
                    ('members','/members/'),
                    ('add a member','/members/add/'),
                 ) )
@@ -94,6 +74,24 @@ def add(r):
                 'form': form,
                 })
 
+# details #
+###########
+@login_required
+def details(r, member_id):
+  member = Member.objects.get(id=member_id)
+
+  r.breadcrumbs( ( 
+			('home','/'),
+                   	('members','/members/'),
+                   	('details of member: '+unicode(member_id),'/members/list/'+member_id+'/'),
+               ) )
+
+  message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,settings.TEMPLATE_CONTENT['members']['details']['overview']['actions'])
+
+  return render(r, settings.TEMPLATE_CONTENT['members']['details']['template'], {
+                   'message': message,
+                })
+
 
 # modify #
 ##########
@@ -119,7 +117,7 @@ class ModifyMemberWizard(SessionWizardView):
       M = Member.objects.get(pk=list_data['members'].id)
       #add breadcrumbs to context
       self.request.breadcrumbs( ( 
-					('home','/home/'),
+					('board','/board/'),
         	 	                ('member','/members/'),
 	        	       	        ('modify a member','/members/modify/'),
                             ) )
@@ -198,7 +196,7 @@ class ModifyMemberWizard(SessionWizardView):
 ############
 @permission_required('cms.BOARD')
 def role_add(r):
-  r.breadcrumbs( ( ('home','/home/'),
+  r.breadcrumbs( ( ('board','/board/'),
                    ('members','/members/'),
                    ('add a role','/members/role/add/'),
                 ) )

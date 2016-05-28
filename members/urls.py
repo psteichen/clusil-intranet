@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import permission_required
 
 from .forms import ListMembersForm, ModifyMemberForm, RoleForm
 from .views import ModifyMemberWizard, show_role_form
-from .views import index, add, list
+from .views import list, add, details
 from .views import role_add
 
 # modify wizard #
@@ -24,11 +24,11 @@ modify_member_wizard = ModifyMemberWizard.as_view(modify_member_forms, condition
 modify_member_wrapper = permission_required('cms.BOARD')(modify_member_wizard)
 
 urlpatterns = patterns('',
-  url(r'^$', index, name='index'),
+  url(r'^$', list, name='list'),
 
-  url(r'^list/$', list, name='list'),
   url(r'^add/$', add, name='add'),
-  url(r'^modify/$', modify_member_wrapper, name='modify'),
+  url(r'^modify/(?P<member_id>.+?)/$', modify_member_wrapper, name='modify'),
+  url(r'^list/(?P<member_id>.+?)/$', details, name='details'),
 
   url(r'^role/add/$', role_add, name='role_add'),
 )

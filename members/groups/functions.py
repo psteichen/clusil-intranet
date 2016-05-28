@@ -34,3 +34,8 @@ def get_affiliations(u):
   out+='</ul>'
   return out
   
+def get_group_members(g):
+  from .models import Affiliation
+  return Affiliation.objects.filter(group=g)
+
+

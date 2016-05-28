@@ -1,4 +1,4 @@
-from django.db.models import Model, IntegerField, CharField, ForeignKey
+from django.db.models import Model, IntegerField, CharField, ForeignKey, EmailField
 from django.contrib.auth.models import User
 
 from members.functions import gen_fulluser
@@ -40,6 +40,7 @@ class Group(Model):
   acronym 	= CharField(max_length=15,primary_key=True)
   title 	= CharField(max_length=150)
   desc 		= CharField(max_length=500,blank=True,null=True)
+  email 	= EmailField(blank=True,null=True)
   type 		= IntegerField(choices=TYPES)
   status      	= IntegerField(choices=STATUSES,default=ACT) 
 

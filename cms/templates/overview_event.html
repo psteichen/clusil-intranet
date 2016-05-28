@@ -1,0 +1,23 @@
+<div class="overview">
+<div class="panel panel-primary">
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-6">
+        {{ overview.date }}<p class="lead">{{ when }} {{ time }}</p>
+      </div>
+      <div class="col-sm-6">
+        {{ overview.location }}<address class="lead">{{ location }}<br/>{{ address }}</address>
+      </div>
+    </div>
+    <br/>
+    <div class="row">
+      <div class="col-sm-6">
+        {{ overview.invitation }}<p class="lead">{{ invitation }}</p>
+      </div>
+      <div class="col-sm-6">
+        {{ overview.attachement }}<p class="lead"><a href="{{ attachement.url }}" target="_blank">{{ attachement.name }}</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

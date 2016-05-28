@@ -1,3 +1,35 @@
+# coding=utf-8
+
+from django.conf import settings
+from django.template.loader import render_to_string
+
+from cms.functions import visualiseDateTime
+
+
+################################
+# MEMBERS SUPPORTING FUNCTIONS #
+################################
+
+def get_member_from_username(username):
+  from django.contrib.auth.models import User
+  from members.models import Member
+
+  U = User.objects.get(username=username)
+  M = None
+  try:
+    M = Member.objects.get(head_of_list=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    M = Member.objects.get(delegate=U)
+  except Member.DoesNotExist:
+    pass
+  try:
+    M = Member.objects.get(users__in=[U])
+  except Member.DoesNotExist:
+    pass
+
+  return M
 
 def get_members_to_validate():
   from .models import Member
@@ -8,7 +40,10 @@ def get_active_members():
   return Member.objects.filter(status=Member.ACT)
 
 def gen_fullname(user):
-  return unicode(user.first_name) + u' ' + unicode.upper(user.last_name)
+  try:
+    return unicode(user.first_name) + u' ' + unicode.upper(user.last_name)
+  except:
+    return unicode(user['first_name']) + u' ' + unicode.upper(user['last_name'])
 
 def gen_fulluser(user):
   return unicode(user.first_name) + u' ' + unicode.upper(user.last_name) + u' (' + unicode(user.email) + u')'
@@ -102,3 +137,16 @@ def get_country_from_address(address):
 
   return c
  
+def gen_member_overview(template,member,actions=False):
+
+  content = { 'overview' : settings.TEMPLATE_CONTENT['members']['details']['overview'] }
+
+  content['title'] = member.id
+  content['member'] = member
+  content['country'] = get_country_from_address(member.address)
+  if actions: content['actions'] = actions
+  content['users'] = get_all_users_for_membership(member)
+
+  return render_to_string(template,content)
+
+

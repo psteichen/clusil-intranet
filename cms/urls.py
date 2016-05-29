@@ -18,6 +18,7 @@ urlpatterns = patterns('',
   url(r'^home/$', home, name='home'),
   url(r'^documentation/', documentation, name='documentaion'),
   url(r'^reg/', include('registration.urls')),
+  url(r'^upload/', include('upload.urls')),
 
   #login stuff
   url(r'^login/', 'django.contrib.auth.views.login', {'template_name': 'auth.html'}, name='login'),

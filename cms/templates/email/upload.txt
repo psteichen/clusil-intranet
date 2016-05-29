@@ -1,0 +1,11 @@
+{% autoescape off %}
+Dear
+
+{{ MESSAGE }}
+
+{{ LINK }}
+
+{{ SALUTATION }}
+
+{{ DISCLAIMER }}
+{% endautoescape %}

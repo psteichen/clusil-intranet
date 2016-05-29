@@ -52,6 +52,7 @@ INSTALLED_APPS = (
   'attendance',
   'events',
   'accounting',
+  'upload',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -353,6 +354,10 @@ REG_VAL_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/reg/validate/'
 REG_SALT	= u'CLUSIL 1996-2016, 20 years of CHEEBANG!'
 
 TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
+
+## upload
+from upload.settings import *
+TEMPLATE_CONTENT['upload'] = UPLOAD_TMPL_CONTENT
 
 
 ## board

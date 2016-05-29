@@ -12,7 +12,7 @@ UPLOAD_TMPL_CONTENT = {
     'email': {
       'template'   	: u'upload.txt',
       'subject'     	: u'Generic submission.',
-      'to'   		: u'pst@clusil.lu',
+      'to'   		: u'board@clusil.lu',
       'message'   	: u'Please find below a generic submission.',
     },
     'done': {
@@ -26,7 +26,7 @@ UPLOAD_TMPL_CONTENT = {
     'email': {
       'template'   	: u'upload.txt',
       'subject'     	: u'Submission for the ISM benchmark.',
-      'to'   		: u'pst@clusil.lu',
+      'to'   		: u'cedric.mauny@clusil.lu',
       'message'   	: u'Please find below a submission for the ISM benchmark.',
     },
     'done': {

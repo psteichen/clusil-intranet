@@ -22,7 +22,13 @@ UPLOAD_TMPL_CONTENT = {
   },
   'survey-ism': {
     'title'    		: u'Upload ISM benchmark questionnaire',
-    'desc'		: u'blabla',
+    'desc'		: u'''
+<p>Privacy and anonymity of the respondent is the critical success factor of such survey and CLUSIL considers privacy and anonymity of the respondents as its highest priority.</p>
+<p>The questionnaire will be anonymously uploaded within this restricted area of the CLUSIL.</p>
+<p>Once uploaded, the filled out form will be anonymously posted to a specific mailing-list of the CLUSIL for analysis.</p>
+<p>Anonymity is preserved at all circumstances.</p>
+<p>No logs of the uploading activity will be kept.</p>
+''',
     'email': {
       'template'   	: u'upload.txt',
       'subject'     	: u'Submission for the ISM benchmark.',

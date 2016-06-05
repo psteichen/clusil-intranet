@@ -7,7 +7,7 @@ ACTIONS = {
       'label'		: 'Add Member',
       'icon'    	: 'plus',
       'grade'          	: 'success',
-      'url'     	: '/members/add/',
+      'url'     	: '/reg/',
       'has_perms'	: 'cms.SECR',
     },
     {

@@ -358,7 +358,7 @@ def rmuser(r,user): # only if membership-type is ORG
         #delete user
         U.delete()
 
-        confirm_by_email(subject, to, settings.MAIL_CONFIRMATION['rmuser']['template'], message_content,None,r.user.email) # copy user that did the action, aka HOL_D
+        notify_by_email(r.user.email, to, subject, message_content, settings.MAIL_CONFIRMATION['rmuser']['template']) # copy user that did the action, aka HOL_D
 
         return render(r,'done.html', {'mode': 'deactivating a User', 'message': render_to_string(settings.MAIL_CONFIRMATION['rmuser']['template'], message_content)}) 
 
@@ -438,7 +438,7 @@ def password(r):
         'LOGIN': r.user.username,
       }
       subject=settings.MAIL_CONFIRMATION['password']['subject']  % r.user.username
-      confirm_by_email(subject, r.user.email, settings.MAIL_CONFIRMATION['password']['template'], message_content)
+      notify_by_email(None, r.user.email, subject, message_content, settings.MAIL_CONFIRMATION['password']['template'])
 
       return render(r,'done.html', {'mode': 'changing your password', 'message': render_to_string(msettings.MAIL_CONFIRMATION['password']['template'], message_content)})
     else:

@@ -55,11 +55,11 @@ target/
 
 #local app ignores
 */migrations/
-cms/db.sqlite
 db.sqlite
-cms/wsgi.py
+cms/db.sqlite
 wsgi.py
-cms/local_settings.py
+cms/wsgi.py
 local_settings.py
+cms/local_settings.py
 HERE
 TODO

@@ -73,10 +73,12 @@ PROFILE_TMPL_CONTENT = {
   'adduser': {
     'template'		: 'form.html',
     'title'     	: u'Add User for [{id}]',
+    'desc' 	    	: u'Add a User to your membership',
     'submit'   		: u'Add',
     'done': {
       'template'	: 'done.html',
       'title'     	: u'User [{user}] added.',
+      'message'		: u'<p>{name} added successfully to your membership.</p>',
       'no_org'		: u'<p>Your membership type does only allow one(1) User.</p>',
 #      'max'		: u'''<p>You already have the maximum of allowed Users for your Membership type.</p>
 #<p>If you want more Users, you'll have to get the next membership level: <a href="/profile/upgrade/">Upgrade membership</a>.</p>''',

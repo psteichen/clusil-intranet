@@ -17,7 +17,7 @@ class ProfileForm(Form):
   country	= CharField(label='Address (country)',required=False)
   sp		= FileField(label='Student proof',required=False)
 
-class UserCreationForm(UserCreationForm):
+class UserForm(ModelForm):
 
   class Meta:
     model = User

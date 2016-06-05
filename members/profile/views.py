@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.template.loader import render_to_string
+from django.contrib.auth.hashers import make_password
 
 from django_tables2 import RequestConfig
 
@@ -22,8 +23,10 @@ from members.groups.models import Group, Affiliation
 from accounting.models import Fee
 from accounting.functions import generate_invoice
 
+from registration.functions import gen_username, gen_random_password
+
 from .functions import member_initial_data, get_user_choice_list, member_is_full
-from .forms import ProfileForm, AffiliateForm, UserCreationForm, UserChangeForm
+from .forms import ProfileForm, AffiliateForm, UserForm, UserChangeForm
 from .tables import InvoiceTable
 
 ################
@@ -145,15 +148,16 @@ def adduser(r): # only if membership-type is ORG
                ) )
  
   M = get_member_from_username(r.user.username)
+  template = settings.TEMPLATE_CONTENT['profile']['adduser']['template']
   title = settings.TEMPLATE_CONTENT['profile']['adduser']['title'].format(id=M.id)
   done_template = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['template']
 
   if r.POST:
-    uf = UserCreationForm(r.POST)
+    uf = UserForm(r.POST)
     if uf.is_valid():
       #save user
       U=uf.save(commit=False)
-      U.username = gen_username(user.first_name,user.last_name)
+      U.username = gen_username(uf.cleaned_data['first_name'],uf.cleaned_data['last_name'])
       U.password = make_password(gen_random_password())
       U.save()
     
@@ -161,7 +165,7 @@ def adduser(r): # only if membership-type is ORG
       M.save()
       M.users.add(U)
 	
-      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(user=gen_fullname(U))
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(name=gen_fullname(U))
       return render(r,done_template, {
 			'title'		: title,
 			'message'	: message,
@@ -191,9 +195,11 @@ def adduser(r): # only if membership-type is ORG
 
     else:
       #show user creation form
-      return render(r,done_template, {
-			'title'	: title,
-			'form'	: UserCreationForm(),
+      return render(r,template, {
+			'title'		: title,
+			'desc'		: settings.TEMPLATE_CONTENT['profile']['adduser']['desc'],
+			'submit' 	: settings.TEMPLATE_CONTENT['profile']['adduser']['submit'],
+			'form'		: UserForm(),
 		   })
 
 

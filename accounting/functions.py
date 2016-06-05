@@ -41,11 +41,6 @@ def generate_invoice(m,year=date.today().strftime('%Y')):
 
   fn=invoice_details['ID'] + '.pdf'
  
-  # create attachement
-  from email.mime.application import MIMEApplication
-  attachment = MIMEApplication(pdf.read())
-  attachment.add_header("Content-Disposition", "attachment",filename=fn)
- 
   #save invoice in Fee model
   try:
     F = Fee.objects.get(member=m,year=year)
@@ -58,6 +53,5 @@ def generate_invoice(m,year=date.today().strftime('%Y')):
   # send email
   from cms.functions import notify_by_email
   subject = settings.INVOICE['subject'] % m.id
-  notify_by_email('board',m.head_of_list.email,subject,invoice_details,settings.INVOICE['mail_template'],attachment)
-
+  notify_by_email('board',m.head_of_list.email,subject,invoice_details,settings.INVOICE['mail_template'],File(pdf))
 

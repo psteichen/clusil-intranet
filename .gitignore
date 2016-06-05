@@ -56,8 +56,10 @@ target/
 #local app ignores
 */migrations/
 cms/db.sqlite
+db.sqlite
 cms/wsgi.py
+wsgi.py
 cms/local_settings.py
+local_settings.py
 HERE
 TODO
-meetings_old

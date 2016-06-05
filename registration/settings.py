@@ -85,6 +85,9 @@ As \'head-of-list\' for your organisation ({orga}), you\'re our prefered contact
 Find herebelow the list of all registered Users for this membership:
 {users}
 ''',
-   },
+    },
+  },
+  'board_reg' : {
+    'title'		: 'Add a Member',
   },
 }

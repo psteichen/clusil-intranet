@@ -53,9 +53,14 @@ class RegistrationWizard(SessionWizardView):
     context = super(RegistrationWizard, self).get_context_data(form=form, **kwargs)
 
     if self.steps.current != None:
-      context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title']})
+      if self.request.user.has_perm('cms.SECR'):
+        context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title']})
+        context.update({'step_desc': ''})
+      else:
+        context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title']})
+        context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['desc']})
+
       context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['title']})
-      context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['desc']})
       context.update({'first': settings.TEMPLATE_CONTENT['reg']['register']['first']})
       context.update({'prev': settings.TEMPLATE_CONTENT['reg']['register']['prev']})
       context.update({'next': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['next']})

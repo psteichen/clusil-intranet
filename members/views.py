@@ -37,43 +37,6 @@ def list(request):
                         })
 
 
-# add #
-#######
-@permission_required('cms.BOARD')
-def add(r):
-  r.breadcrumbs( ( ('board','/board/'),
-                   ('members','/members/'),
-                   ('add a member','/members/add/'),
-                ) )
-
-  if r.POST:
-    mf = MemberForm(r.POST)
-    if mf.is_valid():
-      Me = mf.save(commit=False)
-      Me.save()
-      
-      # all fine -> done
-      return render(r, settings.TEMPLATE_CONTENT['members']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['members']['add']['done']['title'], 
-                'message': '',
-                })
-
-    # form not valid -> error
-    else:
-      return render(r, settings.TEMPLATE_CONTENT['members']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['members']['add']['done']['title'], 
-                'error_message': settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in mf.errors]),
-                })
-  # no post yet -> empty form
-  else:
-    form = MemberForm()
-    return render(r, settings.TEMPLATE_CONTENT['members']['add']['template'], {
-                'title': settings.TEMPLATE_CONTENT['members']['add']['title'],
-                'desc': settings.TEMPLATE_CONTENT['members']['add']['desc'],
-                'submit': settings.TEMPLATE_CONTENT['members']['add']['submit'],
-                'form': form,
-                })
-
 # details #
 ###########
 @login_required
@@ -83,7 +46,7 @@ def details(r, member_id):
   r.breadcrumbs( ( 
 			('home','/'),
                    	('members','/members/'),
-                   	('details of member: '+unicode(member_id),'/members/list/'+member_id+'/'),
+                   	('details of member: '+unicode(member_id),'/members/details/'+member_id+'/'),
                ) )
 
   message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,settings.TEMPLATE_CONTENT['members']['details']['overview']['actions'])
@@ -112,9 +75,8 @@ class ModifyMemberWizard(SessionWizardView):
     step = self.steps.current
 
     M = None
-    list_data = self.get_cleaned_data_for_step('list') or {}
-    if list_data != {}:
-      M = Member.objects.get(pk=list_data['members'].id)
+    if self.kwargs['member_id']:
+      M = Member.objects.get(pk=self.kwargs['member_id'])
       #add breadcrumbs to context
       self.request.breadcrumbs( ( 
 					('board','/board/'),
@@ -129,7 +91,6 @@ class ModifyMemberWizard(SessionWizardView):
 	        	       	        ('member profile','/members/profile/'),
 	        	       	        ('modify member profile','/members/profile/modify/'),
                             ) )
-
 
     if step != None:
       context.update({'title': settings.TEMPLATE_CONTENT['members']['modify']['title']})
@@ -147,12 +108,10 @@ class ModifyMemberWizard(SessionWizardView):
       step = self.steps.current
 
     M = None
-    if step != 'list':
-      list_data = self.get_cleaned_data_for_step('list') or {}
-      if list_data != {}:
-        M = Member.objects.get(pk=list_data['members'].id)
-      else:
-        M = Member.objects.get(head_of_list=self.request.user)
+    if self.kwargs['member_id']:
+      M = Member.objects.get(pk=self.kwargs['member_id'])
+    else:
+      M = Member.objects.get(head_of_list=self.request.user)
 
     if step == 'member':
       form.initial = gen_member_initial(M)
@@ -165,7 +124,7 @@ class ModifyMemberWizard(SessionWizardView):
 
     return form
 
-  def done(self, fl, **kwargs):
+  def done(self, fl, form_dict, **kwargs):
     self.request.breadcrumbs( ( ('home','/home/'),
          	                ('member','/members/'),
                 	        ('modify a member','/members/modify/'),
@@ -174,9 +133,9 @@ class ModifyMemberWizard(SessionWizardView):
     template = settings.TEMPLATE_CONTENT['members']['modify']['done']['template']
 
     M = R = None
-    mf = fl[1]
+    mf = form_dict['member_id']
     role = mf.cleaned_data['role']
-    if role: rf = fl[2]
+    if role: rf = form_dict['role']
 
     if mf.is_valid():
       M = mf.save()

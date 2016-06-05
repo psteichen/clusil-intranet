@@ -52,7 +52,7 @@ def gen_member_initial(m):
   initial_data = {}
 
   initial_data['head_of_list'] = gen_fullname(m.head_of_list)
-  if m.delegate: initial_data['delagate'] = gen_fullname(m.delagate)
+  if m.delegate: initial_data['delegate'] = gen_fullname(m.delegate)
   initial_data['address'] = m.address
 
   return initial_data

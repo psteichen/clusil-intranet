@@ -79,6 +79,9 @@ MEMBERS_TMPL_CONTENT = {
       'template'	: 'overview_member.html',
       'actions'     	: ACTIONS['details'],
     },
+    'readonly' : {
+      'template'	: 'overview_member_readonly.html',
+    },
   },
   'modify': {
     'title'     	: 'Modify member profile',

@@ -49,7 +49,11 @@ def details(r, member_id):
                    	('details of member: '+unicode(member_id),'/members/details/'+member_id+'/'),
                ) )
 
-  message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,settings.TEMPLATE_CONTENT['members']['details']['overview']['actions'])
+  if r.user == member.head_of_list or r.user == member.delegate:
+    message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,settings.TEMPLATE_CONTENT['members']['details']['overview']['actions'])
+  else:
+    message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['readonly']['template'],member)
+  
 
   return render(r, settings.TEMPLATE_CONTENT['members']['details']['template'], {
                    'message': message,

@@ -26,8 +26,11 @@ def notify_by_email(sender,to,subject,message_content,template='default.txt',att
 
   if not template: email.body = render_to_string('default.txt',message_content)
   else: email.body = render_to_string(template,message_content)
-#  if attachment: email.attach(attachment)
-  if attachment: email.attach_file(attachment)
+
+  if attachment:
+    from email.mime.application import MIMEApplication
+    if isinstance(attachment, MIMEApplication): email.attach(attachment)
+    else: email.attach_file(attachment)
   try:
     email.send()
     return True

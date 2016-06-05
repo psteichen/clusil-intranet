@@ -70,7 +70,7 @@ Your membership is now validated.
 <br/>
 <em>[MEMBER_ID: {member_id}]</em>
 <br/><br/>
-The membership invoice will reach you in a seperate email, please be pay your fee in a timely manner.
+The membership invoice will reach you in a seperate email, please pay your fee in a timely manner.
 <br/><br/>
 For any further communication please use the above MEMBER_ID for best service experience.
 <br/><br/>

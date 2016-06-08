@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from cms.functions import visualiseDateTime
 
 
+
 ################################
 # MEMBERS SUPPORTING FUNCTIONS #
 ################################
@@ -30,6 +31,15 @@ def get_member_from_username(username):
     pass
 
   return M
+
+# gen fullname (including organisation if there is)
+def gen_member_fullname(m):
+  from .models import Member
+
+  fn = m.head_of_list.first_name + ' ' + unicode.upper(m.head_of_list.last_name)
+  if m.type == Member.ORG:
+    fn += ' (' + unicode(m.organisation) + ')'
+  return fn
 
 def get_members_to_validate():
   from .models import Member
@@ -148,5 +158,10 @@ def gen_member_overview(template,member,actions=False):
   content['users'] = get_all_users_for_membership(member)
 
   return render_to_string(template,content)
+
+def gen_renewal_link(code):
+  from os import path
+  c_url = path.join(settings.RENEW_URL, code + '/')
+  return c_url
 
 

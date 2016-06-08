@@ -11,6 +11,13 @@ ACTIONS = {
       'has_perms'	: 'cms.SECR',
     },
     {
+      'label'		: 'Annual Renewal',
+      'icon'    	: 'refresh',
+      'grade'          	: 'warning',
+      'url'     	: '/members/renew/',
+      'has_perms'	: 'cms.SECR',
+    },
+    {
       'label' 	        : 'Group management',
       'icon'  	   	: 'th-large',
       'grade'    	: 'info',
@@ -62,15 +69,12 @@ MEMBERS_TMPL_CONTENT = {
   'title'       	: 'Member Management',
   'template'    	: 'list.html',
   'actions'     	: ACTIONS['main'],
-  'add': {
-    'template'		: 'form.html',
-    'title'     	: 'Add Member',
-    'desc'     		: '',
-    'submit'   		: 'Add Member',
-    'done': {
-      'template'	: 'done.html',
-      'title'     	: 'New Member added.',
-      'message'     	: 'Details here: ',
+  'renew': {
+    'template'		: 'done.html',
+    'title'     	: 'Membership renewal requests for {year} sent.',
+    'email': {
+      'template'	: 'renewal_request.txt',
+      'title'     	: 'Request to renew your membership for {year}.',
     },
   },
   'details': {

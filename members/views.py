@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required, permission_required
@@ -7,10 +9,12 @@ from django.contrib.auth.models import User
 
 from django_tables2  import RequestConfig
 
-from cms.functions import show_form
+from cms.functions import show_form, notify_by_email
 
-from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview
-from .models import Member, Role
+from registration.functions import gen_hash
+
+from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname
+from .models import Member, Role, Renew
 from .forms import MemberForm, RoleForm
 from .tables  import MemberTable
 
@@ -21,7 +25,7 @@ from .tables  import MemberTable
 
 # list #
 #########
-@permission_required('cms.BOARD')
+@permission_required('cms.SECR')
 def list(request):
   request.breadcrumbs( ( ('board','/board/'),
                          ('members','/members/'),
@@ -35,6 +39,58 @@ def list(request):
                         'actions': settings.TEMPLATE_CONTENT['members']['actions'],
                         'table': table,
                         })
+
+
+# renew #
+#########
+@permission_required('cms.SECR')
+def renew(r):
+  r.breadcrumbs( ( 
+			('home','/'),
+                   	('members','/members/'),
+                   	('annual renewal','/members/renew/'),
+               ) )
+
+  year = date.today().strftime('%Y')
+
+  template 		= settings.TEMPLATE_CONTENT['members']['renew']['template']
+  title 		= settings.TEMPLATE_CONTENT['members']['renew']['title'].format(year=year)
+  email_template 	= settings.TEMPLATE_CONTENT['members']['renew']['email']['template']
+  email_title 		= settings.TEMPLATE_CONTENT['members']['renew']['email']['title'].format(year=year)
+
+  m_list = '<ul>'
+
+  #loop throu all active members and send membership renewal request
+  for m in get_active_members():
+    renew_hash_code = gen_hash(settings.RENEW_SALT,m.head_of_list.email,15,year)
+    # build request mail
+    message_content = {
+        'FULLNAME'	: gen_member_fullname(m),
+        'YEAR'		: year,
+	'LINK'		: gen_renewal_link(renew_hash_code),
+    }
+    # send confirmation
+    ok=notify_by_email(False,m.head_of_list.email,email_title,message_content,email_template)
+    if not ok:
+      return render(r, error_template, { 
+				'mode': 'Error in email request', 
+				'message': settings.TEMPLATE_CONTENT['error']['email'],
+		   })
+    try:
+      renew = Renew(member=m,year=year,renew_hash=renew_hash_code)
+      renew.save()
+    except:
+      pass
+    m_list += '<li>'+gen_member_fullname(m)+'</li>'
+   
+  m_list += '</ul>'
+  # all fine
+  return render(r, template, { 
+			'title'		: title,
+        		'message'	: m_list,
+	       })
+ 
+
 
 
 # details #

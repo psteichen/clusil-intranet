@@ -14,12 +14,12 @@ from django.contrib.auth.hashers import make_password
 from cms.functions import show_form, notify_by_email, replicate_to_ldap
 
 from accounting.functions import generate_invoice
-from members.functions import get_members_to_validate
+from members.functions import get_members_to_validate, gen_member_fullname
 from members.models import Member, Organisation, Address, Role
 from members.groups.models import Group, Affiliation
 
 from .models import Registration
-from .functions import gen_member_id, add_to_groups, gen_member_fullname, gen_username, gen_random_password, gen_hash, gen_confirmation_link, gen_user_list
+from .functions import gen_member_id, add_to_groups, gen_username, gen_random_password, gen_hash, gen_confirmation_link, gen_user_list
 
 
 ##

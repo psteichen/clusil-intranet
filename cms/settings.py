@@ -434,6 +434,8 @@ TEMPLATE_CONTENT['board'] = {
 ## members
 from members.settings import *
 TEMPLATE_CONTENT['members'] = MEMBERS_TMPL_CONTENT
+RENEW_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/profile/renew/'
+RENEW_SALT	= u'CLUSIL 1996-2016, 20 years of CHEEBANG!'
 
 ## groups
 from members.groups.settings import *

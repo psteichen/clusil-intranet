@@ -1,0 +1,16 @@
+{% autoescape off %}
+Dear {{ FULLNAME }}, 
+{{ ORGANISATION }}
+
+Please find herewith a kind request to renew your CLUSIL membership for the year {{ YEAR }}.
+
+By following the below link you validate your membership renewal:
+
+	>  {{ LINK }}  <
+
+{{ SALUTATION }}
+
+--
+{{ DISCLAIMER }}
+{% endautoescape %}
+

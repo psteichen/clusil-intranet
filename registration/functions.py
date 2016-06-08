@@ -50,12 +50,6 @@ def add_to_groups(user,groups):
   for g in groups:
     affiliate(user,g)
 
-# gen fullname (including organisation if there is)
-def gen_member_fullname(m):
-  fn = m.head_of_list.first_name + ' ' + unicode.upper(m.head_of_list.last_name)
-  if m.type == Member.ORG:
-    fn += ' (' + unicode(m.organisation) + ')'
-  return fn
 
 # gen fullname for a user
 def gen_user_fullname(u):

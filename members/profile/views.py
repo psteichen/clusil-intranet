@@ -453,3 +453,10 @@ def password(r):
     #no POST data yet -> show user creation form
     return render(r,'pwd.html', {'pwd_form': PasswordChangeForm(r.user), 'login': r.user.username })
 
+
+# renew validation #
+####################
+def renew(r, renew_hash):
+#HERE
+  return False
+

@@ -1,4 +1,4 @@
-from django.db.models import Model, EmailField, DateField, IntegerField, CharField, ForeignKey, ManyToManyField, FileField
+from django.db.models import Model, EmailField, DateField, IntegerField, CharField, ForeignKey, ManyToManyField, FileField, BooleanField
 from django.db.models.deletion import SET_NULL
 from django.contrib.auth.models import User
 
@@ -101,6 +101,22 @@ class Member(Model):
       o += gen_fulluser(self.head_of_list)
 
     return self.id + ' [ '+ Member.MEMBER_TYPES[self.type][1] + ' ] ' + o
+
+
+# Renew model
+class Renew(Model):
+  member	= ForeignKey(Member) 
+  year      	= CharField(max_length=4)
+  renew_hash   	= CharField(max_length=15)
+  ok	   	= BooleanField(default=False)
+
+  class Meta:
+    unique_together = ('member', 'year',)
+
+  def __unicode__(self):
+    status=''
+    if self.ok: status=' - OK'
+    return unicode(self.member.pk) + ' [' + self.year +']' + status
 
 
 # Role model

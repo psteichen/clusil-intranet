@@ -1,4 +1,5 @@
 from datetime import date
+from random import random
 
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -62,7 +63,8 @@ def renew(r):
 
   #loop throu all active members and send membership renewal request
   for m in get_active_members():
-    renew_hash_code = gen_hash(settings.RENEW_SALT,m.head_of_list.email,15,year)
+    salt2=float(year)*random()
+    renew_hash_code = gen_hash(settings.RENEW_SALT,unicode(m.head_of_list.email)+unicode(m.address).encode('ascii', 'ignore'),15,salt2)
     # build request mail
     message_content = {
         'FULLNAME'	: gen_member_fullname(m),
@@ -76,11 +78,16 @@ def renew(r):
 				'mode': 'Error in email request', 
 				'message': settings.TEMPLATE_CONTENT['error']['email'],
 		   })
+
     try:
-      renew = Renew(member=m,year=year,renew_hash=renew_hash_code)
+      renew = Renew(member=m,year=year,renew_code=renew_hash_code)
       renew.save()
     except:
-      pass
+      renew = Renew.objects.get(member=m,year=year)
+      renew.renew_code = renew_hash_code
+      renew.save()
+
+
     m_list += '<li>'+gen_member_fullname(m)+'</li>'
    
   m_list += '</ul>'

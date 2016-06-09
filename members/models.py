@@ -107,7 +107,7 @@ class Member(Model):
 class Renew(Model):
   member	= ForeignKey(Member) 
   year      	= CharField(max_length=4)
-  renew_hash   	= CharField(max_length=15)
+  renew_code   	= CharField(max_length=15)
   ok	   	= BooleanField(default=False)
 
   class Meta:
@@ -116,7 +116,7 @@ class Renew(Model):
   def __unicode__(self):
     status=''
     if self.ok: status=' - OK'
-    return unicode(self.member.pk) + ' [' + self.year +']' + status
+    return unicode(self.member.pk) + ' [' + self.year + ']' + ' (' + self.renew_code + ')' + status
 
 
 # Role model

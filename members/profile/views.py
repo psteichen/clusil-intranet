@@ -15,7 +15,7 @@ from django_tables2 import RequestConfig
 from cms.functions import notify_by_email, gen_form_errors
 
 from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username
-from members.models import Member
+from members.models import Member, Renew
 
 from members.groups.functions import affiliate, get_affiliations
 from members.groups.models import Group, Affiliation
@@ -456,7 +456,47 @@ def password(r):
 
 # renew validation #
 ####################
-def renew(r, renew_hash):
-#HERE
-  return False
+def renew(r, code):
+
+  title 		= settings.TEMPLATE_CONTENT['profile']['renew']['title']
+  template		= settings.TEMPLATE_CONTENT['profile']['renew']['template']
+  done_message		= settings.TEMPLATE_CONTENT['profile']['renew']['done_message']
+  error_message		= settings.TEMPLATE_CONTENT['profile']['renew']['error_message']
+
+  try:
+    # if hash code match: it's a renewal to be validated
+    R = Renew.objects.get(renew_code=code)
+    if R.ok:
+      return render(r, template, {
+                   'title'		: title,
+                   'error_message'	: error_message,
+               })
+
+    M = R.member
+    y = R.year
+
+    # save registration as OK
+    R.ok = True 
+    R.save()
+
+    # save Member as active
+    M.status = Member.ACT
+    M.save()
+
+    # generate invoice for given year (this will generate and send the invoice)
+    generate_invoice(M,y)
+
+    message = done_message.format(name=gen_fullname(M.head_of_list),member_id=M.pk)
+    return render(r, template, {
+                   'title'	: title,
+                   'message'	: message,
+               })
+
+  except Renew.DoesNotExist:
+    # else: error
+    return render(r, template, {
+                   'title'		: title,
+                   'error_message'	: error_message,
+               })
+ 
 

@@ -132,4 +132,21 @@ PROFILE_TMPL_CONTENT = {
     'title'     	: u'New Invoice generated for [{id}]',
     'message'     		: u'A new invoice for your CLUSIL membership fee for {year} has been generated and sent to the head-of-list. This invoice replaces and cancels all previous ones for the same year.',
   },
+  'renew' : {
+    'template'		: 'done.html',
+    'title'		: 'Membership renewal',
+    'done_message' 	: u'''Dear {name},
+<br/><br/>
+Thank you for your continuing support to <strong>CLUSIL</strong>!
+<br/><br/>
+Your membership is now renewed.
+<br/>
+<em>[MEMBER_ID: {member_id}]</em>
+<br/><br/>
+The invoice will reach you by email, please pay in a timely manner.
+<br/><br/>
+Looking forward to meet you again at one of our next events or working groups.
+''',  
+    'error_message' 	: '<strong>ERROR!</strong> Validation code not known or already used.',
+  },
 }

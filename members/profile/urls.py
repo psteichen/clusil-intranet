@@ -18,5 +18,5 @@ urlpatterns = patterns('',
   url(r'^make_delegate/(?P<user>.+?)/$', make_delegate, name='make_delegate'),
   url(r'^rmuser/(?P<user>.+?)/$', rmuser, name='rmuser'),
 
-  url(r'^renew/(?P<renew_hash>.+?)/$', renew, name='renew'),
+  url(r'^renew/(?P<code>.+?)/$', renew, name='renew'),
 )

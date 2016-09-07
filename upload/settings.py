@@ -40,5 +40,18 @@ UPLOAD_TMPL_CONTENT = {
       'message'   	: u'For your submission for the ISM benchmark.',
     },
   },
+  'import': {
+    'members': {
+      'template'          : 'form.html',
+      'title'             : u'Import Members',
+      'desc'              : u"Only, specially crafted CSV data files are accepted!",
+      'submit'            : u'Import',
+      'done': {
+        'template'        : 'done.html',
+        'title'           : u'{nb} Member(s) imported.',
+        'message'         : u'Details: ',
+      }, 
+    },
+  },
 }
 

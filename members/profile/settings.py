@@ -108,13 +108,32 @@ PROFILE_TMPL_CONTENT = {
     'message'     	: u'{head} is now your new Delegate!',
   },
   'rmuser': {
-    'template'		: 'form.html',
-    'title'     	: u'Remove User',
-    'desc'     		: u'Remove a User from the CLUSIL Membership',
-    'submit'   		: u'Remove',
+    'template'		: 'done.html',
+    'title'     	: u'Delete User',
+    'message'  		: u'''Are you sure to delete the following User from your Membership?
+<dl class="dl-horizontal">
+<dt>Name:</dt><dd>{name}</dd>
+<dt>Email:</dt><dd>{email}</dd>
+<dt>Login:</dt><dd>{login}</dd>
+<dt>Affiliations:</dt><dd>{affil}</dd>
+</dl>
+<a href="{url}" class="btn btn-xl btn-danger"><b>Really</b> delete this User?</a>
+''',
+    'error': {
+      'template'	: 'done.html',
+      'title'     	: u'Error in deleting User.',
+      'message'     	: u'You seem to have no rights to delete User, please contact your Head-of-List or Delegate.',
+    },
     'done': {
       'template'	: 'done.html',
-      'title'     	: u'User removed.',
+      'title'     	: u'User DELETED!',
+      'message' 	: u'''The following User was deleted successfully:
+<dl class="dl-horizontal">
+<dt>Name:</dt><dd>{name}</dd>
+<dt>Email:</dt><dd>{email}</dd>
+<dt>Login:</dt><dd>{login}</dd>
+</dl>
+''',
     },
   },
   'invoice': {

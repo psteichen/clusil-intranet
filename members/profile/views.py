@@ -337,42 +337,59 @@ def make_delegate(r,user):
 	       })
 
 
-#TODO
 # remove user #
 ###############
 @permission_required('cms.MEMBER')
-def rmuser(r,user): # only if membership-type is ORG
-  init_data = initial_data(r)
-  m_id = init_data['member_data']['member_id']
-  m_type = init_data['member_data']['member_type']
-
-  if r.POST:
-    users = r.POST.getlist('users')
-    for u in users:
-      try:
-        #desactivate
-	U = User.objects.get(pk=u)
+def rmuser(r,user,really=False): # only if membership-type is ORG
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('member profile','/profile/'),
+               ) )
  
-        message_content = {
-          'FULLNAME': U.first_name + ' ' + unicode.upper(U.last_name),
-          'LOGIN': U.username,
-          'HOL_D': r.user.first_name + ' ' + unicode.upper(r.user.last_name),
-        }
-        subject=settings.MAIL_CONFIRMATION['rmuser']['subject'] % U.username
-	to=U.email
+  title 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['title']
+  template 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['template']
+  message 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['message']
 
-        #delete user
-        U.delete()
+  done_title 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['done']['title']
+  done_template 	= settings.TEMPLATE_CONTENT['profile']['rmuser']['done']['template']
+  done_message 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['done']['message']
 
-        notify_by_email(r.user.email, to, subject, message_content, settings.MAIL_CONFIRMATION['rmuser']['template']) # copy user that did the action, aka HOL_D
+  error_title 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['error']['title']
+  error_message 	= settings.TEMPLATE_CONTENT['profile']['rmuser']['error']['message']
 
-        return render(r,'done.html', {'mode': 'deactivating a User', 'message': render_to_string(settings.MAIL_CONFIRMATION['rmuser']['template'], message_content)}) 
+  M = get_member_from_username(user)
+  U = User.objects.get(username=user)
+  #check if hol
+  if not r.user.username == M.head_of_list.username:
+    return render(r,done_template, {
+			'title'		: error_title,
+                	'error_message'	: error_message,
+		 })
+  
+  #check if REALLY want to delete user
+  if really == 'REALLY':
+    msg = done_message.format(
+				name	= gen_fullname(U),
+				email	= U.email,
+				login	= U.username
+			     )
+    U.delete()
+    return render(r,done_template, {
+			'title'		: done_title,
+			'message'	: msg,
+	       })
 
-      except User.DoesNotExist:
-        return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit'], 'error_message': settings.TEMPLATE_CONTENT['error']['rm']})
-  else:
-    #no POST data yet -> show user creation form
-    return render(r,'basic.html', {'title': settings.TEMPLATE_CONTENT['profile']['rmuser']['title'], 'form': MemberUsersForm(initial=init_data['member_data']), 'submit': settings.TEMPLATE_CONTENT['profile']['rmuser']['submit']})
+  else: #show user to delete and give a second chance to decide
+    return render(r,template, {
+			'title'		: title,
+			'message'	: message.format(
+								name	= gen_fullname(U),
+								email	= U.email,
+								login	= U.username,
+								affil	= get_affiliations(U),
+								url	= '/profile/rmuser/'+U.username+'/REALLY/'
+							),
+		 })
 
 
 # invoice #

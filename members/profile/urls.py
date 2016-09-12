@@ -16,7 +16,7 @@ urlpatterns = patterns('',
   url(r'^affiluser/(?P<user>.+?)/$', affiluser, name='affiluser'),
   url(r'^make_head/(?P<user>.+?)/$', make_head, name='make_head'),
   url(r'^make_delegate/(?P<user>.+?)/$', make_delegate, name='make_delegate'),
-  url(r'^rmuser/(?P<user>.+?)/$', rmuser, name='rmuser'),
+  url(r'^rmuser/(?P<user>.+?)/((?P<really>.+?)/)?$', rmuser, name='rmuser'),
 
   url(r'^renew/(?P<code>.+?)/$', renew, name='renew'),
 )

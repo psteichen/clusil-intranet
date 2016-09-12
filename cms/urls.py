@@ -1,11 +1,11 @@
-from password_reset.views import recover, recover_done, reset, reset_done
-
 from django.contrib.auth.decorators import login_required
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
+
+from password_reset.views import recover, recover_done, reset, reset_done
 
 from .views import home, documentation
 

@@ -9,17 +9,4 @@ class GroupForm(ModelForm):
 
   class Meta:
     model = Group
-    fields = ( 'type', 'title', 'desc', 'acronym', ) 
-
-#modify forms
-class ListGroupsForm(Form):
-  groups = ModelChoiceField(label='Group',queryset=Group.objects.all().order_by('type'))
-
-class ModifyGroupForm(ModelForm):
-
-  class Meta:
-    model = Group
-    fields = ( 'acronym', 'type', 'status', 'title', 'desc',) 
-    widgets = {
-      'acronym'	: TextInput(attrs={'readonly':'readonly'})
-    }
+    fields = ( 'acronym', 'type', 'status', 'title', 'desc', ) 

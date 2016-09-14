@@ -2,7 +2,6 @@ from datetime import date
 from random import random
 
 from django.shortcuts import render
-from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.conf import settings

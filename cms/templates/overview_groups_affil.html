@@ -1,0 +1,11 @@
+<div class="overview">
+  <table class="table table-condensed">
+   {% for a in affil %}
+   <tr>
+     <td class="lead">{{ a.user.first_name }}</td>
+     <td class="lead">{{ a.user.last_name|upper }}</td>
+     <td class="lead">{{ a.user.email }}</td>
+   </tr>
+   {% endfor %}
+ </table>
+</div>

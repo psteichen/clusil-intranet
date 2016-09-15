@@ -22,6 +22,16 @@ ACTIONS = {
       'has_perms'     	: 'clusil.BOARD',
     },
   ),
+  'affil': ( 
+    { 
+      'label'    	: 'Add User to Group', 
+      'icon'     	: 'plus',
+      'grade'     	: 'danger',
+      'desc'    	: 'Add User to Group', 
+      'url'           	: '/members/groups/adduser/', 
+      'has_perms'     	: 'clusil.BOARD',
+    },
+  ),
 }
 
 GROUPS_TMPL_CONTENT = {
@@ -37,6 +47,7 @@ GROUPS_TMPL_CONTENT = {
   'affil': {
     'template'		: 'done.html',
     'title'     	: 'Group affiliations for <i>{}</i>',
+    'actions'     	: ACTIONS['affil'],
     'overview' : {
       'template'	: 'overview_groups_affil.html',
     },
@@ -60,6 +71,16 @@ GROUPS_TMPL_CONTENT = {
     'done' : {
       'template'        : 'done.html',
       'title'           : 'Group [%s] modified!',
+    },
+  },
+  'adduser': {
+    'template'		: 'form.html',
+    'title'     	: 'Affiliate User to Group {}',
+    'desc'     		: '',
+    'submit'   		: 'Add',
+    'done' : {
+      'template'        : 'done.html',
+      'title'     	: 'Added User(s) to Group <i>{}</i>',
     },
   },
 }

@@ -9,7 +9,7 @@ from django_tables2  import RequestConfig
 
 from .functions import gen_group_initial
 from .models import Group, Affiliation
-from .forms import GroupForm
+from .forms import GroupForm, AddUserForm
 from .tables  import GroupTable
 
 
@@ -50,9 +50,13 @@ def affil(request,group):
   overview = render_to_string(settings.TEMPLATE_CONTENT['groups']['affil']['overview']['template'], { 
 					'affil'	: A, 
 			     })
+  actions = settings.TEMPLATE_CONTENT['groups']['affil']['actions']
+  for a in actions:
+    a['url'] += unicode(group)+'/'
 
   return render(request, settings.TEMPLATE_CONTENT['groups']['affil']['template'], {
                         'title': settings.TEMPLATE_CONTENT['groups']['affil']['title'].format(group),
+#                        'actions': actions,
                         'overview': overview,
                })
 
@@ -136,4 +140,54 @@ def modify(r,group):
 	                'form': form,
                 })
 
+
+# adduser #
+###########
+@permission_required('cms.SECR')
+def adduser(r,group):
+  r.breadcrumbs( ( 
+			('board','/board/'),
+                      	('members','/members/'),
+                       	('groups','/members/groups/'),
+                       	(group+' affiliates','/members/groups/affil/'+group+'/'),
+               ) )
+
+  template 	= settings.TEMPLATE_CONTENT['groups']['adduser']['template']
+  title		= settings.TEMPLATE_CONTENT['groups']['adduser']['title']
+  desc		= settings.TEMPLATE_CONTENT['groups']['adduser']['desc']
+  submit	= settings.TEMPLATE_CONTENT['groups']['adduser']['submit']
+
+  done_template = settings.TEMPLATE_CONTENT['groups']['adduser']['done']['template']
+  done_title	= settings.TEMPLATE_CONTENT['groups']['adduser']['done']['title'] 
+
+  if r.POST:
+    auf = AddUserForm(r.POST)
+    if auf.is_valid():
+      users = auf.cleaned_data['users']
+      for u in users:
+        Affiliation(group=Group.objects.get(pk=group),user=u)
+      
+      # all fine -> done
+      return render(r, done_template, {
+                	'title'		: done_title.format(group), 
+                	'list'		: users, 
+                })
+
+    # form not valid -> error
+    else:
+      return render(r, done_template, {
+        	        'title'		: done_title, 
+	                'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in auf.errors]),
+                })
+
+  # no post yet -> empty form
+  else:
+#    form = AddUserForm(initial=model_to_dict(Affiliation.objects.filter(group=group).only('user')))
+    form = AddUserForm()
+    return render(r, template, {
+			'title'	: title.format(group),
+	                'desc'	: desc,
+        	        'submit': submit,
+	                'form'	: form,
+                })
 

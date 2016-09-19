@@ -9,7 +9,7 @@ ACTIONS = {
       'grade'     	: 'danger',
       'desc'          	: 'Add a Group', 
       'url'           	: '/members/groups/add/', 
-      'has_perms'     	: 'clusil.BOARD',
+      'has_perms'     	: 'cms.SECR',
     },
   ),
   'list': ( 
@@ -19,7 +19,7 @@ ACTIONS = {
       'grade'     	: 'danger',
       'desc'          	: 'Modify a Group', 
       'url'           	: '/members/groups/modify/', 
-      'has_perms'     	: 'clusil.BOARD',
+      'has_perms'     	: 'cms.SECR',
     },
   ),
   'affil': ( 
@@ -29,7 +29,7 @@ ACTIONS = {
       'grade'     	: 'danger',
       'desc'    	: 'Add User to Group', 
       'url'           	: '/members/groups/adduser/', 
-      'has_perms'     	: 'clusil.BOARD',
+      'has_perms'     	: 'cms.SECR'
     },
   ),
 }

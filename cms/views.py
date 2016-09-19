@@ -75,7 +75,7 @@ def home(r):
 			'actions': settings.TEMPLATE_CONTENT['home']['actions'], 
 		})
 
-@permission_required('cms.BOARD')
+@permission_required('cms.SECR')
 def board(r):
   return render(r, settings.TEMPLATE_CONTENT['board']['template'], { 
 			'title': settings.TEMPLATE_CONTENT['board']['title'], 

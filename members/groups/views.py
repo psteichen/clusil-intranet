@@ -55,9 +55,9 @@ def affil(request,group):
     a['url'] += unicode(group)+'/'
 
   return render(request, settings.TEMPLATE_CONTENT['groups']['affil']['template'], {
-                        'title': settings.TEMPLATE_CONTENT['groups']['affil']['title'].format(group),
-#                        'actions': actions,
-                        'overview': overview,
+                        'title'		: settings.TEMPLATE_CONTENT['groups']['affil']['title'].format(group),
+                        'actions'	: actions,
+                        'overview'	: overview,
                })
 
 
@@ -79,25 +79,25 @@ def add(r):
       
       # all fine -> done
       return render(r, settings.TEMPLATE_CONTENT['groups']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['groups']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['groups']['add']['done']['message'] + unicode(G),
+                'title'		: settings.TEMPLATE_CONTENT['groups']['add']['done']['title'], 
+                'message'	: settings.TEMPLATE_CONTENT['groups']['add']['done']['message'] + unicode(G),
                 })
 
     # form not valid -> error
     else:
       return render(r, settings.TEMPLATE_CONTENT['groups']['add']['done']['template'], {
-                'title': settings.TEMPLATE_CONTENT['groups']['add']['done']['title'], 
-                'error_message': settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in gf.errors]),
+                'title'		: settings.TEMPLATE_CONTENT['groups']['add']['done']['title'], 
+                'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in gf.errors]),
                 })
 
   # no post yet -> empty form
   else:
     form = GroupForm()
     return render(r, settings.TEMPLATE_CONTENT['groups']['add']['template'], {
-                'title': settings.TEMPLATE_CONTENT['groups']['add']['title'],
-                'desc': settings.TEMPLATE_CONTENT['groups']['add']['desc'],
-                'submit': settings.TEMPLATE_CONTENT['groups']['add']['submit'],
-                'form': form,
+                'title'		: settings.TEMPLATE_CONTENT['groups']['add']['title'],
+                'desc'		: settings.TEMPLATE_CONTENT['groups']['add']['desc'],
+                'submit'	: settings.TEMPLATE_CONTENT['groups']['add']['submit'],
+                'form'		: form,
                 })
 
 # modify #
@@ -119,25 +119,25 @@ def modify(r,group):
       
       # all fine -> done
       return render(r, settings.TEMPLATE_CONTENT['groups']['modify']['done']['template'], {
-                	'title': settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'], 
-        	        'message': settings.TEMPLATE_CONTENT['groups']['modify']['done']['message'] + unicode(G),
+                	'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'], 
+        	        'message'	: settings.TEMPLATE_CONTENT['groups']['modify']['done']['message'] + unicode(G),
                 })
 
     # form not valid -> error
     else:
       return render(r, settings.TEMPLATE_CONTENT['groups']['modify']['done']['template'], {
-        	        'title': settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'], 
-	                'error_message': settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in gf.errors]),
+        	        'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'], 
+	                'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in gf.errors]),
                 })
 
   # no post yet -> empty form
   else:
     form = GroupForm(initial=model_to_dict(Group.objects.get(pk=group)))
     return render(r, settings.TEMPLATE_CONTENT['groups']['modify']['template'], {
-			'title': settings.TEMPLATE_CONTENT['groups']['modify']['title'],
-	                'desc': settings.TEMPLATE_CONTENT['groups']['modify']['desc'],
-        	        'submit': settings.TEMPLATE_CONTENT['groups']['modify']['submit'],
-	                'form': form,
+			'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['title'],
+	                'desc'		: settings.TEMPLATE_CONTENT['groups']['modify']['desc'],
+        	        'submit'	: settings.TEMPLATE_CONTENT['groups']['modify']['submit'],
+	                'form'		: form,
                 })
 
 
@@ -182,12 +182,12 @@ def adduser(r,group):
 
   # no post yet -> empty form
   else:
-#    form = AddUserForm(initial=model_to_dict(Affiliation.objects.filter(group=group).only('user')))
-    form = AddUserForm()
+#    form = AddUserForm(Affiliation.objects.filter(group=group).only('user').values())
+    form = AddUserForm(gid=group)
     return render(r, template, {
-			'title'	: title.format(group),
-	                'desc'	: desc,
-        	        'submit': submit,
-	                'form'	: form,
+			'title'		: title.format(group),
+	                'desc'		: desc,
+        	        'submit'	: submit,
+	                'form'		: form,
                 })
 

@@ -28,7 +28,7 @@ ACTIONS = {
       'icon'     	: 'plus',
       'grade'     	: 'danger',
       'desc'    	: 'Add User to Group', 
-      'url'           	: '/members/groups/adduser/', 
+      'url'           	: '/members/groups/adduser/{}/', 
       'has_perms'     	: 'cms.SECR'
     },
   ),

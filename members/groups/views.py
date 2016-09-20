@@ -52,7 +52,7 @@ def affil(request,group):
 			     })
   actions = settings.TEMPLATE_CONTENT['groups']['affil']['actions']
   for a in actions:
-    a['url'] += unicode(group)+'/'
+    a['url'] = a['url'].format(group)
 
   return render(request, settings.TEMPLATE_CONTENT['groups']['affil']['template'], {
                         'title'		: settings.TEMPLATE_CONTENT['groups']['affil']['title'].format(group),

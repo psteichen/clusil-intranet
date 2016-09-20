@@ -23,6 +23,9 @@ class GroupTable(Table):
     if record.status == Group.ACT:
       return 'success'
 
+    if record.status == Group.SPL:
+      return 'info'
+
     if record.status == Group.OLD:
       return 'muted'
 

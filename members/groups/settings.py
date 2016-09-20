@@ -40,6 +40,7 @@ GROUPS_TMPL_CONTENT = {
   'desc'     		: '''
 	<p class="text-success">GREEN: <b>active groups</b></p>
 	<p class="text-warning">AMBER: <b>standby/inactive groups</b></p>
+	<p class="text-info">BLUE: <b>special groups</b></p>
 	<p class="text-muted">WHITE: <b>old/archived groups</b></p>
 ''',
   'actions'     	: ACTIONS['main'],

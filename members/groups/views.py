@@ -119,14 +119,14 @@ def modify(r,group):
       
       # all fine -> done
       return render(r, settings.TEMPLATE_CONTENT['groups']['modify']['done']['template'], {
-                	'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'], 
+                	'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'] % unicode(G), 
         	        'message'	: settings.TEMPLATE_CONTENT['groups']['modify']['done']['message'] + unicode(G),
                 })
 
     # form not valid -> error
     else:
       return render(r, settings.TEMPLATE_CONTENT['groups']['modify']['done']['template'], {
-        	        'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'], 
+        	        'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'] % unicode(G), 
 	                'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in gf.errors]),
                 })
 

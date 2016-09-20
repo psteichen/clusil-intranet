@@ -161,11 +161,11 @@ def adduser(r,group):
   done_title	= settings.TEMPLATE_CONTENT['groups']['adduser']['done']['title'] 
 
   if r.POST:
-    auf = AddUserForm(r.POST)
+    auf = AddUserForm(r.POST,gid=group)
     if auf.is_valid():
       users = auf.cleaned_data['users']
       for u in users:
-        Affiliation(group=Group.objects.get(pk=group),user=u)
+        Affiliation.objects.create(group=Group.objects.get(pk=group),user=u)
       
       # all fine -> done
       return render(r, done_template, {

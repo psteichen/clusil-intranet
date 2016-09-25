@@ -1,0 +1,46 @@
+[
+  {
+    "model": "groups.group",
+    "pk": 1,
+    "fields": {
+      "acronym"	: "board",
+      "title"	: "Management Board",
+      "desc"	: "CLUSL Management Board",
+      "type"	: 0,
+      "status"	: 1
+    }
+  },
+  {
+    "model": "groups.group",
+    "pk": 3,
+    "fields": {
+      "acronym"	: "wg-ism",
+      "title"	: "Information Security Management",
+      "desc"	: "Information Security Management Working Group",
+      "type"	: 1,
+      "status"	: 0
+    }
+  },
+  {
+    "model": "groups.group",
+    "pk": 4,
+    "fields": {
+      "acronym"	: "wg-bcm",
+      "title"	: "Business Continuity Management",
+      "desc"	: "Business Continuity Management Working Group",
+      "type"	: 1,
+      "status"	: 0
+    }
+  },
+  {
+    "model": "groups.group",
+    "pk": 2,
+    "fields": {
+      "acronym"	: "wg-imp",
+      "title"	: "Incident Management Preparedness",
+      "desc"	: "Incident Management Preparedness Working Group",
+      "type"	: 1,
+      "status"	: 0
+    }
+  }
+]

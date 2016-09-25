@@ -45,7 +45,8 @@ def affil(request,group):
                          	(group+' affiliates','/members/groups/affil/'+group+'/'),
                      ) )
 
-  A = Affiliation.objects.filter(group=group)
+  G = Group.objects.get(acronym=group)
+  A = Affiliation.objects.filter(group=G)
 
   overview = render_to_string(settings.TEMPLATE_CONTENT['groups']['affil']['overview']['template'], { 
 					'affil'	: A, 
@@ -55,7 +56,7 @@ def affil(request,group):
     a['url'] = a['url'].format(group)
 
   return render(request, settings.TEMPLATE_CONTENT['groups']['affil']['template'], {
-                        'title'		: settings.TEMPLATE_CONTENT['groups']['affil']['title'].format(group),
+                        'title'		: settings.TEMPLATE_CONTENT['groups']['affil']['title'].format(G.acronym),
                         'actions'	: actions,
                         'overview'	: overview,
                })
@@ -107,32 +108,32 @@ def modify(r,group):
 			('home','/home/'),
        	                ('members','/members/'),
                         ('groups','/members/groups/'),
-               	        ('modify a group','/members/groups/modify/'),
                ) )
 
+  G = Group.objects.get(acronym=group)
   template = settings.TEMPLATE_CONTENT['groups']['modify']['done']['template']
 
   if r.POST:
-    gf = GroupForm(r.POST)
-    if gf.is_valid():
+    gf = GroupForm(r.POST, instance=G)
+    if gf.is_valid() and gf.has_changed():
       G = gf.save()
       
       # all fine -> done
       return render(r, settings.TEMPLATE_CONTENT['groups']['modify']['done']['template'], {
-                	'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'] % unicode(G), 
-        	        'message'	: settings.TEMPLATE_CONTENT['groups']['modify']['done']['message'] + unicode(G),
+                	'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'] % unicode(G.acronym), 
                 })
 
     # form not valid -> error
     else:
       return render(r, settings.TEMPLATE_CONTENT['groups']['modify']['done']['template'], {
-        	        'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'] % unicode(G), 
+        	        'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['done']['title'] % unicode(G.acronym), 
 	                'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in gf.errors]),
                 })
 
   # no post yet -> empty form
   else:
-    form = GroupForm(initial=model_to_dict(Group.objects.get(pk=group)))
+#    form = GroupForm(initial=model_to_dict(G))
+    form = GroupForm(instance=G)
     return render(r, settings.TEMPLATE_CONTENT['groups']['modify']['template'], {
 			'title'		: settings.TEMPLATE_CONTENT['groups']['modify']['title'],
 	                'desc'		: settings.TEMPLATE_CONTENT['groups']['modify']['desc'],
@@ -145,11 +146,12 @@ def modify(r,group):
 ###########
 @permission_required('cms.SECR')
 def adduser(r,group):
+  G = Group.objects.get(acronym=group)
   r.breadcrumbs( ( 
 			('board','/board/'),
                       	('members','/members/'),
                        	('groups','/members/groups/'),
-                       	(group+' affiliates','/members/groups/affil/'+group+'/'),
+                       	(G.acronym+' affiliates','/members/groups/affil/'+group+'/'),
                ) )
 
   template 	= settings.TEMPLATE_CONTENT['groups']['adduser']['template']
@@ -161,11 +163,11 @@ def adduser(r,group):
   done_title	= settings.TEMPLATE_CONTENT['groups']['adduser']['done']['title'] 
 
   if r.POST:
-    auf = AddUserForm(r.POST,gid=group)
+    auf = AddUserForm(r.POST,gid=G.pk)
     if auf.is_valid():
       users = auf.cleaned_data['users']
       for u in users:
-        Affiliation.objects.create(group=Group.objects.get(pk=group),user=u)
+        Affiliation.objects.create(group=G,user=u)
       
       # all fine -> done
       return render(r, done_template, {
@@ -183,7 +185,7 @@ def adduser(r,group):
   # no post yet -> empty form
   else:
 #    form = AddUserForm(Affiliation.objects.filter(group=group).only('user').values())
-    form = AddUserForm(gid=group)
+    form = AddUserForm(gid=G.pk)
     return render(r, template, {
 			'title'		: title.format(group),
 	                'desc'		: desc,

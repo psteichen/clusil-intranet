@@ -24,11 +24,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Group',
             fields=[
-                ('acronym', models.CharField(max_length=15, serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('acronym', models.CharField(max_length=15)),
                 ('title', models.CharField(max_length=150)),
                 ('desc', models.CharField(max_length=500, null=True, blank=True)),
-                ('type', models.IntegerField(choices=[(0, b'Management Group'), (1, b'Working Group'), (2, b'Ad-Hoc Group')])),
-                ('status', models.IntegerField(default=0, choices=[(0, b'active'), (1, b'standby'), (2, b'archived')])),
+                ('email', models.EmailField(max_length=75, null=True, blank=True)),
+                ('type', models.IntegerField(choices=[(0, b'Management Group'), (1, b'Working Group'), (2, b'Ad-Hoc Group'), (3, b'Tool')])),
+                ('status', models.IntegerField(default=0, choices=[(0, b'active'), (1, b'special'), (2, b'standby'), (3, b'archived')])),
             ],
             options={
             },

@@ -31,13 +31,13 @@ class GroupTable(Table):
 
   def render_involvement(self, value, record):
     count = Affiliation.objects.filter(group=record.pk).count()
-    link = '<a class="btn btn-sm btn-default" href="/members/groups/affil/'+escape(record.pk)+'/">'+escape(count)+'</a>'
+    link = '<a class="btn btn-sm btn-default" href="/members/groups/affil/'+escape(record.acronym)+'/">'+escape(count)+'</a>'
     return mark_safe(link)
 
   def render_actions(self, value, record):
     link = '<center>'
     for a in settings.TEMPLATE_CONTENT['groups']['list_actions']:
-      link += '<a class="btn btn-sm btn-'+a['grade']+'" href="'+a['url']+escape(record.pk)+'/"><span class="glyphicon glyphicon-'+a['icon']+'"></span></a>'
+      link += '<a class="btn btn-sm btn-'+a['grade']+'" href="'+a['url']+escape(record.acronym)+'/"><span class="glyphicon glyphicon-'+a['icon']+'"></span></a>'
     link += '</center>'
     return mark_safe(link)
 

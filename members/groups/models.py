@@ -37,7 +37,7 @@ class Group(Model):
     (OLD, 'archived'), #not used any more
   )
 
-  acronym 	= CharField(max_length=15,primary_key=True)
+  acronym 	= CharField(max_length=15)
   title 	= CharField(max_length=150)
   desc 		= CharField(max_length=500,blank=True,null=True)
   email 	= EmailField(blank=True,null=True)

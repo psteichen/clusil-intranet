@@ -13,7 +13,7 @@ from cms.functions import show_form, notify_by_email
 
 from registration.functions import gen_hash
 
-from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname
+from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname, user_in_board
 from .models import Member, Role, Renew
 from .forms import MemberForm, RoleForm
 from .tables  import MemberTable
@@ -111,8 +111,15 @@ def details(r, member_id):
                    	('details of member: '+unicode(member_id),'/members/details/'+member_id+'/'),
                ) )
 
-  if r.user == member.head_of_list or r.user == member.delegate:
+#  if r.user == member.head_of_list or r.user == member.delegate:
+  if r.user == member.head_of_list or r.user == member.delegate or user_in_board(r.user):
     message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,settings.TEMPLATE_CONTENT['members']['details']['overview']['actions'])
+#  elif user_in_board(r.user):
+#    actions = settings.TEMPLATE_CONTENT['members']['details']['overview']['admin_actions']
+#    for a in actions:
+#      a['url'] = a['url'].format(member_id)
+#
+#    message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,actions)
   else:
     message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['readonly']['template'],member)
   

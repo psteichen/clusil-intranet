@@ -19,6 +19,7 @@
   	  </li>
 	{% endif %}
 	</ul>
+        {% if member.student_proof %} <a class="btn btn-sm btn-info }}" href="{{ media_url }}{{ member.student_proof }}" role="button"><span class="glyphicon glyphicon-education"></span>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
       </div>
       <div class="col-sm-4">
         <blockquote>

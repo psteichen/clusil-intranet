@@ -45,7 +45,7 @@ class Organisation(Model):
     return self.name + ' (' + unicode(self.address) + ')'
 
 def rename_sp(i,f):
-  return 'REG/students/'+f
+  return 'REG/students/'+i.id+'_'+f
 
 # Member model
 class Member(Model):

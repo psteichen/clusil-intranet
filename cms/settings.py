@@ -155,7 +155,8 @@ STATICFILES_FINDERS = (
 # LOCAL settings
 
 #where to store and get user-uploaded files
-MEDIA_ROOT = '/var/www/clusil.lu/cms/media/'
+WEBROOT = '/var/www/clusil.lu/cms/'
+MEDIA_ROOT = os.path.join(WEBROOT,'media/')
 MEDIA_URL = '/media/'
 
 #login/auth (used by the login_required decorator)

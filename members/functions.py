@@ -156,6 +156,7 @@ def gen_member_overview(template,member,actions=False):
   content['country'] = get_country_from_address(member.address)
   if actions: content['actions'] = actions
   content['users'] = get_all_users_for_membership(member)
+  content['media_url'] = settings.MEDIA_URL
 
   return render_to_string(template,content)
 
@@ -165,3 +166,5 @@ def gen_renewal_link(code):
   return c_url
 
 
+def user_in_board(u):
+  return u.has_perm('cms.BOARD') 

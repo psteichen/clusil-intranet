@@ -45,6 +45,26 @@ ACTIONS = {
       'url'	: '/profile/adduser/',
     },
   ),
+  'admin_details' : (
+    {
+      'label'	: 'Change Member',
+      'icon'	: 'pencil',
+      'grade'	: 'warning',
+      'url'    	: '/members/modify/{}',
+    },
+    {
+      'label'	: 'View Invoices',
+      'icon'	: 'euro',
+      'grade'	: 'info',
+      'url'    	: '/members/invoice/{}',
+    },
+    {
+      'label'	: 'Add User',
+      'icon'	: 'plus',
+      'grade'	: 'success',
+      'url'	: '/members/adduser/{}',
+    },
+  ),
   'roles' : (
     { 
       'label'		: 'Add Role', 
@@ -82,6 +102,7 @@ MEMBERS_TMPL_CONTENT = {
     'overview' : {
       'template'	: 'overview_member.html',
       'actions'     	: ACTIONS['details'],
+      'admin_actions'  	: ACTIONS['admin_details'],
     },
     'readonly' : {
       'template'	: 'overview_member_readonly.html',

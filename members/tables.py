@@ -18,6 +18,7 @@ class MemberTable(Table):
   users		= Column(verbose_name='Users',empty_values=())
   details	= Column(verbose_name='Details',empty_values=())
 #  modify	= Column(verbose_name='Modify',empty_values=())
+#  activate	= Column(verbose_name='Activate',empty_values=())
 
   def render_row_class(self, value, record):
     #TODO
@@ -43,13 +44,16 @@ class MemberTable(Table):
     return mark_safe(link)
 
   def render_modify(self, record):
-    link = '<center><a class="btn btn-danger btn-sm" href="/members/modify/{}/"><span class="glyphicon glyphicon-pencil"></span></a></center>'.format(escape(record.id))
+    link = '<center><a class="btn btn-warning btn-sm" href="/members/modify/{}/"><span class="glyphicon glyphicon-pencil"></span></a></center>'.format(escape(record.id))
     return mark_safe(link)
 
+  def render_activate(self, record):
+    link = '<center><a class="btn btn-danger btn-sm" href="/reg/validate/{}/"><span class="glyphicon glyphicon-ok"></span></a></center>'.format(escape(record.id))
+    return mark_safe(link)
 
   class Meta:
     model = Member
-#    fields = ( 'id', 'type', 'member', 'head_of_list', 'status', 'users', 'details', 'modify', )
+#    fields = ( 'id', 'type', 'member', 'head_of_list', 'status', 'users', 'details', 'modify', 'activate' )
     fields = ( 'id', 'type', 'member', 'head_of_list', 'status', 'users', 'details' )
     attrs = {"class": "table"}
 

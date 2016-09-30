@@ -262,6 +262,12 @@ def validate(r, val_hash):
   org_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['org_msg']
   users_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['users_msg']
 
+  if r.user.has_pems('cms.BOARD'):
+    #admin validation: ds val_hash = member_id
+    M = Member.objects.get(id=val_has)
+
+#HERE
+
   try:
     # if hash code match: it's a member to be validated
     R = Registration.objects.get(hash_code=val_hash)

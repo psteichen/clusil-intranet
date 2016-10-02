@@ -58,9 +58,9 @@ def send_invitation(event,user,invitation):
   }
   #send email
   try:
-    return notify_by_email(False,user['email'],subject,message_content,False,settings.MEDIA_ROOT + unicode(invitation.attachement))
+    return notify_by_email(user['email'],subject,message_content,False,settings.MEDIA_ROOT + unicode(invitation.attachement))
   except:
-    return notify_by_email(False,user['email'],subject,message_content)
+    return notify_by_email(user['email'],subject,message_content)
 
 @permission_required('cms.SECR',raise_exception=True)
 def add(r):

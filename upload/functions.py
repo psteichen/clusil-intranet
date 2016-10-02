@@ -32,8 +32,7 @@ def handle_uploaded_file(f,c,subject,to,message,template):
     'LINK'	: 'https://'+settings.ALLOWED_HOSTS[0]+settings.MEDIA_URL+fn,
   }
 
-#  notify_by_email(None, to, subject, message_content, template, (settings.MEDIA_ROOT+fn, f, f.content_type))
-  notify_by_email(None, to, subject, message_content, template, settings.MEDIA_ROOT+fn)
+  notify_by_email(to, subject, message_content, template, settings.MEDIA_ROOT+fn)
  
 
 def import_data(ty,data):

@@ -461,7 +461,7 @@ def password(r):
         'LOGIN': r.user.username,
       }
       subject=settings.MAIL_CONFIRMATION['password']['subject']  % r.user.username
-      notify_by_email(None, r.user.email, subject, message_content, settings.MAIL_CONFIRMATION['password']['template'])
+      notify_by_email(r.user.email, subject, message_content, settings.MAIL_CONFIRMATION['password']['template'])
 
       return render(r,'done.html', {'mode': 'changing your password', 'message': render_to_string(msettings.MAIL_CONFIRMATION['password']['template'], message_content)})
     else:

@@ -113,7 +113,7 @@ def attendance(r, event_type, event_id, attendance_hash):
           'MESSAGE'     : e_message,
         }
         #send email
-        ok=notify_by_email(False,m.email,title,message_content)
+        ok=notify_by_email(m.email,title,message_content)
 
 
   #set meeting:num and member_id for invitee link

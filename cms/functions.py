@@ -3,34 +3,34 @@ from datetime import date, datetime, time
 
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
 
 ###############################
 # GLOBAL SUPPORTING FUNCTIONS #
 ###############################
+def debug(app,message):
+  if settings.DEBUG:
+    from sys import stderr as errlog
+    print >>errlog, 'DEBUG ['+str(app)+']: '+str(message)
 
-def notify_by_email(sender,to,subject,message_content,template='default.txt',attachment=None):
+def notify_by_email(to,subject,message_content,template='default.txt',attachment=None):
+  from django.core.mail import EmailMessage
 
-  board = settings.EMAILS['sender']['board'] #board
-
-  if not sender: sender = settings.EMAILS['sender']['no-reply'] #default
-  else: sender = settings.EMAILS['sender'][unicode(sender)]
   email = EmailMessage(
-                subject		= '[CLUSIL] ' + subject,
-                from_email	= sender,
-                to		= [to],
-                cc		= [board]
+                subject=subject, 
+                from_email=settings.TEMPLATE_CONTENT['email']['no-reply'], 
+                to=[to], 
+                cc=[settings.TEMPLATE_CONTENT['email']['board']] #always Cc to board
           )
-  message_content['SALUTATION'] = settings.EMAILS['salutation']
-  message_content['DISCLAIMER'] = settings.EMAILS['disclaimer']
-
-  if not template: email.body = render_to_string('default.txt',message_content)
-  else: email.body = render_to_string(template,message_content)
-
+  # add default footer (questions, salutation and disclaimer)
+  message_content['SALUTATION'] = settings.TEMPLATE_CONTENT['email']['salutation']
+  message_content['DISCLAIMER'] = settings.TEMPLATE_CONTENT['email']['disclaimer']
+  email.body = render_to_string(template,message_content)
   if attachment:
-    from email.mime.application import MIMEApplication
-    if isinstance(attachment, MIMEApplication): email.attach(attachment)
-    else: email.attach_file(attachment)
+    try: email.attach(attachment)
+    except:
+      from email.mime.application import MIMEApplication
+      if isinstance(attachment, MIMEApplication): email.attach(attachment)
+      else: email.attach_file(attachment)
   try:
     email.send()
     return True

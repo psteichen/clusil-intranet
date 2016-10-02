@@ -168,3 +168,23 @@ def gen_renewal_link(code):
 
 def user_in_board(u):
   return u.has_perm('cms.BOARD') 
+
+
+def activate_member(member):
+  from accounting.functions import generate_invoice
+
+  # set head-of-list (and delegate permissions)
+  is_hol_d = Permission.objects.get(codename='MEMBER')
+  member.head_of_list.user_permissions.add(is_hol_d)
+  if member.delegate: member.delegate.user_permissions.add(is_hol_d)
+
+  # member confirmation Ok -> replicate Users to LDAP
+  #replicate_to_ldap(member)
+
+  # save Member as active
+  member.status = Member.ACT
+  member.save()
+
+  # generate invoice (this will generate and send the invoice)
+  generate_invoice(member)
+

@@ -71,7 +71,7 @@ def renew(r):
 	'LINK'		: gen_renewal_link(renew_hash_code),
     }
     # send confirmation
-    ok=notify_by_email(False,m.head_of_list.email,email_title,message_content,email_template)
+    ok=notify_by_email(m.head_of_list.email,email_title,message_content,email_template)
     if not ok:
       return render(r, error_template, { 
 				'mode': 'Error in email request', 

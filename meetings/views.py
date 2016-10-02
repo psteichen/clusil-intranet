@@ -101,9 +101,9 @@ def add(r):
         #send email
         if send:
           if I.attachement:
-            ok=notify_by_email(False,u.email,e_subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
+            ok=notify_by_email(u.email,e_subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
           else:
-            ok=notify_by_email(False,u.email,e_subject,message_content)
+            ok=notify_by_email(u.email,e_subject,message_content)
           if not ok:
             email_error['ok']=False
             email_error['who'].append(u.email)
@@ -168,9 +168,9 @@ def send(r, meeting_id):
     }
     #send email
     try: #with attachement
-      ok=notify_by_email(settings.EMAILS['sender']['default'],m.email,subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
+      ok=notify_by_email(m.email,subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
     except: #no attachement
-      ok=notify_by_email(settings.EMAILS['sender']['default'],m.email,subject,message_content)
+      ok=notify_by_email(m.email,subject,message_content)
      
     if not ok: 
       email_error['ok']=False
@@ -350,7 +350,7 @@ def report(r, meeting_id):
           }
           attachement = settings.MEDIA_ROOT + unicode(Mt.report)
           #send email
-          ok=notify_by_email(settings.EMAILS['sender']['default'],m.email,subject,message_content,False,attachement)
+          ok=notify_by_email(m.email,subject,message_content,False,attachement)
           if not ok: 
             email_error['ok']=False
             email_error['who'].append(m.email)

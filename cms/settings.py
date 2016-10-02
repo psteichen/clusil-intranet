@@ -184,7 +184,7 @@ ADMINS = (
 )
 
 EMAILS = {
-  'sender' : {
+  'email' : {
     'board'	: 'CLUSIL Board <board@clusil.lu>',
     'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },

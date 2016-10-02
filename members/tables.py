@@ -18,7 +18,7 @@ class MemberTable(Table):
   users		= Column(verbose_name='Users',empty_values=())
   details	= Column(verbose_name='Details',empty_values=())
 #  modify	= Column(verbose_name='Modify',empty_values=())
-#  activate	= Column(verbose_name='Activate',empty_values=())
+  activate	= Column(verbose_name='Activate',empty_values=())
 
   def render_row_class(self, value, record):
     #TODO
@@ -54,7 +54,7 @@ class MemberTable(Table):
   class Meta:
     model = Member
 #    fields = ( 'id', 'type', 'member', 'head_of_list', 'status', 'users', 'details', 'modify', 'activate' )
-    fields = ( 'id', 'type', 'member', 'head_of_list', 'status', 'users', 'details' )
+    fields = ( 'id', 'type', 'member', 'head_of_list', 'status', 'users', 'details', 'activate' )
     attrs = {"class": "table"}
 
 

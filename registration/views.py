@@ -11,10 +11,9 @@ from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib.auth.models import Permission
 from django.contrib.auth.hashers import make_password
 
-from cms.functions import show_form, notify_by_email, replicate_to_ldap
+from cms.functions import show_form, notify_by_email, replicate_to_ldap, debug
 
-from accounting.functions import generate_invoice
-from members.functions import get_members_to_validate, gen_member_fullname
+from members.functions import get_members_to_validate, gen_member_fullname, activate_member
 from members.models import Member, Organisation, Address, Role
 from members.groups.models import Group, Affiliation
 
@@ -229,7 +228,7 @@ class RegistrationWizard(SessionWizardView):
 	'LINK'		: gen_confirmation_link(reg_hash_code),
       }
       # send confirmation
-      ok=notify_by_email(False,M.head_of_list.email,done_title,message_content,email_template)
+      ok=notify_by_email(M.head_of_list.email,done_title,message_content,email_template)
       if not ok:
         return render(self.request, error_template, { 
 				'mode': 'Error in email confirmation', 
@@ -262,42 +261,36 @@ def validate(r, val_hash):
   org_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['org_msg']
   users_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['users_msg']
 
-  if r.user.has_pems('cms.BOARD'):
-    #admin validation: ds val_hash = member_id
-    M = Member.objects.get(id=val_has)
+  M = None
 
-#HERE
+  debug('reg','hash == ' + val_hash)
 
-  try:
-    # if hash code match: it's a member to be validated
-    R = Registration.objects.get(hash_code=val_hash)
-    if R.validated == R.OK:
-      return render(r, template, {
-                   'title'		: title,
-                   'error_message'	: error_message,
-               })
+  # validation by Board member
+  if r.user.is_authenticated():
+    debug('reg','user is logged in (!)')
+    if r.user.has_perms('cms.BOARD'):
+      debug('reg','user is board member!')
+      #admin validation: val_hash == member_id
+      R = Registration.objects.get(member=Member.objects.get(id=val_hash))
+      if R.validated != R.OK:
+        M = R.member
+  else:
+    try:
+      # if hash code match: it's a member to be validated
+      R = Registration.objects.get(hash_code=val_hash)
+      if R.validated != R.OK:
+        M = R.member
+    except Registration.DoesNotExist:
+      pass
 
-    M = R.member
-
-    # set head-of-list (and delegate permissions)
-    is_hol_d = Permission.objects.get(codename='MEMBER')
-    M.head_of_list.user_permissions.add(is_hol_d)
-    if M.delegate: M.delegate.user_permissions.add(is_hol_d)
-
-    # member confirmation Ok -> replicate Users to LDAP
-    #replicate_to_ldap(M)
+  if M != None:
+    # activate member
+    activate_member(M)
 
     # save registration as OK
     R.date_of_validation = timezone.now()
-#    R.validated = R.OK
+    R.validated = R.OK
     R.save()
-
-    # save Member as active
-    M.status = Member.ACT
-    M.save()
-
-    # generate invoice (this will generate and send the invoice)
-    generate_invoice(M)
 
     message = done_message.format(name=gen_member_fullname(M),member_id=M.pk)
 
@@ -314,17 +307,16 @@ def validate(r, val_hash):
       message_content['USERS']=users_msg.format(users=gen_user_list(M))
 
     #send email
-    ok=notify_by_email('board',M.head_of_list.email,title,message_content,email_template)
+    ok=notify_by_email(M.head_of_list.email,title,message_content,email_template)
 
     return render(r, template, {
                    'title'	: title,
                    'message'	: message,
                })
-
-  except Registration.DoesNotExist:
-    # else: error
+  else: #error
     return render(r, template, {
                    'title'		: title,
                    'error_message'	: error_message,
                })
-    
+
+  

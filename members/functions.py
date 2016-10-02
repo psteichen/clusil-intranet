@@ -171,6 +171,8 @@ def user_in_board(u):
 
 
 def activate_member(member):
+  from django.contrib.auth.models import Permission
+  from members.models import Member
   from accounting.functions import generate_invoice
 
   # set head-of-list (and delegate permissions)

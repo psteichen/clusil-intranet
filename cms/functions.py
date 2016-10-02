@@ -17,13 +17,13 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
 
   email = EmailMessage(
                 subject=subject, 
-                from_email=settings.TEMPLATE_CONTENT['email']['no-reply'], 
+                from_email=settings.EMAILS['email']['no-reply'], 
                 to=[to], 
-                cc=[settings.TEMPLATE_CONTENT['email']['board']] #always Cc to board
+                cc=[settings.EMAILS['email']['board']] #always Cc to board
           )
   # add default footer (questions, salutation and disclaimer)
-  message_content['SALUTATION'] = settings.TEMPLATE_CONTENT['email']['salutation']
-  message_content['DISCLAIMER'] = settings.TEMPLATE_CONTENT['email']['disclaimer']
+  message_content['SALUTATION'] = settings.EMAILS['salutation']
+  message_content['DISCLAIMER'] = settings.EMAILS['disclaimer']
   email.body = render_to_string(template,message_content)
   if attachment:
     try: email.attach(attachment)

@@ -268,7 +268,7 @@ def validate(r, val_hash):
   # validation by Board member
   if r.user.is_authenticated():
     debug('reg','user is logged in (!)')
-    if r.user.has_perms('cms.BOARD'):
+    if r.user.has_perm('cms.BOARD'):
       debug('reg','user is board member!')
       #admin validation: val_hash == member_id
       R = Registration.objects.get(member=Member.objects.get(id=val_hash))
@@ -314,6 +314,7 @@ def validate(r, val_hash):
                    'message'	: message,
                })
   else: #error
+    debug('reg','error, no valid hash found')
     return render(r, template, {
                    'title'		: title,
                    'error_message'	: error_message,

@@ -14,7 +14,7 @@ from django_tables2  import RequestConfig
 from cms.functions import notify_by_email
 
 from members.models import Member
-from members.functions import get_active_members, gen_fullname, get_member_from_username, get_all_users_for_membership
+from members.functions import get_active_members, gen_fullname, get_member_from_username
 from attendance.functions import gen_invitation_message, gen_hash
 
 from .functions import gen_event_overview, gen_event_initial
@@ -58,9 +58,9 @@ def send_invitation(event,user,invitation):
   }
   #send email
   try:
-    return notify_by_email(user['email'],subject,message_content,False,settings.MEDIA_ROOT + unicode(invitation.attachement))
+    return notify_by_email(user.email,subject,message_content,False,settings.MEDIA_ROOT + unicode(invitation.attachement))
   except:
-    return notify_by_email(user['email'],subject,message_content)
+    return notify_by_email(user.email,subject,message_content)
 
 @permission_required('cms.SECR',raise_exception=True)
 def add(r):
@@ -93,8 +93,8 @@ def add(r):
       recipient_list = []
       for m in get_active_members():
         if m.type == Member.ORG:
-          for u in get_all_users_for_membership(m):
-            recipient_list.append(u['email'])
+          for u in m.users.all():
+            recipient_list.append(u.email)
             if send:
               ok=send_invitation(Ev,u,I)
               if not ok: 
@@ -155,8 +155,8 @@ def send(r,event_id):
   recipient_list = []
   for m in get_active_members():
     if m.type == Member.ORG:
-      for u in get_all_users_for_membership(m):
-        recipient_list.append(u['email'])
+      for u in m.users.all():
+        recipient_list.append(u.email)
         ok=send_invitation(Ev,u,I)
         if not ok: 
           email_error['ok']=False

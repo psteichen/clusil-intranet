@@ -1,3 +1,5 @@
+#coding=utf-8
+
 from django.shortcuts import render
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -6,9 +8,11 @@ from django.contrib.auth.models import Permission
 
 from django_tables2 import RequestConfig
 
+from members.models import Member
+
 from .models import Fee
 from .tables import InvoiceTable
-from .forms import FeeForm
+from .forms import PaymentForm
 
 ####################
 # ACCOUNTING VIEWS #
@@ -27,35 +31,74 @@ def list(request):
 
   return render(request, settings.TEMPLATE_CONTENT['accounting']['template'], {
                         'title': settings.TEMPLATE_CONTENT['accounting']['title'],
-                        'actions': settings.TEMPLATE_CONTENT['accounting']['actions'],
+#                        'actions': settings.TEMPLATE_CONTENT['accounting']['actions']['main'],
                         'table': table,
                         })
 
 
-# payment function #
+# validate payment #
 ####################
 @permission_required('cms.BOARD')
-def payment(r):
+def payment(r,member_id):
+  r.breadcrumbs( ( 	
+			('home','/'),
+                   	('accounting','/accounting/'),
+               ) )
+
+  M = Member.objects.get(id=member_id)
+
+  template 	= settings.TEMPLATE_CONTENT['accounting']['payment']['template']
+  title 	= settings.TEMPLATE_CONTENT['accounting']['payment']['title']
+
+  done_template = settings.TEMPLATE_CONTENT['accounting']['payment']['done']['template']
+  done_title 	= settings.TEMPLATE_CONTENT['accounting']['payment']['done']['title']
+
   if r.POST:
-    payments=r.POST.getlist('payments')
-    msg="""
-The following Members have payed:
-"""
-    for p in payments:
-      try:
-        m = Member.objects.get(member_id=p)
-        f = Fee(member=m)
-        f.paid = True
-        f.save()
+    pf = PaymentForm(r.POST)
+    if pf.is_valid():
+      F = pf.save()
 
-        #add to payed list
-        msg+="""  > """ + m.member_id + """ (""" + m.user.first_name + """ """ + unicode.upper(m.user.last_name) + """) <
-"""
-      except Member.DoesNotExist:
-        return render(r,'board.html', {'title': 'Validate membership fee payments','form': FeeForm(), 'error_message': settings.TEMPLATE_CONTENT['error']['board']})
+      # done 
+      return render(r, done_template, {
+			'title'		: done_title, 
+                })
 
-    return render(r,'done.html', {'mode': 'validating payments', 'message': msg})
+    else:
+      # error in form -> show messages
+      return render(r, done_template, {
+                	'title'		: done_title, 
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in pf['who']]),
+                })
+    
   else:
-   #no POST data yet -> show profile form
-   return render(r,'board.html', {'title': 'Validate membership fee payments','form': FeeForm(),})
+    # no data yet -> empty form
+    form = PaymentForm()
+    return render(r, template, {
+			'title'	: title, 
+                	'form'	: form,
+                 })
+
+
+# invoice #
+###########
+@permission_required('cms.BOARD')
+def invoice(r,member):
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('accounting','/accounting/'),
+               ) )
+
+  M = Member.objects.get(pk=member)
+
+  template = settings.TEMPLATE_CONTENT['accounting']['invoice']['template']
+  title = settings.TEMPLATE_CONTENT['accounting']['invoice']['title'].format(id=M.id)
+  message = settings.TEMPLATE_CONTENT['accounting']['invoice']['message'].format(head=gen_fullname(M.head_of_list),year=date.today().strftime('%Y'))
+
+  generate_invoice(M)
+
+  return render(r, template, {
+			'title'		: title,
+			'message'	: message,
+	       })
+
 

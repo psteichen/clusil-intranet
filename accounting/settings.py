@@ -2,22 +2,33 @@
 # coding=utf-8
 
 ACTIONS = {
-  'list' : (
-    { 
-      'label'         	: 'Produce Invoice', 
-      'icon'     	: 'euro',
-      'grade'     	: 'danger',
-      'url'           	: '/accounting/invoice/', 
-      'has_perms'     	: 'cms.BOARD',
-    },
-    { 
-      'label'         	: 'Validate payment', 
-      'icon'     	: 'tick',
-      'grade'          	: 'danger', 
-      'url'           	: '/accounting/payment/', 
-      'has_perms'     	: 'cms.BOARD',
-    },
-  ),
+  'list' : {
+    'main' : (
+    ),
+    'table' : (
+      { 
+        'label'        	: 'Validate payment', 
+        'icon'     	: 'ok',
+        'grade'        	: 'success', 
+        'url'          	: '/accounting/payment/{}/', 
+        'has_perms'    	: 'cms.BOARD',
+      },
+      { 
+        'label'        	: 'Credit Note', 
+        'icon'     	: 'repeat',
+        'grade'        	: 'warning', 
+        'url'          	: '/accounting/credit/{}/', 
+        'has_perms'    	: 'cms.BOARD',
+      },
+      { 
+        'label'        	: 'New Invoice', 
+        'icon'     	: 'file',
+        'grade'     	: 'danger',
+        'url'          	: '/accounting/invoice/{}/', 
+        'has_perms'    	: 'cms.BOARD',
+      },
+    ),
+  },
 }
 
 ACCOUNTING_TMPL_CONTENT = {
@@ -26,18 +37,18 @@ ACCOUNTING_TMPL_CONTENT = {
   'actions'     	: ACTIONS['list'],
   'invoice': {
     'template'		: 'form.html',
-    'title'     	: ACTIONS[0]['actions'][0]['label'],
-    'desc'     		: ACTIONS[0]['actions'][0]['desc'],
+    'title'     	: 'Produce Invoice',
+    'desc'     		: '',
     'submit'   		: 'Generate',
   },
   'payment': {
     'template'		: 'form.html',
-    'title'     	: ACTIONS[0]['actions'][1]['label'],
-    'desc'     		: ACTIONS[0]['actions'][1]['desc'],
+    'title'     	: 'Validate Payment',
+    'desc'     		: '',
     'submit'   		: 'Validate',
     'done': {
       'template'	: 'done.html',
-      'title'     	: 'Invoices validated.',
+      'title'     	: 'Payment validated.',
     },
   },
 }

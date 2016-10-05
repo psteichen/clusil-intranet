@@ -261,27 +261,26 @@ def validate(r, val_hash):
   org_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['org_msg']
   users_msg		= settings.TEMPLATE_CONTENT['reg']['validate']['email']['users_msg']
 
-  M = None
+  M = R = None
 
   debug('reg','hash == ' + val_hash)
 
-  # validation by Board member
-  if r.user.is_authenticated():
-    debug('reg','user is logged in (!)')
-    if r.user.has_perm('cms.BOARD'):
-      debug('reg','user is board member!')
-      #admin validation: val_hash == member_id
-      R = Registration.objects.get(member=Member.objects.get(id=val_hash))
-      if R.validated != R.OK:
-        M = R.member
-  else:
-    try:
-      # if hash code match: it's a member to be validated
-      R = Registration.objects.get(hash_code=val_hash)
-      if R.validated != R.OK:
-        M = R.member
-    except Registration.DoesNotExist:
-      pass
+  try:
+    # if hash code match: it's a member to be validated
+    R = Registration.objects.get(hash_code=str(val_hash))
+    debug('reg','valid hash found')
+    if R.validated != R.OK: M = R.member
+  except Registration.DoesNotExist:
+    # check if validation by Board member
+    if r.user.is_authenticated():
+      debug('reg','user is logged in (!)')
+      if r.user.has_perm('cms.BOARD'):
+        debug('reg','user is board member!')
+        #admin validation: val_hash == member_id
+        R = Registration.objects.get(member=Member.objects.get(id=str(val_hash)))
+        if R.validated != R.OK: M = R.member
+
+  debug('reg','Member is :' + unicode(M))
 
   if M != None:
     # activate member

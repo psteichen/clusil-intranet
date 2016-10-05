@@ -31,5 +31,4 @@ registration_wizard = RegistrationWizard.as_view(registration_forms, condition_d
 urlpatterns = patterns('',
   url(r'^$', registration_wizard, name='register'),
   url(r'^validate/(?P<val_hash>.+?)/$', validate, name='validate'),
-
 )

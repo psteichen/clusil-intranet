@@ -15,7 +15,6 @@ from members.groups.models import Group as WG, Affiliation
 
 def member_initial_data(member):
   member_data = {
-    'orga'	: member.organisation.name,
     'fn'	: member.head_of_list.first_name,
     'ln'	: member.head_of_list.last_name,
     'email'	: member.head_of_list.email,
@@ -24,6 +23,7 @@ def member_initial_data(member):
     'town'	: member.address.town,
     'country'	: get_country_from_address(member.address),
   }
+  if member.type == Member.ORG: member_data['orga'] = member.organisation.name
   if member.type == Member.STD: member_data['sp'] = member.student_proof
 
   return member_data

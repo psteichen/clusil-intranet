@@ -71,7 +71,7 @@ def add(r):
                ) )
 
   if r.POST:
-    e_template =  settings.TEMPLATE_CONTENT['events']['add']['done']['email']['template']
+    e_template =  settings.TEMPLATE_CONTENT['events']['email']['template']
 
     ef = EventForm(r.POST,r.FILES)
     if ef.is_valid():

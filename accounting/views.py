@@ -7,14 +7,15 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Permission
 from django.forms.models import model_to_dict
 
-
 from django_tables2 import RequestConfig
 
+from members.functions import gen_fullname
 from members.models import Member
 
 from .models import Fee
 from .tables import InvoiceTable
 from .forms import PaymentForm
+from .functions import generate_invoice, generate_credit_note
 
 ####################
 # ACCOUNTING VIEWS #
@@ -89,7 +90,7 @@ def payment(r,member_id,year):
 # invoice #
 ###########
 @permission_required('cms.BOARD')
-def invoice(r,member):
+def invoice(r,member,year):
   r.breadcrumbs( ( 
 			('home','/home/'),
                        	('accounting','/accounting/'),
@@ -99,9 +100,33 @@ def invoice(r,member):
 
   template = settings.TEMPLATE_CONTENT['accounting']['invoice']['template']
   title = settings.TEMPLATE_CONTENT['accounting']['invoice']['title'].format(id=M.id)
-  message = settings.TEMPLATE_CONTENT['accounting']['invoice']['message'].format(head=gen_fullname(M.head_of_list),year=date.today().strftime('%Y'))
+  message = settings.TEMPLATE_CONTENT['accounting']['invoice']['message'].format(member=M,year=year,head=gen_fullname(M.head_of_list))
 
-  generate_invoice(M)
+  # generate invoice and sent to head-of-list
+  generate_invoice(M,year)
+
+  return render(r, template, {
+			'title'		: title,
+			'message'	: message,
+	       })
+
+# credit #
+##########
+@permission_required('cms.BOARD')
+def credit(r,member,year):
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('accounting','/accounting/'),
+               ) )
+
+  M = Member.objects.get(pk=member)
+
+  template = settings.TEMPLATE_CONTENT['accounting']['credit']['template']
+  title = settings.TEMPLATE_CONTENT['accounting']['credit']['title'].format(id=M.id)
+  message = settings.TEMPLATE_CONTENT['accounting']['credit']['message'].format(member=M,year=year,head=gen_fullname(M.head_of_list))
+
+  # generate credit note and sent to head-of-list
+  generate_credit_note(M,year)
 
   return render(r, template, {
 			'title'		: title,

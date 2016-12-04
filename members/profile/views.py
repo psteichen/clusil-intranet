@@ -492,7 +492,7 @@ def renew(r, code):
     M = R.member
     y = R.year
 
-    # save registration as OK
+    # save renewal as OK
     R.ok = True 
     R.save()
 

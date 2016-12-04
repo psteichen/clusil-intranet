@@ -86,7 +86,6 @@ def renew(r):
       renew.renew_code = renew_hash_code
       renew.save()
 
-
     m_list += '<li>'+gen_member_fullname(m)+'</li>'
    
   m_list += '</ul>'

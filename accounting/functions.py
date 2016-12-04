@@ -60,3 +60,43 @@ def generate_invoice(m,year=date.today().strftime('%Y')):
   subject = settings.INVOICE['subject'] % m.id
   notify_by_email(m.head_of_list.email,subject,invoice_details,settings.INVOICE['mail_template'],attachment)
 
+# generate credit note
+def generate_credit_note(m,year=date.today().strftime('%Y')):
+  from members.models import Member
+
+  if m.type == Member.ORG:
+    amount = settings.FEE[m.lvl]
+  else:
+    amount = settings.FEE[m.type]
+
+  invoice_details = {
+    'ID': invoice_id(m),
+    'FULLNAME': gen_fullname(m.head_of_list),
+    'DATE': date.today().strftime('%Y-%m-%d'),
+    'YEAR': year,
+    'AMOUNT': amount,
+    'CURRENCY': settings.INVOICE['currency'],
+  } 
+
+#HERE
+
+  # generate pdf credit note
+  from StringIO import StringIO
+  pdf = StringIO()
+  draw_pdf(pdf, m, invoice_details)
+  pdf.seek(0)
+
+  fn=invoice_details['ID'] + '.pdf'
+ 
+  # create attachement
+  from email.mime.application import MIMEApplication
+  attachment = MIMEApplication(pdf.read())
+  attachment.add_header("Content-Disposition", "attachment",filename=fn)
+
+  pdf.close()
+
+  # send email
+  from cms.functions import notify_by_email
+  subject = settings.INVOICE['subject'] % m.id
+  notify_by_email(m.head_of_list.email,subject,invoice_details,settings.INVOICE['mail_template'],attachment)
+

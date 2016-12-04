@@ -416,7 +416,7 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Event Management', 
         'icon'     	: 'glass',
-        'grade'     	: 'success',
+        'grade'     	: 'danger',
         'desc'          : 'Manage special events or activities',
         'url'           : '/events/',
 	'has_perms'	: 'cms.SECR',

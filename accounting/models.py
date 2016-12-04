@@ -2,6 +2,8 @@ from django.db.models import Model, ForeignKey, BooleanField, CharField, DateFie
 
 from members.models import Member
 
+from cms.functions import visualiseDateTime
+
 from .invoice import draw_pdf
 
 def rename_invoice(i,f):
@@ -18,7 +20,7 @@ class Fee(Model):
   invoice 	= FileField(upload_to=rename_invoice)
 
   def __unicode__(self):  
-    p = self.paid and ' - payed (' + self.paid_date + ')' or ''
+    p = self.paid and ' - payed (' + visualiseDateTime(self.paid_date) + ')' or ''
     o = ''
     if self.member.type == Member.ORG: # organisation
       o += self.member.organisation.name + ' - head-of-list: '

@@ -7,6 +7,7 @@ from django.utils.html import escape
 from django_tables2.tables import Table
 from django_tables2 import Column
 
+from cms.functions import visualiseDateTime
 from cms.tables import gen_table_actions
 
 from .models import Fee
@@ -22,13 +23,13 @@ class InvoiceTable(Table):
 
   def render_paid(self, value, record):
     if value: #paid
-      return mark_safe('<span class="glyphicon glyphicon-ok"></span>nbsp;nbsp;('+record.paid_date+')')
+      return mark_safe('<span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;('+visualiseDateTime(record.paid_date)+')')
     else:
       return mark_safe('<span class="glyphicon glyphicon-remove"></span>')
 
   def render_actions(self, value, record):
     actions = settings.TEMPLATE_CONTENT['accounting']['actions']['table']
-    return gen_table_actions(actions,record.member.id)
+    return gen_table_actions(actions,{'id':record.member.id,'year':record.year})
 
   class Meta:
     model = Fee

@@ -6,8 +6,8 @@ from .views import list, payment, invoice
 urlpatterns = patterns('',
   url(r'^$', list, name='list'),
 
-  url(r'^payment/(?P<member_id>.+?)/$', payment, name='payment'),
-#  url(r'^credit/(?P<invoice>.+?)/$', credit, name='credit'),
-  url(r'^invoice/(?P<member>.+?)/$', invoice, name='invoice'),
+  url(r'^payment/(?P<member_id>.+?)/(?P<year>.+?)/$', payment, name='payment'),
+#  url(r'^credit/(?P<invoice>.+?)/(?P<year>.+?)/$', credit, name='credit'),
+  url(r'^invoice/(?P<member>.+?)/(?P<year>.+?)/$', invoice, name='invoice'),
 
 )

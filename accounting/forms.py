@@ -1,8 +1,6 @@
 from django.db import models
-from django.forms import Form, ModelForm, ModelChoiceField, CheckboxSelectMultiple
+from django.forms import Form, ModelForm, ModelChoiceField, CheckboxSelectMultiple, TextInput
 from django.conf import settings
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, UserChangeForm
-from django.contrib.auth.models import User
 
 from members.models import Member
 
@@ -18,5 +16,9 @@ class PaymentForm(ModelForm):
 
   class Meta:
     model = Fee
-    fields = ( 'member', 'invoice', 'year', 'paid_date', )
+#    fields = ( 'member', 'invoice', 'year', 'paid_date', ) #maybe one day we could add thumbnail preview for invoice
+    fields = ( 'member', 'year', 'paid_date', )
+    widgets = {
+      'paid_date'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
+    }
 

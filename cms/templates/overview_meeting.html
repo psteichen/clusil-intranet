@@ -16,8 +16,8 @@
         <table class="table table-condensed">
          {% for a in attendance %}
          <tr>
-          <td class="lead">{{ a.first_name }}</td>
-          <td class="lead">{{ a.last_name|upper }}</td>
+          <td class="lead">{{ a.user.first_name }}</td>
+          <td class="lead">{{ a.user.last_name|upper }}</td>
          </tr>
          {% endfor %}
         </table>
@@ -27,8 +27,8 @@
         <table class="table table-condensed">
          {% for e in excused %}
          <tr>
-          <td class="lead">{{ e.first_name }}</td>
-          <td class="lead">{{ e.last_name|upper }}</td>
+          <td class="lead">{{ e.user.first_name }}</td>
+          <td class="lead">{{ e.user.last_name|upper }}</td>
          </tr>
          {% endfor %}
         </table>

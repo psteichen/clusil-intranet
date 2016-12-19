@@ -45,7 +45,7 @@ class Group(Model):
   status      	= IntegerField(choices=STATUSES,default=ACT) 
 
   def __unicode__(self):
-    return '[' + self.TYPES[self.type][1] +'] ' + unicode.upper(self.acronym) + ' (' + self.title + ')'
+    return '[' + self.TYPES[self.type][1] +'] ' + self.title
 
 
 # Affiliation (user to group) model

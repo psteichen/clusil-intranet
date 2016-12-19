@@ -448,22 +448,25 @@ from members.profile.settings import *
 
 TEMPLATE_CONTENT['profile'] = PROFILE_TMPL_CONTENT
 
+## attendance
+from attendance.settings import *
+TEMPLATE_CONTENT['attendance'] = ATTENDANCE_TMPL_CONTENT
+ATTENDANCE_BASE_URL = 'https://' + ALLOWED_HOSTS[0] + '/attendance/'
 
 ## meetings
 from meetings.settings import *
 TEMPLATE_CONTENT['meetings'] = MEETINGS_TMPL_CONTENT
-MEETINGS_ATTENDANCE_URL = 'https://cms.clusil.lu/meetings/attendance/'
+MEETINGS_ATTENDANCE_URL = ATTENDANCE_BASE_URL + 'meetings/'
 
 
 ## events
 from events.settings import *
 TEMPLATE_CONTENT['events'] = EVENTS_TMPL_CONTENT
-EVENTS_ATTENDANCE_URL = 'http://cms.clusil.lu/events/attendance/'
+EVENTS_ATTENDANCE_URL = ATTENDANCE_BASE_URL + 'events/'
 
 
 ## accounting
 from accounting.settings import *
-
 TEMPLATE_CONTENT['accounting'] = ACCOUNTING_TMPL_CONTENT
 
 from members.models import Member

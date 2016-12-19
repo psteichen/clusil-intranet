@@ -1,5 +1,5 @@
 {% autoescape off %}
-Invitation the {{ group }} meeting on {{ when }} starting {{ time }} at {{ location }}.
+Invitation to the {{ group }} meeting on {{ when }} starting {{ time }} at {{ location }}.
 
 The main topic of discussion will be : {{ title }}
 

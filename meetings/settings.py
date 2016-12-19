@@ -45,16 +45,16 @@ Recipients:
   },
   'send': {
     'template'		: 'form.html',
-    'title'         	: u'(R)Envoyer Invitations',
-    'desc'          	: u'Envoie ou renvoie les invitations pour la réunion statutaire choisie, par e-mail.',
-    'submit'   		: u'Envoyer',
+    'title'         	: u'(Re)send invitations',
+    'desc'          	: u'(Re)Send e-mnail invitations for this meeting.',
+    'submit'   		: u'Send',
     'done': {
       'template'	: 'done.html',
-      'title'     	: u'Invitations pour la : %s envoyées',
-      'message'     	: u'Destinataires : ',
+      'title'     	: u'Invitations for "%s" meeting, sent',
+      'message'     	: u'Recipients: ',
       'email': {
 	'template'	: 'meeting_invitation.txt',
-	'subject'	: u'[51 aperta] %(title)s',
+	'subject'	: u'[CLUSIL] %(title)s',
       },
     },
   },
@@ -78,7 +78,7 @@ Recipients:
   },
   'details': {
     'template'  	: 'done.html',
-    'title'     	: u'Details of meeting: %(meeting)s (%(date)s)',
+    'title'     	: u'Details of "%(meeting)s" meeting (%(date)s)',
     'overview' : {
       'template'	: 'overview_meeting.html',
       'modify'		: u'Modify',

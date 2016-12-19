@@ -32,7 +32,7 @@ class MeetingTable(Table):
 
   class Meta:
     model = Meeting
-    fields = ( 'title', 'when', 'location', 'totals', 'details', )
+    fields = ( 'group', 'when', 'location', 'totals', 'details', )
     attrs = {"class": "table table-striped"}
 
 class MgmtMeetingTable(Table):
@@ -80,7 +80,7 @@ class MgmtMeetingTable(Table):
 
   class Meta:
     model = Meeting
-    fields = ( 'title', 'when', 'location', 'totals', 'details', 'send', 'modify', 'report', )
+    fields = ( 'group', 'when', 'location', 'totals', 'details', 'send', 'modify', 'report', )
     attrs = {"class": "table table-striped"}
 
 

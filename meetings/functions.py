@@ -20,7 +20,7 @@ from .models import Invitation
 def gen_meeting_overview(template,meeting):
   content = { 'overview' : settings.TEMPLATE_CONTENT['meetings']['details']['overview'] }
 
-  content['title'] = meeting.title
+  content['title'] = meeting.group
   content['modify'] = '/meetings/modify/' + unicode(meeting.id)
   content['when'] = visualiseDateTime(meeting.when)
   content['time'] = visualiseDateTime(meeting.time)

@@ -4,7 +4,8 @@
 ACTIONS = {
   'invite': (
     {
-      'label' 		: u'Inviter un(des) ami(s), conférencier(s) ou would-be(s).',
+      'label' 		: u'Invite (a) collegue(s).',
+      'grade'     	: 'info',
       'icon'     	: 'plus',
       'url'           	: '/meetings/invite/',
     },
@@ -13,38 +14,39 @@ ACTIONS = {
  
 ATTENDANCE_TMPL_CONTENT = {
   'template'	: 'done.html',
-  'too_late' 	: u'Désolé il est <strong>trop tard</strong> pour s\'inscrire/désister!',
-  'actions'  	: ACTIONS['invite'],
-  'yes'  	: u'%(name)s, par la présente ta <strong>participation</strong> est <strong>confirmé(e)</strong>!',
-  'no'  	: u'%(name)s, merci de nous avoir notifier ton désistement, tu sera <strong>excusé(e)</strong>!',
-  'details'  	: u'''<p>Pour rappel:
+  'too_late' 	: u'Sorry, it is <strong>too late</strong> to confirm/cancel your participation!',
+#  'actions'  	: ACTIONS['invite'],
+  'actions'  	: None,
+  'yes'  	: u'%(name)s, herewith your <strong>participation</strong> is <strong>confirmed</strong>!',
+  'no'  	: u'%(name)s, thank you for notifying us your cancellation, you will be <strong>excused</strong>!',
+  'details'  	: u'''<p>For your reminder:
 <ul>
-<strong>Lieu  : %(location)s</strong><br/>
+<strong>Location: %(location)s</strong><br/>
 %(address)s<br/>
-<em>Date  : %(when)s</em><br/>
-Heure : %(time)s<br/>
+<em>Date: %(when)s</em><br/>
+Time: %(time)s<br/>
 </ul></p>
 ''',
   'event': {
-    'title'	: u'Participation à l\'événement "%(event)s"',
+    'title'	: u'Your participation to the following event: "%(event)s"',
     'email' : {
       'yes'	: u'''
-Par la présente ta participation à l\'événement "%(event)s" est confirmé(e)!''',
+Herewith your participation to "%(event)s" is *confirmed*!''',
       'no'  	: u'''
-Merci de nous avoir notifié ton désistement pour l\'événement "%(event)s". 
+Thank you for notifying us your cancellation for "%(event)s".
 
-Tu sera excusé(e).''',
+You will be *excused*.''',
     },
   },
   'meeting': {
-    'title'      : u'Participation à la %(meeting)s',
+    'title'	: u'%(meeting)s meeting',
     'email' : {
       'yes'	: u'''
-Par la présente ta participation à la %(meeting)s est confirmé(e)!''',
+Herewith your participation to "%(meeting)s" is *confirmed*!''',
       'no'  	: u'''
-Merci de nous avoir notifié ton désistement pour la %(meeting)s. 
+Thank you for notifying us your cancellation for "%(meeting)s".
 
-Tu sera excusé(e).''',
+You will be *excused*.''',
     },
   },
 }

@@ -91,8 +91,6 @@ def add(r):
    
         gen_attendance_hashes(Mt,Event.MEET,u)
         invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,u) + mf.cleaned_data['additional_message']
-        if u == r.user: 
-          done_message = invitation_message
 
         message_content = {
           'FULLNAME'    : gen_fullname(u),
@@ -120,7 +118,7 @@ def add(r):
       I.save()
       return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': done_message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]), },
+                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': invitation_message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]), },
                 })
 
     # form not valid -> error
@@ -155,26 +153,27 @@ def send(r, meeting_id):
   Mt = Meeting.objects.get(id=meeting_id)
   I = Invitation.objects.get(meeting=Mt)
 
-  title = settings.TEMPLATE_CONTENT['meetings']['send']['done']['title'] % unicode(Mt.title)
+  title = settings.TEMPLATE_CONTENT['meetings']['send']['done']['title'] % unicode(Mt.group)
       
   email_error = { 'ok': True, 'who': [], }
-  for m in get_active_members():
+  for a in get_group_members(Mt.group):
+    u = a.user
     #invitation email with "YES/NO button"
-    subject = settings.TEMPLATE_CONTENT['meetings']['send']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
-    invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,m)
+    subject = settings.TEMPLATE_CONTENT['meetings']['send']['done']['email']['subject'] % { 'title': unicode(Mt.group) }
+    invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,u)
     message_content = {
-        'FULLNAME'    : gen_member_fullname(m),
+        'FULLNAME'    : gen_fullname(u),
         'MESSAGE'     : invitation_message + I.message,
     }
     #send email
     try: #with attachement
-      ok=notify_by_email(m.email,subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
+      ok=notify_by_email(u.email,subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
     except: #no attachement
-      ok=notify_by_email(m.email,subject,message_content)
+      ok=notify_by_email(u.email,subject,message_content)
      
     if not ok: 
       email_error['ok']=False
-      email_error['who'].append(m.email)
+      email_error['who'].append(u.email)
 
   # error in email -> show error messages
   if not email_error['ok']:
@@ -189,7 +188,7 @@ def send(r, meeting_id):
     I.save()
     return render(r, settings.TEMPLATE_CONTENT['meetings']['send']['done']['template'], {
 	                'title': title, 
-        	        'message': settings.TEMPLATE_CONTENT['meetings']['send']['done']['message'] + ' ; '.join([gen_member_fullname(m) for m in get_active_members()]),
+                	'message': settings.TEMPLATE_CONTENT['meetings']['send']['done']['message'] + ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]),
                   })
 
 
@@ -206,7 +205,7 @@ def details(r, meeting_id):
                    	('details for meeting: '+meeting.title + ' ('+ meeting_date+ ')','/meetings/list/'+meeting_id+'/'),
                ) )
 
-  title = settings.TEMPLATE_CONTENT['meetings']['details']['title'] % { 'meeting' : meeting.title, 'date': meeting_date, }
+  title = settings.TEMPLATE_CONTENT['meetings']['details']['title'] % { 'meeting' : meeting.group, 'date': meeting_date, }
   message = gen_meeting_overview(settings.TEMPLATE_CONTENT['meetings']['details']['overview']['template'],meeting)
 
   return render(r, settings.TEMPLATE_CONTENT['meetings']['details']['template'], {

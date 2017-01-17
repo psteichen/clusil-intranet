@@ -55,6 +55,7 @@ target/
 
 #local app ignores
 */migrations/
+*/*/migrations/
 cms/db.sqlite
 cms/wsgi.py
 local_settings.py

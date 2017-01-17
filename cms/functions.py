@@ -15,6 +15,8 @@ def debug(app,message):
 def notify_by_email(to,subject,message_content,template='default.txt',attachment=None):
   from django.core.mail import EmailMessage
 
+  if not template: template='default.txt'
+
   email = EmailMessage(
                 subject=subject, 
                 from_email=settings.EMAILS['email']['no-reply'], 

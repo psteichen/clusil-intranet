@@ -8,7 +8,8 @@ from django.shortcuts import render
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from cms.functions import notify_by_email
+from cms.functions import notify_by_email, visualiseDateTime
+
 from members.models import Member
 from members.functions import get_active_members, gen_fullname, get_all_users_for_membership
 from members.groups.functions import get_group_members
@@ -66,20 +67,20 @@ def attendance(r, event_type, event_id, attendance_hash):
           if attendance_hash == mTm.yes_hash:
             # it's a YES
             A.present = True
-            A.timestamp = datetime.now()
+            A.timestamp = timezone.now()
             A.save()
             notify=True
             member=m
             message = settings.TEMPLATE_CONTENT['attendance']['yes'] % { 'name': gen_fullname(U), }
             #add meeting information to the confirmation message
-            message += settings.TEMPLATE_CONTENT['attendance']['details'] % { 'when': M.when, 'time': M.time, 'location': M.location, 'address': M.location, }
+            message += settings.TEMPLATE_CONTENT['attendance']['details'] % { 'when': M.when, 'time': visualiseDateTime(M.start) + ' - ' + visualiseDateTime(M.end), 'location': M.location, }
             actions = settings.TEMPLATE_CONTENT['attendance']['actions']
             e_message = e_yes
   
           if attendance_hash == mTm.no_hash:
             # it's a NO
             A.present = False
-            A.timestamp = datetime.now()
+            A.timestamp = timezone.now()
             A.save()
             notify=True
             message = settings.TEMPLATE_CONTENT['attendance']['no'] % { 'name': gen_fullname(U), }
@@ -99,7 +100,7 @@ def attendance(r, event_type, event_id, attendance_hash):
           if attendance_hash == eTm.yes_hash:
             # it's a YES
             A.present = True
-            A.timestamp = datetime.now()
+            A.timestamp = timezone.now()
             A.save()
             notify=True
             member=m
@@ -110,7 +111,7 @@ def attendance(r, event_type, event_id, attendance_hash):
           if attendance_hash == eTm.no_hash:
             # it's a NO
             A.present = False
-            A.timestamp = datetime.now()
+            A.timestamp = timezone.now()
             A.save()
             notify=True
             message = settings.TEMPLATE_CONTENT['attendance']['no'] % { 'name': gen_fullname(U), }

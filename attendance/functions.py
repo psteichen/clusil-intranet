@@ -6,6 +6,8 @@ from os import path
 from django.conf import settings
 from django.template.loader import render_to_string
 
+from cms.functions import visualiseDateTime
+
 from .models import MtoM, EtoM
 from events.models import Event
 
@@ -65,7 +67,7 @@ def gen_invitation_message(template,event,event_type,user):
   content['title'] = event.title
   if event_type == Event.MEET: content['group'] = event.group
   content['when'] = event.when
-  content['time'] = event.time
+  content['time'] = visualiseDateTime(event.start) + ' - ' + visualiseDateTime(event.end)
   content['location'] = event.location
   content['deadline'] = event.deadline
   content['attendance'] = gen_attendance_links(event,event_type,user)

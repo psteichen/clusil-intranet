@@ -8,6 +8,13 @@
       <div class="col-sm-6">
         {{ overview.location }}<address class="lead">{{ location }}<br/>{{ address }}</address>
       </div>
+      <div class="col-sm-12">
+        <div class="pull-right" role="group">
+          {% if attach %}<a class="btn btn-info" href="{{ attach }}" target="_blank" role="button"><span class="glyphicon glyphicon-open-file"></span>&nbsp;&nbsp;{{ overview.attach }}&nbsp;</a>{% endif %}
+          {% if report %}<a class="btn btn-success" href="{{ report }}" target="_blank" role="button"><span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;{{ overview.report }}&nbsp;</a>{% endif %}
+        </div>
+        {{ overview.topic }}<p class="lead">{{ topic }}</p>
+      </div>
     </div>
     <br/>
     <div class="row">

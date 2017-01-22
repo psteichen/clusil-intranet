@@ -15,6 +15,7 @@ ACTIONS = {
 
 MEETINGS_TMPL_CONTENT = {
   'title'       	: u'Meetings',
+  'duration'       	: 2, #default duration
   'template'    	: 'list.html',
   'desc'       		: u'',
   'actions'     	: ACTIONS['main'],
@@ -82,6 +83,7 @@ Recipients:
     'overview' : {
       'template'	: 'overview_meeting.html',
       'modify'		: u'Modify',
+      'topic'		: u'Main topic of the meeting:',
       'date'		: u'Date and time',
       'attach'		: u'Supplementary information',
       'location'	: u'Location (venue)',
@@ -92,7 +94,7 @@ Recipients:
   },
   'report': {
     'template'		: 'form.html',
-    'title'         	: u'Minutes of meeting: {meeting}',
+    'title'         	: u'Minutes of meeting: {}',
     'desc'          	: u'Save minutes and send it automatically to the meeting attendees (optional).',
     'submit'   		: u'Upload',
     'done': {

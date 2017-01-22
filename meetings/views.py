@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from django_tables2  import RequestConfig
 
-from cms.functions import notify_by_email, show_form, visualiseDateTime
+from cms.functions import notify_by_email, show_form, visualiseDateTime, genIcal
 
 from events.models import Event
 from members.models import Member
@@ -96,12 +96,16 @@ def add(r):
           'FULLNAME'    : gen_fullname(u),
           'MESSAGE'     : invitation_message,
         }
+       
+        #generate ical invite
+        invite = genIcal(Mt)
+
         #send email
         if send:
           if I.attachement:
-            ok=notify_by_email(u.email,e_subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
+            ok=notify_by_email(u.email,e_subject,message_content,False,[invite,settings.MEDIA_ROOT + unicode(I.attachement)])
           else:
-            ok=notify_by_email(u.email,e_subject,message_content)
+            ok=notify_by_email(u.email,e_subject,message_content,False,invite)
           if not ok:
             email_error['ok']=False
             email_error['who'].append(u.email)
@@ -280,36 +284,6 @@ class ModifyMeetingWizard(SessionWizardView):
     if mf.is_valid():
       M = mf.save()
 
-      attendance = mf.cleaned_data['attendance']
-      if attendance == True: 
-        af = form_dict['attendance']
-        if af.is_valid() and af.has_changed():
-          s_initial = af.initial['subscribed']
-          s_changed = af.cleaned_data['subscribed']
-          for s in s_changed:
-            try:
-              Meeting_Attendance(meeting=M,member=s,timestamp=datetime.now(),present=True).save()
-            except: pass
-#          s_diff = set(s_initial) ^ set(s_changed)
-#          for s_d in s_diff:
-#            try:
-#              Meeting_Attendance.objects.get(meeting=M,member=s_d).delete()
-#            except:
-#              pass
-
-          e_initial = af.initial['excused']
-          e_changed = af.cleaned_data['excused']
-          for e in e_changed:
-            try:
-              Meeting_Attendance(meeting=M,member=e,timestamp=datetime.now(),present=False).save()
-            except: pass
-#          e_diff = set(e_initial) ^ set(e_changed)
-#          for e_d in e_diff:
-#            try:
-#              Meeting_Attendance.objects.get(meeting=M,member=e_d).delete()
-#            except:
-#              pass
-
     title = settings.TEMPLATE_CONTENT['meetings']['modify']['done']['title'] % M
 
     return render(self.request, template, {
@@ -382,7 +356,7 @@ def report(r, meeting_id):
   # no post yet -> empty form
   else:
     form = MeetingReportForm(initial={ 'id': Mt.id, 'title': Mt.title, 'when': visualiseDateTime(Mt.when), })
-    title = settings.TEMPLATE_CONTENT['meetings']['report']['title'].format(unicode(Mt.id))
+    title = settings.TEMPLATE_CONTENT['meetings']['report']['title'].format(unicode(Mt.group) + ' - ' + unicode(Mt.title))
     return render(r, settings.TEMPLATE_CONTENT['meetings']['report']['template'], {
                 'title': title,
                 'desc': settings.TEMPLATE_CONTENT['meetings']['report']['desc'],

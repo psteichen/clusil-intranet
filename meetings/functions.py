@@ -21,14 +21,15 @@ def gen_meeting_overview(template,meeting):
   content = { 'overview' : settings.TEMPLATE_CONTENT['meetings']['details']['overview'] }
 
   content['title'] = meeting.group
+  content['topic'] = meeting.title
   content['modify'] = '/meetings/modify/' + unicode(meeting.id)
   content['when'] = visualiseDateTime(meeting.when)
-  content['time'] = visualiseDateTime(meeting.time)
+  content['time'] = visualiseDateTime(meeting.start) + ' - ' + visualiseDateTime(meeting.end)
   content['location'] = meeting.location
   if meeting.report:  content['report'] = settings.MEDIA_URL + unicode(meeting.report)
   try:   
     invitation = Invitation.objects.get(meeting=meeting)
-    content['attach'] = settings.MEDIA_URL + unicode(invitation.attachement)
+    if invitation.attachement: content['attach'] = settings.MEDIA_URL + unicode(invitation.attachement)
   except: pass
   content['attendance'] = Meeting_Attendance.objects.filter(meeting=meeting,present=True).only('user')
   content['excused'] = Meeting_Attendance.objects.filter(meeting=meeting,present=False).only('user')
@@ -39,7 +40,8 @@ def gen_meeting_initial(m):
   initial_data = {}
   initial_data['title'] = m.title
   initial_data['when'] = m.when
-  initial_data['time'] = m.time
+  initial_data['start'] = m.start
+  initial_data['end'] = m.end
   initial_data['location'] = m.location
   initial_data['deadline'] = m.deadline
 
@@ -58,7 +60,8 @@ def gen_report_message(template,meeting,member):
 
   content['title'] = meeting.title
   content['when'] = meeting.when
-  content['time'] = meeting.time
+  content['start'] = meeting.start
+  content['end'] = meeting.end
   content['location'] = meeting.location
 
   return render_to_string(template,content)
@@ -68,7 +71,7 @@ def gen_meeting_listing(template,meeting):
 
   content['title'] = meeting.title
   content['when'] = visualiseDateTime(meeting.when)
-  content['time'] = visualiseDateTime(meeting.time)
+  content['time'] = visualiseDateTime(meeting.start) + ' - ' + visualiseDateTime(meeting.end)
   content['location'] = meeting.location.name
   content['address'] = meeting.location.address
 

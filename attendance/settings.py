@@ -22,7 +22,6 @@ ATTENDANCE_TMPL_CONTENT = {
   'details'  	: u'''<p>For your reminder:
 <ul>
 <strong>Location: %(location)s</strong><br/>
-%(address)s<br/>
 <em>Date: %(when)s</em><br/>
 Time: %(time)s<br/>
 </ul></p>

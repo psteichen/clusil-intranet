@@ -53,6 +53,7 @@ def payment(r,member_id,year):
 
   template 	= settings.TEMPLATE_CONTENT['accounting']['payment']['template']
   title 	= settings.TEMPLATE_CONTENT['accounting']['payment']['title']
+  submit 	= settings.TEMPLATE_CONTENT['accounting']['payment']['submit']
 
   done_template = settings.TEMPLATE_CONTENT['accounting']['payment']['done']['template']
   done_title 	= settings.TEMPLATE_CONTENT['accounting']['payment']['done']['title']
@@ -82,8 +83,9 @@ def payment(r,member_id,year):
     form.initial= model_to_dict(F)
     form.instance = F
     return render(r, template, {
-			'title'	: title, 
-                	'form'	: form,
+			'title'		: title, 
+                	'form'		: form,
+                	'submit'	: submit,
                  })
 
 
@@ -113,7 +115,7 @@ def invoice(r,member,year):
 # credit #
 ##########
 @permission_required('cms.BOARD')
-def credit(r,member,year):
+def credit(r,member,year): #year is not used, but for sake of easiness keep it
   r.breadcrumbs( ( 
 			('home','/home/'),
                        	('accounting','/accounting/'),
@@ -126,7 +128,7 @@ def credit(r,member,year):
   message = settings.TEMPLATE_CONTENT['accounting']['credit']['message'].format(member=M,year=year,head=gen_fullname(M.head_of_list))
 
   # generate credit note and sent to head-of-list
-  generate_credit_note(M,year)
+  generate_credit_note(M)
 
   return render(r, template, {
 			'title'		: title,

@@ -386,7 +386,7 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Treasury', 
         'icon'     	: 'euro',
-        'grade'     	: 'danger',
+        'grade'     	: 'success',
         'desc'          : 'Manage and check payments or other financial figures.',
         'url'           : '/accounting/',
 	'has_perms'	: 'cms.BOARD',
@@ -478,12 +478,19 @@ FEE = {
   Member.ORG_18 : 1000,
 }
 
-
-INVOICE = {
-  'logo'		: STATIC_ROOT + 'pics/logo.jpg',
-  'currency' 		: 'EUR',
-  'subject' 		: 'Invoice for membership: %s',
-  'mail_template' 	: 'invoice.txt',
+ACCOUNTING = {
+  'invoice' : {
+    'logo'		: STATIC_ROOT + 'pics/logo.jpg',
+    'currency' 		: 'EUR',
+    'subject' 		: 'Invoice for membership: %s',
+    'mail_template' 	: 'invoice.txt',
+  },
+  'credit' : {
+    'logo'		: STATIC_ROOT + 'pics/logo.jpg',
+    'currency' 		: 'EUR',
+    'subject' 		: 'Credit note for: %s',
+    'mail_template' 	: 'credit.txt',
+  }
 }
 
 #add local settings

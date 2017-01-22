@@ -8,7 +8,8 @@ from django.core.files import File
 from members.functions import gen_fullname
 
 from .models import Fee
-from .invoice import draw_pdf
+from .invoice import draw_pdf as pdf_invoice
+from .credit import draw_pdf as pdf_credit
 
 # gen invoice id
 def invoice_id(m):
@@ -18,6 +19,8 @@ def invoice_id(m):
 # generate invoice
 def generate_invoice(m,year=date.today().strftime('%Y')):
   from members.models import Member
+
+  INV = settings.ACCOUNTING['invoice']
 
   if m.type == Member.ORG:
     amount = settings.FEE[m.lvl]
@@ -30,13 +33,13 @@ def generate_invoice(m,year=date.today().strftime('%Y')):
     'DATE': date.today().strftime('%Y-%m-%d'),
     'YEAR': year,
     'AMOUNT': amount,
-    'CURRENCY': settings.INVOICE['currency'],
+    'CURRENCY': INV['currency'],
   } 
 
   # generate pdf invoice
   from StringIO import StringIO
   pdf = StringIO()
-  draw_pdf(pdf, m, invoice_details)
+  pdf_invoice(pdf, m, invoice_details)
   pdf.seek(0)
 
   fn=invoice_details['ID'] + '.pdf'
@@ -57,36 +60,41 @@ def generate_invoice(m,year=date.today().strftime('%Y')):
 
   # send email
   from cms.functions import notify_by_email
-  subject = settings.INVOICE['subject'] % m.id
-  notify_by_email(m.head_of_list.email,subject,invoice_details,settings.INVOICE['mail_template'],attachment)
+  subject = INV['subject'] % m.id
+  notify_by_email(m.head_of_list.email,subject,invoice_details,INV['mail_template'],attachment)
+
+
+# gen credit note id
+def credit_id(m):
+  i = 'CRED_' + m.id + '_'+date.today().strftime('%Y')
+  return i
 
 # generate credit note
-def generate_credit_note(m,year=date.today().strftime('%Y')):
+def generate_credit_note(m):
   from members.models import Member
+
+  CRED = settings.ACCOUNTING['credit']
 
   if m.type == Member.ORG:
     amount = settings.FEE[m.lvl]
   else:
     amount = settings.FEE[m.type]
 
-  invoice_details = {
-    'ID': invoice_id(m),
+  credit_details = {
+    'ID': credit_id(m),
     'FULLNAME': gen_fullname(m.head_of_list),
     'DATE': date.today().strftime('%Y-%m-%d'),
-    'YEAR': year,
     'AMOUNT': amount,
-    'CURRENCY': settings.INVOICE['currency'],
+    'CURRENCY': CRED['currency'],
   } 
-
-#HERE
 
   # generate pdf credit note
   from StringIO import StringIO
   pdf = StringIO()
-  draw_pdf(pdf, m, invoice_details)
+  pdf_credit(pdf, m, credit_details)
   pdf.seek(0)
 
-  fn=invoice_details['ID'] + '.pdf'
+  fn=credit_details['ID'] + '.pdf'
  
   # create attachement
   from email.mime.application import MIMEApplication
@@ -97,6 +105,6 @@ def generate_credit_note(m,year=date.today().strftime('%Y')):
 
   # send email
   from cms.functions import notify_by_email
-  subject = settings.INVOICE['subject'] % m.id
-  notify_by_email(m.head_of_list.email,subject,invoice_details,settings.INVOICE['mail_template'],attachment)
+  subject = CRED['subject'] % m.id
+  notify_by_email(m.head_of_list.email,subject,credit_details,CRED['mail_template'],attachment)
 

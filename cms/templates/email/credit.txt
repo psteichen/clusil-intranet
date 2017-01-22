@@ -1,0 +1,18 @@
+{% autoescape off %}
+Dear {{ FULLNAME }},
+
+Your CREDIT NOTE is ready. Please see attachment.
+
+ID:     {{ ID }}
+Date:   {{ DATE }}
+Client:         {{ FULLNAME }}
+Amount:      {{ AMOUNT }} {{ CURRENCY }}
+
+If you have any questions or concerns, please contact: {{ SUPPORT_MAIL }}
+
+{{ SALUTATION }}
+
+--
+{{ DISCLAIMER }}
+{% endautoescape %}
+

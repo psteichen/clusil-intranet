@@ -101,8 +101,7 @@ class Member(Model):
     else:
       o += gen_fulluser(self.head_of_list)
 
-#    return self.id + ' [ '+ Member.MEMBER_TYPES[self.type][1] + ' ] ' + o
-    return self.id + ' [ '+ o + ' ]'
+    return self.id + ' [ ' + o + ' ]'
 
 
 # Renew model

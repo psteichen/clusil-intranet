@@ -12,7 +12,7 @@ import os, sys
 # set sys.path to the directory containing the django app
 # else wsgi will not find the settings file below
 sys.path.append('/var/www/clusil.lu/django')
-sys.path.append('/var/www/clusil.lu/django/cms-dev')
+sys.path.append('/var/www/clusil.lu/django/cms')
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cms.settings")
 

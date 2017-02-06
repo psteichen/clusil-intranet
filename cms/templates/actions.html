@@ -21,7 +21,8 @@
         {% for action in part.actions %}
         {% if action.has_perms in perms or not action.has_perms %}
           {% if action.url %}
-            <a class="btn btn-{{ action.grade }}" href="{{ action.url }}" role="button">{% if action.icon %}<span class="glyphicon glyphicon-{{ action.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ action.label }}&nbsp;</a>
+{#            <a class="btn btn-{{ action.grade }}" href="{{ action.url }}" role="button">{% if action.icon %}<span class="glyphicon glyphicon-{{ action.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ action.label }}&nbsp;</a> #}
+            <a class="btn btn-{{ action.grade }}" href="{{ action.url }}" role="button">{% if action.icon %}<i class="fa fa-{{ action.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ action.label }}&nbsp;</a>
      	    <br />
      	    {% if action.desc %}<span class="btn-footer">( {{ action.desc }} )</span>{% endif %}
      	    <br />

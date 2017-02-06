@@ -17,13 +17,6 @@ ACTIONS = {
       'url'     	: '/members/renew/',
       'has_perms'	: 'cms.SECR',
     },
-    {
-      'label' 	        : 'Group management',
-      'icon'  	   	: 'th-large',
-      'grade'    	: 'info',
-      'url'           	: '/members/groups/',
-      'has_perms'	: 'cms.SECR',
-    },
   ),
   'details' : (
     {

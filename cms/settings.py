@@ -394,9 +394,9 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Organisation', 
         'icon'     	: 'home',
-        'grade'     	: 'danger',
-        'desc'          : 'Manage and affiliate board members and admin staff.',
-        'url'           : '/members/board/',
+        'grade'     	: 'success',
+        'desc'          : 'Manage and affiliate members to groups.',
+        'url'           : '/members/groups/',
 	'has_perms'	: 'cms.BOARD',
       },
     ),

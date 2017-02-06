@@ -86,6 +86,7 @@ def modify(r):
       for field in pf.changed_data:
         O = M.organisation
         A = M.address
+        H = M.head_of_list
         if field == 'orga': #organisation name changed
           O.name = pf.cleaned_data[field]
         if field == 'fn': #first_name of head_of_list changed

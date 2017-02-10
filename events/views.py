@@ -32,7 +32,7 @@ from .tables  import EventTable
 @permission_required('cms.MEMBER',raise_exception=True)
 def list(r):
   r.breadcrumbs( ( 
-			('home','/'),
+			('board','/board/'),
                    	('events','/events/'),
                ) )
 
@@ -65,7 +65,7 @@ def send_invitation(event,user,invitation):
 @permission_required('cms.SECR',raise_exception=True)
 def add(r):
   r.breadcrumbs( ( 
-			('home','/'),
+			('board','/board/'),
                    	('events','/events/'),
                    	('add event','/events/add/'),
                ) )
@@ -143,7 +143,7 @@ def add(r):
 @permission_required('cms.SECR',raise_exception=True)
 def send(r,event_id):
   r.breadcrumbs( ( 
-			('home','/'),
+			('board','/board/'),
                    	('events','/events/'),
                    	('send event invitations','/events/send/'),
                ) )
@@ -187,7 +187,7 @@ def send(r,event_id):
 @login_required
 def details(r, event_id):
   r.breadcrumbs( ( 
-			('home','/'),
+			('board','/board/'),
                    	('events','/events/'),
                    	('details for event n. '+event_id,'/events/details/'+event_id+'/'),
                ) )
@@ -219,7 +219,8 @@ class ModifyEventWizard(SessionWizardView):
     context = super(ModifyEventWizard, self).get_context_data(form=form, **kwargs)
 
     #add breadcrumbs to context
-    self.request.breadcrumbs( ( ('home','/'),
+    self.request.breadcrumbs( ( 
+				('board','/board/'),
                                 ('events','/events/'),
                                 ('modify an event','/events/modify/'),
                             ) )
@@ -249,7 +250,8 @@ class ModifyEventWizard(SessionWizardView):
     return form
 
   def done(self, fl, **kwargs):
-    self.request.breadcrumbs( ( ('home','/'),
+    self.request.breadcrumbs( (
+				('board','/board/'),
                                 ('events','/events/'),
                                 ('modify an event','/events/modify/'),
                             ) )

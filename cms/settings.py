@@ -186,6 +186,7 @@ ADMINS = (
 EMAILS = {
   'email' : {
     'board'	: 'CLUSIL Board <board@clusil.lu>',
+    'secgen'	: 'Secretariat <secgen@clusil.lu>',
     'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },
   'salutation' 	: '''
@@ -307,7 +308,7 @@ HOME_ACTIONS = (
     ),
   },
   {
-    'heading'   	: 'Management Console',
+    'heading'   	: 'Management Console (BOARD)',
     'has_perms'		: 'cms.SECR',
     'cols'		: '12',
     'actions' : (
@@ -365,32 +366,48 @@ TEMPLATE_CONTENT['upload'] = UPLOAD_TMPL_CONTENT
 ## board
 BOARD_ACTIONS = (
   {
-    'heading'      	: 'Admin and internal management applications:',
+    'heading'      	: 'Meetings, Events and Communication',
     'has_perms'		: 'cms.SECR',
+    'cols'		: '6',
     'actions' : (
       {         
-        'label'         : 'Meeting Management', 
+        'label'         : 'Meetings and <i>members-only</i> Events', 
         'icon'     	: 'calendar',
         'grade'     	: 'success',
-        'desc'          : 'Manage regular meetings (board, working groups...).',
+        'desc'          : 'Manage regular meetings (board, working groups...) or membery-only events.',
         'url'           : '/meetings/',
 	'has_perms'	: 'cms.SECR',
       },
       {         
-        'label'         : 'Member Management', 
+        'label'         : 'Public Events', 
+        'icon'     	: 'glass',
+        'grade'     	: 'danger',
+        'desc'          : 'Manage public events or activities',
+        'url'           : '/events/',
+	'has_perms'	: 'cms.SECR',
+      },
+      {         
+        'label'         : 'Web Content', 
+        'icon'     	: 'cloud',
+        'grade'     	: 'danger',
+        'desc'          : 'Manage the public website content',
+        'url'           : '/webcontent/',
+	'has_perms'	: 'cms.SECR',
+      },
+    ),
+  },
+  {
+    'heading'      	: 'Club Management',
+    'has_perms'		: 'cms.SECR',
+    'cols'		: '6',
+    'actions' : (
+      {         
+        'label'         : 'Members', 
         'icon'     	: 'user',
         'grade'     	: 'success',
         'desc'          : 'Manage members.',
         'url'           : '/members/',
 	'has_perms'	: 'cms.SECR',
-      },
-      {         
-        'label'         : 'Treasury', 
-        'icon'     	: 'euro',
-        'grade'     	: 'success',
-        'desc'          : 'Manage and check payments or other financial figures.',
-        'url'           : '/accounting/',
-	'has_perms'	: 'cms.BOARD',
       },
       {         
         'label'         : 'Organisation', 
@@ -400,34 +417,21 @@ BOARD_ACTIONS = (
         'url'           : '/members/groups/',
 	'has_perms'	: 'cms.BOARD',
       },
-    ),
-  },
-  {
-    'heading'      	: 'Web and online content management applications:',
-    'has_perms'		: 'cms.SECR',
-    'actions' : (
       {         
-        'label'         : 'Web Content Management', 
-        'icon'     	: 'cloud',
-        'grade'     	: 'danger',
-        'desc'          : 'Manage the public website content',
-        'url'           : '/webcontent/',
-	'has_perms'	: 'cms.SECR',
-      },
-      {         
-        'label'         : 'Event Management', 
-        'icon'     	: 'glass',
-        'grade'     	: 'danger',
-        'desc'          : 'Manage special events or activities',
-        'url'           : '/events/',
-	'has_perms'	: 'cms.SECR',
+        'label'         : 'Treasury', 
+        'icon'     	: 'euro',
+        'grade'     	: 'success',
+        'desc'          : 'Manage and check payments or other financial figures.',
+        'url'           : '/accounting/',
+	'has_perms'	: 'cms.BOARD',
       },
     ),
   },
 )
 
 TEMPLATE_CONTENT['board'] = {
-  'title'     	: 'What do you want to do today ?',
+  'title'      	: 'Management Dashboard',
+#  'template'    : 'dashboard.html',
   'template'    : 'actions.html',
   'actions'     : BOARD_ACTIONS,
 }

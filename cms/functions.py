@@ -31,7 +31,7 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
                 subject=subject, 
                 from_email=settings.EMAILS['email']['no-reply'], 
                 to=[to], 
-                cc=[settings.EMAILS['email']['board']] #always Cc to board
+                cc=[settings.EMAILS['email']['secgen']] #always Cc to secgen
           )
   # add default footer (questions, salutation and disclaimer)
   message_content['SALUTATION'] = settings.EMAILS['salutation']

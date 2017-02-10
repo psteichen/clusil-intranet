@@ -25,7 +25,7 @@ class EventTable(Table):
       return 'danger'
 
   def render_details(self, record):
-    link = '<a class="btn btn-info btn-sm" href="/events/list/{}/"><span class="glyphicon glyphicon-list"></span></a>'.format(escape(record.pk))
+    link = '<a class="btn btn-info btn-sm" href="/events/list/{}/"><i class="fa fa-list"></i></a>'.format(escape(record.pk))
     return mark_safe(link)
  
   def render_send(self, record):
@@ -35,14 +35,14 @@ class EventTable(Table):
       sent = I.sent
     except: pass
     if sent: #already sent, resend?
-      link = '<center><a class="btn btn-success btn-sm" href="/events/send/{}/" title="Renvoyer"><span class="glyphicon glyphicon-envelope"></span></a></center>'.format(escape(record.id))
+      link = '<center><a class="btn btn-success btn-sm" href="/events/send/{}/" title="Renvoyer"><i class="fa fa-envelope"></i></a></center>'.format(escape(record.id))
     else: #not yet sent
-      link = '<center><a class="btn btn-danger btn-sm" href="/events/send/{}/" title="Envoyer"><span class="glyphicon glyphicon-envelope"></span></a></center>'.format(escape(record.id))
+      link = '<center><a class="btn btn-danger btn-sm" href="/events/send/{}/" title="Envoyer"><i class="fa fa-envelope"></i></a></center>'.format(escape(record.id))
 
     return mark_safe(link)
 
   def render_modify(self, record):
-    link = '<center><a class="btn btn-danger btn-sm" href="/events/modify/{}/"><span class="glyphicon glyphicon-pencil"></span></a></center>'.format(escape(record.id))
+    link = '<center><a class="btn btn-danger btn-sm" href="/events/modify/{}/"><i class="fa fa-pencil"></i></a></center>'.format(escape(record.id))
     return mark_safe(link)
 
   class Meta:

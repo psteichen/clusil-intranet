@@ -84,11 +84,15 @@ def modify(r):
     pf = ProfileForm(r.POST,r.FILES)
     if pf.is_valid() and pf.has_changed(): 
       for field in pf.changed_data:
-        O = M.organisation
+        O = None
+        if M.type == Member.ORG:
+          O = M.organisation
+
         A = M.address
         H = M.head_of_list
-        if field == 'orga': #organisation name changed
-          O.name = pf.cleaned_data[field]
+        if M.type == Member.ORG:
+          if field == 'orga': #organisation name changed
+            O.name = pf.cleaned_data[field]
         if field == 'fn': #first_name of head_of_list changed
           H.first_name = pf.cleaned_data[field]
         if field == 'ln': #last_name of head_of_list changed
@@ -103,20 +107,22 @@ def modify(r):
           A.town = pf.cleaned_data[field]
         if field == 'country': #country changed
           A.c_other = pf.cleaned_data[field]
-        if field == 'sp': #student_proof changed
-          M.student_proof = pf.cleaned_data[field]
+        if M.type == Member.STD:
+          if field == 'sp': #student_proof changed
+            M.student_proof = pf.cleaned_data[field]
          
+      if M.type == Member.ORG:
         O.save()
-        A.save()
-        M.save()
+      A.save()
+      H.save()
+      M.save()
 
-        # all fine: done message
-        return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['done']['template'], {
+      # all fine: done message
+      return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['done']['template'], {
 			'title'		: settings.TEMPLATE_CONTENT['profile']['modify']['done']['title'].format(id=M.id),
-#                	'message'	: settings.TEMPLATE_CONTENT['profile']['modify']['done']['message'].format(list=' ;<br/> '.join([f for f in pf.changed_data])),
-		     })
+		   })
 
-        
+
     else: #form not valid -> error
       return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['done']['template'], {
 			'title'		: title,
@@ -128,6 +134,8 @@ def modify(r):
     form = ProfileForm()
     if M.type != Member.STD:
       del form.fields['sp']
+    if M.type != Member.ORG:
+      del form.fields['orga']
     form.initial = member_initial_data(M)
 
     return render(r,settings.TEMPLATE_CONTENT['profile']['modify']['template'], {

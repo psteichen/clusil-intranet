@@ -8,11 +8,13 @@ class Group(Model):
   MG = 0
   WG = 1
   AG = 2
-  TL = 3
+  SG = 3
+  TL = 4
   TYPES = (
     (MG, 'Management Group'), #only for specific members
     (WG, 'Working Group'),
     (AG, 'Ad-Hoc Group'),
+    (SG, 'Special Group'),  # for all group for instance
     (TL, 'Tool'),
   )
 
@@ -32,7 +34,6 @@ class Group(Model):
   OLD = 3
   STATUSES = (
     (ACT, 'active'),
-    (SPL, 'special'), #special
     (STB, 'standby'), #inactive
     (OLD, 'archived'), #not used any more
   )

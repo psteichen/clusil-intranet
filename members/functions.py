@@ -173,6 +173,8 @@ def user_in_board(u):
 def activate_member(member):
   from django.contrib.auth.models import Permission
   from members.models import Member
+  from groups.models import Group
+  from groups.functions import affiliate
   from accounting.functions import generate_invoice
 
   # set head-of-list (and delegate permissions)
@@ -186,6 +188,11 @@ def activate_member(member):
   # save Member as active
   member.status = Member.ACT
   member.save()
+
+  # add all users for Member to "all" group
+  all_group = Group.objects.get(acronym="ALL")
+  for u in get_all_users_for_membership(member):
+    affiliate(u,all_group)
 
   # generate invoice (this will generate and send the invoice)
   generate_invoice(member)

@@ -15,8 +15,9 @@ class Event(Model):
   title		= CharField(verbose_name='Title',max_length=100)
   when		= DateField(verbose_name='Date')
   time		= TimeField(verbose_name='Starting time')
+  agenda	= CharField(verbose_name='Agenda',max_length=500)
   location	= CharField(verbose_name='Venue',max_length=500)
-  deadline	= DateTimeField(verbose_name='Deadline')
+  deadline	= DateTimeField(verbose_name='Registration deadline')
   
   def __unicode__(self):
     return unicode(self.title) + ' [ ' + unicode(self.when) + ' ] '

@@ -14,8 +14,8 @@ def submit_idea(r):
 
   template 	= settings.TEMPLATE_CONTENT['ideabox']['template']
   title 	= settings.TEMPLATE_CONTENT['ideabox']['title']
-  desc		= settings.TEMPLATE_CONTENT['ideabox']['desc'],
-  submit	= settings.TEMPLATE_CONTENT['ideabox']['submit'],
+  desc		= settings.TEMPLATE_CONTENT['ideabox']['desc']
+  submit	= settings.TEMPLATE_CONTENT['ideabox']['submit']
 
   subject 	= settings.TEMPLATE_CONTENT['ideabox']['email']['subject']
   to 		= settings.TEMPLATE_CONTENT['ideabox']['email']['to']
@@ -56,7 +56,7 @@ def submit_idea(r):
 		   })
   else:
     #no POST data yet -> show form
-    form = IdeaForm()
+    form = IdeaForm(initial={ 'user': r.user, })
 
     return render(r,template, {
 			'title'	: title,

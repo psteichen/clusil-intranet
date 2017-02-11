@@ -13,11 +13,15 @@ class EventForm(ModelForm):
 
   class Meta:
     model = Event
-    fields = ( 'title', 'when', 'time', 'location', 'deadline', 'message', 'attachement', 'send', )
+    fields = ( 'title', 'when', 'time', 'location', 'agenda', 'deadline', 'message', 'attachement', 'send', )
+    labels = {
+      'deadline'	: 'Registration deadline',
+    }
     widgets = {
       'when'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
       'time'	: TextInput(attrs={'type': 'time', 'id': 'tpicker', }),
       'location': Textarea(attrs={'placeholder': "Provide full address details.",}),
+      'agenda'	: Textarea(attrs={'placeholder': "Agenda or description of the event.",}),
       'deadline': TextInput(attrs={'type': 'datetime', 'id': 'dtpicker', }),
     }
 

@@ -53,6 +53,7 @@ INSTALLED_APPS = (
   'events',
   'accounting',
   'upload',
+  'ideabox',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -284,10 +285,18 @@ HOME_ACTIONS = (
     ),
   },
   {
-    'heading'		: 'Tools for Working Groups',
-    'desc'          	: 'coming soon...',
+    'heading'		: 'Suggestion Box',
+    'desc'         	: 'An idea? A remark? A suggestion?',
     'has_perms'		: 'cms.MEMBER',
     'actions' : (
+      {         
+        'label'        	: 'Submit your thought', 
+        'icon' 		: 'commenting-o',
+        'grade'  	: 'success',
+    	'desc'         	: 'Please share with us your thoughts about CLUSIL!',
+        'url'          	: '/ideabox/',
+        'has_perms'	: 'cms.MEMBER',
+      },
 #      {         
 #        'label'        : 'Document Management', 
 #        'icon'  	: 'folder-open',
@@ -452,6 +461,12 @@ TEMPLATE_CONTENT['groups'] = GROUPS_TMPL_CONTENT
 from members.profile.settings import *
 
 TEMPLATE_CONTENT['profile'] = PROFILE_TMPL_CONTENT
+
+## ideabox
+from ideabox.settings import *
+
+TEMPLATE_CONTENT['ideabox'] = IDEABOX_TMPL_CONTENT
+
 
 ## attendance
 from attendance.settings import *

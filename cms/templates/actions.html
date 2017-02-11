@@ -23,7 +23,7 @@
           {% if action.url %}
             <a class="btn btn-{{ action.grade }}" href="{{ action.url }}" role="button">{% if action.icon %}<i class="fa fa-{{ action.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ action.label|safe }}&nbsp;</a>
      	    <br />
-     	    {% if action.desc %}<span class="btn-footer">( {{ action.desc }} )</span>{% endif %}
+     	    {% if action.desc %}<span class="btn-footer">{{ action.desc|safe }}</span>{% endif %}
      	    <br />
      	    <br />
           {% endif %}

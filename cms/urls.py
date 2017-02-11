@@ -32,6 +32,7 @@ urlpatterns = patterns('',
 
   #members back-office (members)
   url(r'^profile/', include('members.profile.urls')),
+  url(r'^ideabox/', include('ideabox.urls')),
 
   #admin back-office (board)
   url(r'^board/', board, name='board'),
@@ -47,7 +48,6 @@ urlpatterns = patterns('',
 
 #  url(r'^events/', include('events.urls')),
 
-#  url(r'^webcontent/', include('webcontent.urls')),
 
   #admin
   url(r'^admin/', include(admin.site.urls)),

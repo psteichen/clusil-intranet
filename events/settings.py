@@ -4,42 +4,39 @@
 ACTIONS = {
   'main': (
     {
-      'label'           : u'New event',
+      'label'           : u'Create event',
       'icon'            : 'plus',
       'grade'           : 'success',
-      'url'             : '/events/add/',
+      'url'             : '/events/create/',
       'has_perms'       : 'cms.SECR',
     },
   ),
 }
 
 EVENTS_TMPL_CONTENT = {
-  'title'       	: u'Events',
+  'title'       	: u'Public Events',
   'template'    	: 'list.html',
   'actions'     	: ACTIONS['main'],
   'email': {
     'template'	: 'event_invitation.txt',
     'subject'	: u'%(title)s',
   },
-  'add': {
-    'template'		: 'form.html',
-    'title'     	: u'New event',
-    'desc'     		: u'This creates a new event and prepares the invitations to be send.',
-    'submit'   		: u'add',
-    'done': {
-      'template'	: 'done.html',
-      'title'     	: u'New event created.',
-      'message'     	: '''
-<pre>
-Invitation message: 
---------------------------------------
-%(email)s
---------------------------------------
-
-Recipients : 
-%(list)s
-</pre>
-''',
+  'create' : {
+    'title'             : u'Create a Public Event',
+    'desc'              : u'Create a Public Event.',
+    'first'             : u'first',
+    'prev'              : u'prev',
+    'event' : {
+      'title'           : u'Event details',
+      'next'            : 'next',
+    },
+    'distrib' : {
+      'title'           : u'Choose distribution lists',
+      'next'            : 'submit',
+    },
+    'done' : {
+      'template'        : 'done.html',
+      'title'           : u'[%s] created!',
     },
   },
   'send': {
@@ -57,6 +54,27 @@ Recipients :
 %(list)s
 </ul>
 ''',
+    },
+  },
+  'register': {
+    'template'		: 'form.html',
+    'title'             : u'Register for the event: {}',
+    'submit'            : u'Register',
+    'email': {
+      'template'	: 'event_registration.txt',
+      'subject'     	: u'Thank you for registration',
+    }, 
+    'done': {
+      'template'	: 'done.html',
+      'title'     	: u'Thank you for registering to our event: {}',
+      'overview' : {
+        'template'      : 'overview_event_reg.html',
+        'date'          : u'Date and starting time',
+        'location'      : u'Venue',
+        'agenda'      	: u'Agenda',
+        'info'		: u'Additional information',
+        'regcode'	: u'Your Registration Code:',
+      },
     },
   },
   'modify' : {
@@ -89,8 +107,11 @@ Recipients :
       'modify'          : u'Modify',
       'date'            : u'Date and starting time',
       'location'        : u'Venue',
+      'agenda'      	: u'Agenda',
       'invitation'      : u'Invitation',
       'attachement'     : u'Attachement',
+      'attendance'	: u'Registered participants',
+      'registration'	: u'Registration link',
     },
   },
 }

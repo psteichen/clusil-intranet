@@ -9,24 +9,36 @@ from cms.functions import visualiseDateTime
 from attendance.models import Event_Attendance
 from members.functions import get_active_members
 
-from .models import Invitation
+from .models import Invitation, Participant
 
 ###############################
 # EVENTS SUPPORTING FUNCTIONS #
 ###############################
 
-def gen_event_overview(template,event):
-  content = { 'overview' : settings.TEMPLATE_CONTENT['events']['details']['overview'] }
+def get_event_attendance(event):
+  out=''
+  for p in Participant.objects.filter(event=event):
+    out += '''
+''' + unicode(p)
+  
+  return out
+
+def gen_event_overview(overview,event,p=False):
+  content = { 'overview' : overview }
 
   content['title'] = event.title
   content['when'] = visualiseDateTime(event.when)
   content['time'] = visualiseDateTime(event.time)
   content['location'] = event.location
+  content['agenda'] = event.agenda
   I = Invitation.objects.get(event=event)
   content['invitation'] = I.message
   if I.attachement: content['attachement'] = I.attachement
+  content['attendance'] = get_event_attendance(event)
+  content['registration'] = settings.EVENTS_REG_BASE_URL + event.registration
+  if p: content['regcode'] = p.regcode
 
-  return render_to_string(template,content)
+  return render_to_string(overview['template'],content)
 
 def gen_event_initial(e):
   initial_data = {}
@@ -38,11 +50,30 @@ def gen_event_initial(e):
 
   return initial_data
 
-def gen_current_attendance(e):
+def gen_reg_hash(event):
+  #hash
+  h = hashlib.md5()
+  h.update(unicode(event.agenda)) #salt
+  h.update(unicode(event.title) + unicode(event.when)) #message
+  return unicode(h.hexdigest()[:10])
 
-  initial_data = {}
-  initial_data['subscribe'] = Event_Attendance.objects.filter(event=e,present=True).only('user')
-  initial_data['excuse'] = Event_Attendance.objects.filter(event=e,present=False).only('user')
+def gen_reg_code(e,p):
+  #hash
+  h = hashlib.md5()
+  h.update(unicode(p.email)) #salt
+  h.update(unicode(e.title) + unicode(e.when)) #message
+  return unicode(h.hexdigest()[:15])
 
-  return initial_data
+def gen_registration_message(template,event,participant):
+  content = {}
+
+  content['title'] = event.title
+  content['when'] = event.when
+  content['time'] = visualiseDateTime(event.time)
+  content['location'] = event.location
+  content['agenda'] = event.agenda
+  content['code'] = participant.regcode
+
+  return render_to_string(template,content)
+
 

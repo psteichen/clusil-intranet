@@ -1,0 +1,15 @@
+{% autoescape off %}
+We are delighted to welcome you to a CLUSIL event.
+
+Title: 		{{ title }}
+Venue: 		{{ location }}
+Date: 		{{ when }} (starting at {{ time }})
+
+Agenda 
+------
+{{ agenda }}
+
+YOUR REGISTRATION CODE: {{ code }}
+
+Make sure to have the above code available at the registration desk the day(s) of the event!
+{% endautoescape %}

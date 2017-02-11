@@ -2,8 +2,6 @@
 Dear {% if FULLNAME %}{{ FULLNAME }},{% endif %}
 
 {{ MESSAGE }}
-
 {{ SALUTATION }}
-
 {{ DISCLAIMER }}
 {% endautoescape %}

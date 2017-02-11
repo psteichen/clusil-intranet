@@ -482,7 +482,7 @@ MEETINGS_ATTENDANCE_URL = ATTENDANCE_BASE_URL + 'meetings/'
 ## events
 from events.settings import *
 TEMPLATE_CONTENT['events'] = EVENTS_TMPL_CONTENT
-EVENTS_ATTENDANCE_URL = ATTENDANCE_BASE_URL + 'events/'
+EVENTS_REG_BASE_URL = 'https://' + ALLOWED_HOSTS[0] + '/events/reg/'
 
 
 ## accounting

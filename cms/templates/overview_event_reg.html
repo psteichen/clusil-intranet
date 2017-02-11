@@ -15,16 +15,13 @@
         <i>{{ overview.agenda }}</i><pre>{{ agenda }}</pre>
       </div>
       <div class="col-sm-6">
-        <i>{{ overview.invitation }}</i><pre>{{ invitation }}</pre>
-        <i>{{ overview.attachement }}</i><a href="{{ attachement.url }}" target="_blank">{{ attachement.name }}</a>
+        <i>{{ overview.info }}</i><pre>{{ invitation }}</pre>
+        <a href="{{ attachement.url }}" target="_blank">{{ attachement.name }}</a>
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-6">
-        <i>{{ overview.attendance }}</i><pre>{{ attendance }}</pre>
-      </div>
-      <div class="col-sm-6">
-        <i>{{ overview.registration }}:&nbsp;</i><a href="{{ registration }}" target="_blank">{{ registration }}</a>
+      <div class="col-sm-12">
+        <i>{{ overview.regcode }}</i>&nbsp;{{ regcode|safe }}
       </div>
     </div>
   </div>

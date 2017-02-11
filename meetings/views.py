@@ -36,7 +36,7 @@ from .tables  import MeetingTable, MgmtMeetingTable, MeetingMixin, MeetingListin
 @permission_required('cms.MEMBER',raise_exception=True)
 def list(r):
   r.breadcrumbs( ( 
-			('home','/'),
+			('board','/board/'),
                    	('meetings','/meetings/'),
                ) )
 
@@ -59,7 +59,7 @@ def list(r):
 @permission_required('cms.BOARD',raise_exception=True)
 def add(r):
   r.breadcrumbs( ( 	
-			('home','/'),
+			('board','/board/'),
                    	('meetings','/meetings/'),
                    	('add meeting','/meetings/add/'),
                ) )
@@ -147,7 +147,7 @@ def add(r):
 @permission_required('cms.BOARD',raise_exception=True)
 def send(r, meeting_id):
   r.breadcrumbs( ( 
-			('home','/'),
+			('board','/board/'),
                    	('meetings','/meetings/'),
                    	('send meeting invitations','/meetings/send/'),
                ) )
@@ -204,7 +204,7 @@ def details(r, meeting_id):
   meeting_date = visualiseDateTime(meeting.when)
 
   r.breadcrumbs( ( 
-			('home','/'),
+			('board','/board/'),
                    	('meetings','/meetings/'),
                    	('details for meeting: '+meeting.title + ' ('+ meeting_date+ ')','/meetings/list/'+meeting_id+'/'),
                ) )
@@ -235,7 +235,8 @@ class ModifyMeetingWizard(SessionWizardView):
     context = super(ModifyMeetingWizard, self).get_context_data(form=form, **kwargs)
 
     #add breadcrumbs to context
-    self.request.breadcrumbs( ( ('home','/'),
+    self.request.breadcrumbs( (
+				('board','/board/'),
                                 ('meetings','/meetings/'),
                                 ('modify a meeting','/meetings/modify/'),
                             ) )
@@ -272,7 +273,8 @@ class ModifyMeetingWizard(SessionWizardView):
     return form
 
   def done(self, form_list, form_dict, **kwargs):
-    self.request.breadcrumbs( ( ('home','/'),
+    self.request.breadcrumbs( (
+				('board','/board/'),
                                 ('meetings','/meetings/'),
                                 ('modify a meeting','/meetings/modify/'),
                             ) )
@@ -296,7 +298,7 @@ class ModifyMeetingWizard(SessionWizardView):
 @permission_required('cms.BOARD',raise_exception=True)
 def report(r, meeting_id):
   r.breadcrumbs( ( 	
-			('home','/'),
+			('board','/board/'),
                    	('meetings','/meetings/'),
                ) )
 

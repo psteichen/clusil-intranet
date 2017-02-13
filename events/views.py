@@ -182,6 +182,7 @@ def register(r, event_hash):
   E = Event.objects.get(registration=event_hash)
 
   title 	= settings.TEMPLATE_CONTENT['events']['register']['title'].format(E.title)
+  header 	= settings.TEMPLATE_CONTENT['events']['register']['header']
   submit 	= settings.TEMPLATE_CONTENT['events']['register']['submit']
 
   e_subject 	= settings.TEMPLATE_CONTENT['events']['register']['email']['subject']
@@ -237,10 +238,12 @@ def register(r, event_hash):
 
   else: #empty form
     form = RegistrationForm()
-
+    teaser_message = gen_event_overview(settings.TEMPLATE_CONTENT['events']['register']['teaser'],E)
     return render(r, settings.TEMPLATE_CONTENT['events']['register']['template'], {
 			'title'		: title,
+			'header'	: header,
 			'form'		: form,
+			'teaser'	: teaser_message,
 			'submit'	: submit,
                 })
 

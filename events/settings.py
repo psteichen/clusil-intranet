@@ -57,9 +57,18 @@ EVENTS_TMPL_CONTENT = {
     },
   },
   'register': {
-    'template'		: 'form.html',
-    'title'             : u'Register for the event: {}',
+    'template'		: 'events_reg.html',
+    'title'             : u'{}',
+    'header'       	: u'Registration form:',
     'submit'            : u'Register',
+    'teaser' : {
+      'template'      	: 'teaser_event_reg.html',
+      'title'           : u'Event overview:',
+      'date'          	: u'Schedule',
+      'location'      	: u'Venue',
+      'agenda'      	: u'Agenda',
+      'info'		: u'Additional information',
+    },
     'email': {
       'template'	: 'event_registration.txt',
       'subject'     	: u'Thank you for registration',

@@ -12,3 +12,8 @@ body {
 img.logo {
   margin: 10px auto;
 }
+
+div.teaser {
+  padding-left: 10px;
+  border-left: 1px solid #5cb85c;
+}

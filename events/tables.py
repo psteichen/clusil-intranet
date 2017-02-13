@@ -11,19 +11,24 @@ from django_tables2 import Column
 from members.functions import gen_fullname
 from attendance.models import Event_Attendance
 
-from .models import Event
+from .models import Event, Participant
 
 #table for visualisation via django_tables2
 class EventTable(Table):
   row_class	= Column(visible=False, empty_values=()) #used to highlight some rows
+  attendance	= Column(verbose_name='Attendance',empty_values=())
   details	= Column(verbose_name='Details',empty_values=())
-  send		= Column(verbose_name='Send invitations',empty_values=())
+  send		= Column(verbose_name='Mailing',empty_values=())
   modify	= Column(verbose_name='Modify',empty_values=())
 
   def render_row_class(self, record):
     if record.when < date.today():
       return 'danger'
 
+  def render_attendance(self, record):
+    nb = Participant.objects.filter(event=record.pk).count()
+    return nb
+ 
   def render_details(self, record):
     link = '<a class="btn btn-info btn-sm" href="/events/list/{}/"><i class="fa fa-list"></i></a>'.format(escape(record.pk))
     return mark_safe(link)
@@ -47,5 +52,5 @@ class EventTable(Table):
 
   class Meta:
     model = Event
-    fields = ( 'title', 'when', 'location', 'details', )
+    fields = ( 'title', 'when', 'location', 'attendance', 'details', 'send' ,'modify', )
     attrs = {"class": "table table-striped"}

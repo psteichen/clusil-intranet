@@ -27,7 +27,7 @@ def submit_idea(r):
   submit	= settings.TEMPLATE_CONTENT['ideabox']['submit']
 
   subject 	= settings.TEMPLATE_CONTENT['ideabox']['email']['subject']
-  to 		= settings.TEMPLATE_CONTENT['ideabox']['email']['to']
+  to 		= settings.EMAILS['email']['board']
 
   done_template = settings.TEMPLATE_CONTENT['ideabox']['done']['template']
   done_title 	= settings.TEMPLATE_CONTENT['ideabox']['done']['title']

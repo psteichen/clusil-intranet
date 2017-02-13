@@ -12,7 +12,6 @@ IDEABOX_TMPL_CONTENT = {
   'email': {
     'template'		: 'ideabox.txt',
     'subject'     	: u'Member submission.',
-    'to'   		: u'board@clusil.lu',
   },
 }
 

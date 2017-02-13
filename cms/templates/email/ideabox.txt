@@ -1,0 +1,9 @@
+{% autoescape off %}
+A member submitted an idea/thought/suggestion via the MemberIdeaBox. Please find it below.
+
+---------------------------------------------------------------------
+Member: {{ name }}
+Idea:
+{{ idea }}
+---------------------------------------------------------------------
+{% endautoescape %}

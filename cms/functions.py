@@ -15,11 +15,20 @@ def debug(app,message):
     print >>errlog, 'DEBUG ['+str(app)+']: '+str(message)
 
 def attach_to_email(email,attachment):
-  try: email.attach(attachment)
+  from os import path
+  from django.core.files.storage import default_storage
+  from django.core.files.base import ContentFile
+
+  try: email.attach(tmp_file)
   except:
     from email.mime.application import MIMEApplication
     if isinstance(attachment, MIMEApplication): email.attach(attachment)
-    else: email.attach_file(attachment)
+    else: 
+      try: email.attach_file(attachment)
+      except:
+        tmp_file = default_storage.save(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name), ContentFile(attachment.read()))
+        email.attach_file(tmp_file)
+        tmp_file = default_storage.delete(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name))
 
 def notify_by_email(to,subject,message_content,template='default.txt',attachment=None):
   from django.core.mail import EmailMessage
@@ -39,8 +48,8 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
   email.body = render_to_string(template,message_content)
   if attachment:
     if is_array(attachment):
-      for a in attachment: attach_to_email(email,a) 
-    else: attach_to_email(email,attachment) 
+      for a in attachment: attach_to_email(email,a)
+    else: attach_to_email(email,attachment)
 
   try:
     email.send()

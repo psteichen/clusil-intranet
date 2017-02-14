@@ -100,8 +100,6 @@ class CreateEventWizard(SessionWizardView):
       I = Invitation(event=E,message=ef.cleaned_data['message'])
       I.save()
 
-      
-
     df = fl[1]
     if df.is_valid():
       D = df.save(commit=False)

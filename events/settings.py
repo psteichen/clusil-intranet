@@ -18,8 +18,8 @@ EVENTS_TMPL_CONTENT = {
   'template'    	: 'list.html',
   'actions'     	: ACTIONS['main'],
   'email': {
-    'template'	: 'event_invitation.txt',
-    'subject'	: u'%(title)s',
+    'template'		: 'event_invitation.txt',
+    'subject'		: u'%(title)s',
   },
   'create' : {
     'title'             : u'Create a Public Event',

@@ -20,7 +20,7 @@ class MeetingForm(ModelForm):
     model = Meeting
     fields = ( 'title', 'group', 'when', 'start', 'end', 'location', 'deadline', 'additional_message', 'attachement', 'send', )
     labels = {
-      'title'	: 'Meeting Topic',
+      'title'	: 'Meeting Topic/Title',
     }
     widgets = {
       'when'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),

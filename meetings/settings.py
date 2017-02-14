@@ -38,10 +38,6 @@ Recipients:
 %(list)s
 </pre>
 ''',
-      'email': {
-	'template'	: 'meeting_invitation.txt',
-	'subject'	: u'[CLUSIL] %(title)s',
-      },
     },
   },
   'send': {

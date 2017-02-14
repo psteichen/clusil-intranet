@@ -393,7 +393,7 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Public Events', 
         'icon'     	: 'glass',
-        'grade'     	: 'danger',
+        'grade'     	: 'warning',
         'desc'          : 'Manage public events or activities',
         'url'           : '/events/',
 	'has_perms'	: 'cms.SECR',

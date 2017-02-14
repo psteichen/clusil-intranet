@@ -74,49 +74,12 @@ def add(r):
       Mt.save()
       
       user_member = get_member_from_username(r.user.username)
-      e_subject = settings.TEMPLATE_CONTENT['meetings']['add']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
 
       if r.FILES:
         I = Invitation(meeting=Mt,message=mf.cleaned_data['additional_message'],attachement=r.FILES['attachement'])
       else:
         I = Invitation(meeting=Mt,message=mf.cleaned_data['additional_message'])
       I.save()
-      send = mf.cleaned_data['send']
-      if send:
-        I.sent = timezone.now()
-
-      email_error = { 'ok': True, 'who': [], }
-      for a in get_group_members(Mt.group):
-        u = a.user
-   
-        gen_attendance_hashes(Mt,Event.MEET,u)
-        invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,u) + mf.cleaned_data['additional_message']
-
-        message_content = {
-          'FULLNAME'    : gen_fullname(u),
-          'MESSAGE'     : invitation_message,
-        }
-       
-        #generate ical invite
-        invite = genIcal(Mt)
-
-        #send email
-        if send:
-          if I.attachement:
-            ok=notify_by_email(u.email,e_subject,message_content,False,[invite,settings.MEDIA_ROOT + unicode(I.attachement)])
-          else:
-            ok=notify_by_email(u.email,e_subject,message_content,False,invite)
-          if not ok:
-            email_error['ok']=False
-            email_error['who'].append(u.email)
-
-          # error in email -> show error messages
-          if not email_error['ok']:
-            I.save()
-            return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
-                		'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                		'error_message': settings.TEMPLATE_CONTENT['error']['email'] + ' ; '.join([e for e in email_error['who']]),
-			 })
 
       # all fine -> done
       I.save()
@@ -158,24 +121,29 @@ def send(r, meeting_id):
   I = Invitation.objects.get(meeting=Mt)
 
   title = settings.TEMPLATE_CONTENT['meetings']['send']['done']['title'] % unicode(Mt.group)
-      
+  subject = settings.TEMPLATE_CONTENT['meetings']['send']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
+
   email_error = { 'ok': True, 'who': [], }
   for a in get_group_members(Mt.group):
     u = a.user
-    #invitation email with "YES/NO button"
-    subject = settings.TEMPLATE_CONTENT['meetings']['send']['done']['email']['subject'] % { 'title': unicode(Mt.group) }
-    invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,u)
+   
+    gen_attendance_hashes(Mt,Event.MEET,u)
+    invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,u) + I.message
+
     message_content = {
-        'FULLNAME'    : gen_fullname(u),
-        'MESSAGE'     : invitation_message + I.message,
+          'FULLNAME'    : gen_fullname(u),
+          'MESSAGE'     : invitation_message,
     }
+       
+    #generate ical invite
+    invite = genIcal(Mt)
+
     #send email
-    try: #with attachement
-      ok=notify_by_email(u.email,subject,message_content,False,settings.MEDIA_ROOT + unicode(I.attachement))
-    except: #no attachement
-      ok=notify_by_email(u.email,subject,message_content)
-     
-    if not ok: 
+    if I.attachement:
+      ok=notify_by_email(u.email,e_subject,message_content,False,[invite,settings.MEDIA_ROOT + unicode(I.attachement)])
+    else:
+      ok=notify_by_email(u.email,e_subject,message_content,False,invite)
+    if not ok:
       email_error['ok']=False
       email_error['who'].append(u.email)
 
@@ -188,7 +156,7 @@ def send(r, meeting_id):
 
   # all fine -> done
   else:
-    I.sent = datetime.now()
+    I.sent = timezone.now()
     I.save()
     return render(r, settings.TEMPLATE_CONTENT['meetings']['send']['done']['template'], {
 	                'title': title, 

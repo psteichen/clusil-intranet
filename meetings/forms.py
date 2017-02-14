@@ -14,11 +14,10 @@ from .models import Meeting
 class MeetingForm(ModelForm):
   additional_message 	= CharField(label='Additional message',widget=Textarea(attrs={'placeholder': "Message to add to the invitation email.",}),required=False)
   attachement 		= FileField(required=False)
-  send 			= BooleanField(label='Send invitations straight away!',required=False)
 
   class Meta:
     model = Meeting
-    fields = ( 'title', 'group', 'when', 'start', 'end', 'location', 'deadline', 'additional_message', 'attachement', 'send', )
+    fields = ( 'title', 'group', 'when', 'start', 'end', 'location', 'deadline', 'additional_message', 'attachement', )
     labels = {
       'title'	: 'Meeting Topic/Title',
     }

@@ -5,4 +5,5 @@ Please confirm/cancel your attendance, before {{ deadline }},  herewith:
 
 	YES, I will attend: 	{{ attendance.YES }}
 	NO, pleasee excuse me: 	{{ attendance.NO }}
+
 {% endautoescape %}

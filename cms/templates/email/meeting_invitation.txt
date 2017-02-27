@@ -1,8 +1,10 @@
 {% autoescape off %}
-Invitation to the {{ title }} meeting on {{ when }} {{ time }} at {{ location }}.
+Invitation to the {{ group }} meeting on {{ when }} starting {{ time }} at {{ location }}.
 
-Please confirm/cancel your attendance, before {{ deadline }},  herewith:
+The main topic of discussion will be : {{ title }}
+
+Please confirm/cancel your attendance herewith:
 
 	YES, I will attend: 	{{ attendance.YES }}
-	NO, pleasee excuse me: 	{{ attendance.NO }}
+	NO, I have to excuse:	{{ attendance.NO }}
 {% endautoescape %}

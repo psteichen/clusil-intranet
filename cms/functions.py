@@ -19,13 +19,16 @@ def attach_to_email(email,attachment):
   from django.core.files.storage import default_storage
   from django.core.files.base import ContentFile
 
-  try: email.attach(attachment)
+  try: email.attach(tmp_file)
   except:
-    try: email.attach_file(attachment)
-    except:
-      tmp_file = default_storage.save(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name), ContentFile(attachment.read()))
-      email.attach_file(tmp_file)
-      tmp_file = default_storage.delete(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name))
+    from email.mime.application import MIMEApplication
+    if isinstance(attachment, MIMEApplication): email.attach(attachment)
+    else: 
+      try: email.attach_file(attachment)
+      except:
+        tmp_file = default_storage.save(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name), ContentFile(attachment.read()))
+        email.attach_file(tmp_file)
+        tmp_file = default_storage.delete(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name))
 
 def notify_by_email(to,subject,message_content,template='default.txt',attachment=None):
   from django.core.mail import EmailMessage

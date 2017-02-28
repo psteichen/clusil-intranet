@@ -386,7 +386,7 @@ BOARD_ACTIONS = (
         'label'         : 'Meetings and <i>members-only</i> Events', 
         'icon'     	: 'calendar',
         'grade'     	: 'success',
-        'desc'          : 'Manage regular meetings (board, working groups...) or membery-only events.',
+        'desc'          : 'Manage regular meetings (board, working groups...) or members-only events.',
         'url'           : '/meetings/',
 	'has_perms'	: 'cms.SECR',
       },

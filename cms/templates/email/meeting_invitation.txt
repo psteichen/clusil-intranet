@@ -4,6 +4,6 @@ Invitation to the {{ title }} meeting on {{ when }} {{ time }} at {{ location }}
 Please confirm/cancel your attendance, before {{ deadline }},  herewith:
 
 	YES, I will attend: 	{{ attendance.YES }}
-	NO, pleasee excuse me: 	{{ attendance.NO }}
+	NO, please excuse me: 	{{ attendance.NO }}
 
 {% endautoescape %}

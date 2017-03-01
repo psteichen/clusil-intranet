@@ -65,7 +65,6 @@ def add(r):
                ) )
 
   if r.POST:
-    e_template =  settings.TEMPLATE_CONTENT['meetings']['add']['done']['email']['template']
     done_message = ''
 
     mf = MeetingForm(r.POST,r.FILES)

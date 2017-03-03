@@ -13,6 +13,11 @@ from cms.functions import show_form, notify_by_email
 
 from registration.functions import gen_hash
 
+from accounting.models import Fee
+from accounting.functions import generate_invoice
+
+from .profile.tables import InvoiceTable
+
 from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname, user_in_board
 from .models import Member, Role, Renew
 from .forms import MemberForm, RoleForm
@@ -110,15 +115,15 @@ def details(r, member_id):
                    	('details of member: '+unicode(member_id),'/members/details/'+member_id+'/'),
                ) )
 
-#  if r.user == member.head_of_list or r.user == member.delegate:
-  if r.user == member.head_of_list or r.user == member.delegate or user_in_board(r.user):
+  if r.user == member.head_of_list or r.user == member.delegate:
+#  if r.user == member.head_of_list or r.user == member.delegate or user_in_board(r.user):
     message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,settings.TEMPLATE_CONTENT['members']['details']['overview']['actions'])
-#  elif user_in_board(r.user):
-#    actions = settings.TEMPLATE_CONTENT['members']['details']['overview']['admin_actions']
-#    for a in actions:
-#      a['url'] = a['url'].format(member_id)
-#
-#    message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,actions)
+  elif user_in_board(r.user):
+    actions = settings.TEMPLATE_CONTENT['members']['details']['overview']['admin_actions']
+    for a in actions:
+      a['url'] = a['url'].format(member_id)
+
+    message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,actions)
   else:
     message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['readonly']['template'],member)
   
@@ -221,6 +226,65 @@ class ModifyMemberWizard(SessionWizardView):
     return render(self.request, template, {
 				'title': title,
                  })
+
+
+# invoice #
+###########
+@permission_required('cms.MEMBER')
+def invoice(r, member_id):
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('members','/members/'),
+                       	('invoices','/members/invoice/'),
+               ) )
+  M = Member.objects.get(id=member_id)
+
+  template = settings.TEMPLATE_CONTENT['profile']['invoice']['template']
+  done_template = settings.TEMPLATE_CONTENT['profile']['invoice']['done']['template']
+  if M != None:  
+    title = settings.TEMPLATE_CONTENT['profile']['invoice']['title'] % { 'member' : M.id, }
+    desc = settings.TEMPLATE_CONTENT['profile']['invoice']['desc']
+    actions = settings.TEMPLATE_CONTENT['profile']['invoice']['admin_actions']
+    for a in actions:
+      a['url'] = a['url'].format(member_id)
+ 
+    table = InvoiceTable(Fee.objects.filter(member=M).order_by('-year'))
+    RequestConfig(r, paginate={"per_page": 75}).configure(table)
+
+    return render(r, template, {
+			'title'		: title,
+			'desc'		: desc,
+			'actions'	: actions,
+       	            	'table'		: table,
+                  })
+
+  else: #error
+    return render(r, done_template, {
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'],
+		   })
+
+
+# new invoice #
+###############
+@permission_required('cms.MEMBER')
+def new_invoice(r, member_id):
+  r.breadcrumbs( ( 
+			('home','/home/'),
+                       	('members','/members/'),
+                       	('invoices','/members/invoice/'),
+               ) )
+  M = Member.objects.get(id=member_id)
+  generate_invoice(M)
+
+  template = settings.TEMPLATE_CONTENT['profile']['newinv']['template']
+  title = settings.TEMPLATE_CONTENT['profile']['newinv']['title'].format(id=M.id)
+  message = settings.TEMPLATE_CONTENT['profile']['newinv']['message'].format(head=gen_fullname(M.head_of_list),year=date.today().strftime('%Y'))
+  return render(r, template, {
+			'title'		: title,
+			'message'	: message,
+	       })
+
+
 
 
 # role_add #

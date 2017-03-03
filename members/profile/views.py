@@ -429,9 +429,8 @@ def invoice(r):
        	            	'table'		: table,
                   })
 
-  else: #none-member login -> error
+  else: #none-member login -> probably an admin
     return render(r, done_template, {
-			'title'		: title,
                 	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'],
 		   })
 

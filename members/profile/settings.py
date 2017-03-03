@@ -31,6 +31,15 @@ INV_ACTIONS = (
     'url'	: '/profile/invoice/new/',
   },
 )
+ADMIN_INV_ACTIONS = (
+  {
+    'label'	: 'Generate Invoice',
+    'icon'	: 'euro',
+    'grade'	: 'warning',
+    'url'	: '/members/invoice/new/{}/',
+  },
+)
+
 
 PROFILE_TMPL_CONTENT = {
   'profile': {
@@ -141,6 +150,7 @@ PROFILE_TMPL_CONTENT = {
     'title'     	: u'Invoices',
     'desc'     		: u'View Invoices and payment status of the CLUSIL Membership',
     'actions'  		: INV_ACTIONS,
+    'admin_actions'  	: ADMIN_INV_ACTIONS,
     'done': {
       'template'	: 'done.html',
       'title'     	: u'View Invoice.',

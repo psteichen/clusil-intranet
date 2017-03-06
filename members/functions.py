@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.contrib.auth.models import User
 
 from cms.functions import visualiseDateTime
 
@@ -12,7 +13,6 @@ from cms.functions import visualiseDateTime
 ################################
 
 def get_member_from_username(username):
-  from django.contrib.auth.models import User
   from members.models import Member
 
   U = User.objects.get(username=username)
@@ -192,7 +192,7 @@ def activate_member(member):
   # add all users for Member to "all" group
   all_group = Group.objects.get(acronym="ALL")
   for u in get_all_users_for_membership(member):
-    affiliate(u,all_group)
+    affiliate(User.objects.get(username=u.username),all_group)
 
   # generate invoice (this will generate and send the invoice)
   generate_invoice(member)

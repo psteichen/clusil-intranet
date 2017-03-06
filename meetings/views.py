@@ -84,7 +84,7 @@ def add(r):
       I.save()
       return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': invitation_message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]), },
+                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': I.message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]), },
                 })
 
     # form not valid -> error

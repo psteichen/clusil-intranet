@@ -29,9 +29,9 @@ from .functions import member_initial_data, get_user_choice_list, member_is_full
 from .forms import ProfileForm, AffiliateForm, UserForm, UserChangeForm
 from .tables import InvoiceTable
 
-################
-# MEMBER views #
-################
+#################
+# PROFILE views #
+#################
 
 # profile #
 ###########

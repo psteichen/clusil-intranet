@@ -235,7 +235,7 @@ def invoice(r, member_id):
   r.breadcrumbs( ( 
 			('home','/home/'),
                        	('members','/members/'),
-                       	('invoices','/members/invoice/'),
+                       	('invoices - '+member_id,'/members/invoice/'+member_id+'/'),
                ) )
   M = Member.objects.get(id=member_id)
 

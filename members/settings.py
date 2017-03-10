@@ -43,19 +43,19 @@ ACTIONS = {
       'label'	: 'Change Member',
       'icon'	: 'pencil',
       'grade'	: 'warning',
-      'url'    	: '/members/modify/{}',
+      'url'    	: '/members/modify/{}/',
     },
     {
       'label'	: 'View Invoices',
       'icon'	: 'euro',
       'grade'	: 'info',
-      'url'    	: '/members/invoice/{}',
+      'url'    	: '/members/invoice/{}/',
     },
     {
       'label'	: 'Add User',
       'icon'	: 'plus',
       'grade'	: 'success',
-      'url'	: '/members/adduser/{}',
+      'url'	: '/members/adduser/{}/',
     },
   ),
   'roles' : (

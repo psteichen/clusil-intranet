@@ -192,7 +192,7 @@ def activate_member(member):
   # add all users for Member to "all" group
   all_group = Group.objects.get(acronym="ALL")
   for u in get_all_users_for_membership(member):
-    affiliate(User.objects.get(username=u.username),all_group)
+    affiliate(User.objects.get(username=u['username']),all_group)
 
   # generate invoice (this will generate and send the invoice)
   generate_invoice(member)

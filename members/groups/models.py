@@ -18,7 +18,6 @@ class Group(Model):
     (TL, 'Tool'),
   )
 
-
   CMS    = 0
   CLOUD  = 1
   COLLAB = 2
@@ -46,7 +45,7 @@ class Group(Model):
   status      	= IntegerField(choices=STATUSES,default=ACT) 
 
   def __unicode__(self):
-    return '[' + self.TYPES[self.type][1] +'] ' + self.title
+    return self.title
 
 
 # Affiliation (user to group) model

@@ -28,11 +28,15 @@ def gen_attendance_hashes(event,event_type,user):
   yes_hash = gen_hash(event,user.email)
   no_hash = gen_hash(event,user.email,False)
   if event_type == Event.MEET:
-    mm = MtoM(meeting=event,user=user,yes_hash=yes_hash,no_hash=no_hash)
-    mm.save()
+    try: MtoM.objects.get(meeting=event,user=user)
+    except: 
+      mm = MtoM(meeting=event,user=user,yes_hash=yes_hash,no_hash=no_hash)
+      mm.save()
   if event_type == Event.OTH:
-    em = EtoM(event=event,user=user,yes_hash=yes_hash,no_hash=no_hash)
-    em.save()
+    try: EtoM.objects.get(event=event,user=user)
+    except: 
+      em = EtoM(event=event,user=user,yes_hash=yes_hash,no_hash=no_hash)
+      em.save()
 
 def get_attendance_hash(e,t,m,yes):
   if t == Event.MEET:

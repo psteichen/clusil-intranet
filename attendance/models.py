@@ -29,6 +29,9 @@ class MtoM(Model):
   yes_hash   	= CharField(max_length=250)
   no_hash   	= CharField(max_length=250)
 
+  class Meta:
+    unique_together = ('meeting', 'user')
+
   def __unicode__(self):
     return unicode(self.meeting) + ' - ' + unicode(self.user)
 

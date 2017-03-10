@@ -84,7 +84,7 @@ def add(r):
       I.save()
       return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': invitation_message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]), },
+                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': I.message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]), },
                 })
 
     # form not valid -> error
@@ -139,9 +139,9 @@ def send(r, meeting_id):
 
     #send email
     if I.attachement:
-      ok=notify_by_email(u.email,e_subject,message_content,False,[invite,settings.MEDIA_ROOT + unicode(I.attachement)])
+      ok=notify_by_email(u.email,subject,message_content,False,[invite,settings.MEDIA_ROOT + unicode(I.attachement)])
     else:
-      ok=notify_by_email(u.email,e_subject,message_content,False,invite)
+      ok=notify_by_email(u.email,subject,message_content,False,invite)
     if not ok:
       email_error['ok']=False
       email_error['who'].append(u.email)

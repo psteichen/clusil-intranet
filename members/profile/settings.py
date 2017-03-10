@@ -174,7 +174,7 @@ Your membership is now renewed.
 <br/><br/>
 The invoice will reach you by email, please pay in a timely manner.
 <br/><br/>
-Looking forward to meet you again at one of our next events or working groups.
+Looking forward meeting you again at one of our next events.
 ''',  
     'error_message' 	: '<strong>ERROR!</strong> Validation code not known or already used.',
   },

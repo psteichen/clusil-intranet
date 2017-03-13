@@ -29,6 +29,7 @@ def gen_meeting_overview(template,meeting):
   if meeting.report:  content['report'] = settings.MEDIA_URL + unicode(meeting.report)
   try:   
     invitation = Invitation.objects.get(meeting=meeting)
+    content['message'] = invitation.message
     if invitation.attachement: content['attach'] = settings.MEDIA_URL + unicode(invitation.attachement)
   except: pass
   content['attendance'] = Meeting_Attendance.objects.filter(meeting=meeting,present=True).only('user')
@@ -44,6 +45,14 @@ def gen_meeting_initial(m):
   initial_data['end'] = m.end
   initial_data['location'] = m.location
   initial_data['deadline'] = m.deadline
+
+  return initial_data
+
+def gen_invitation_initial(i):
+  initial_data = {}
+  initial_data['meeting'] = i.meeting
+  initial_data['message'] = i.message
+  initial_data['attachement'] = i.attachement
 
   return initial_data
 

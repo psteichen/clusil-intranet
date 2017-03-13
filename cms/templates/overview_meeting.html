@@ -2,16 +2,24 @@
 <div class="panel panel-primary">
   <div class="panel-body">
     <div class="row">
-      <div class="col-sm-6">
+      <div class="col-sm-4">
         {{ overview.date }}<p class="lead">{{ when }} {{ time }}</p>
       </div>
-      <div class="col-sm-6">
+      <div class="col-sm-4">
         {{ overview.location }}<address class="lead">{{ location }}<br/>{{ address }}</address>
       </div>
+      <div class="col-sm-4">
+          {% if report %}<a class="btn btn-success pull-right" href="{{ report }}" target="_blank" role="button"><span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;{{ overview.report }}&nbsp;</a>{% endif %}
+      </div>
+    </div>
+    <div class="row">
       <div class="col-sm-12">
         <div class="pull-right" role="group">
-          {% if attach %}<a class="btn btn-info" href="{{ attach }}" target="_blank" role="button"><span class="glyphicon glyphicon-open-file"></span>&nbsp;&nbsp;{{ overview.attach }}&nbsp;</a>{% endif %}
-          {% if report %}<a class="btn btn-success" href="{{ report }}" target="_blank" role="button"><span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;{{ overview.report }}&nbsp;</a>{% endif %}
+          {% if message %}{{ overview.message }}
+	    {% if attach %}<a class="btn btn-info" href="{{ attach }}" target="_blank" role="button"><span class="glyphicon glyphicon-open-file"></span>&nbsp;&nbsp;{{ overview.attach }}&nbsp;</a><br />{% endif %}
+	    <br />
+            <div class="well"><p class="lead">{{ message }}</p></div>
+	  {% endif %}
         </div>
         {{ overview.topic }}<p class="lead">{{ topic }}</p>
       </div>

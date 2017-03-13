@@ -42,6 +42,7 @@ class MgmtMeetingTable(Table):
   send		= Column(verbose_name='Invitations',empty_values=())
   modify	= Column(verbose_name='Modify',empty_values=())
   report	= Column(verbose_name='Minutes',empty_values=())
+  delete	= Column(verbose_name='Delete',empty_values=())
 
   def render_row_class(self, record):
     if record.when < date.today():
@@ -64,7 +65,6 @@ class MgmtMeetingTable(Table):
       link = '<center><a class="btn btn-success btn-sm" href="/meetings/send/{}/" title="Renvoyer"><span class="glyphicon glyphicon-envelope"></span></a></center>'.format(escape(record.id))
     else: #not yet sent
       link = '<center><a class="btn btn-danger btn-sm" href="/meetings/send/{}/" title="Envoyer"><span class="glyphicon glyphicon-envelope"></span></a></center>'.format(escape(record.id))
-
     return mark_safe(link)
 
   def render_modify(self, record):
@@ -78,9 +78,20 @@ class MgmtMeetingTable(Table):
       link = '<center><a class="btn btn-danger btn-sm" href="/meetings/report/{}/" title="Soumettre"><span class="glyphicon glyphicon-file"></span></a></center>'.format(escape(record.id))
     return mark_safe(link)
 
+  def render_delete(self, record):
+    sent = None
+    link = ''
+    try:
+      I = Invitation.objects.get(meeting=record)
+      sent = I.sent
+    except: pass
+    if not sent: #not yet sent, possible to delete
+      link = '<center><a class="btn btn-danger btn-sm" href="/meetings/delete/{}/" title="Delete"><i class="fa fa-trash"></i></a></center>'.format(escape(record.id))
+    return mark_safe(link)
+
   class Meta:
     model = Meeting
-    fields = ( 'group', 'when', 'location', 'totals', 'details', 'send', 'modify', 'report', 'delete', )
+    fields = ( 'group', 'title', 'when', 'location', 'totals', 'details', 'send', 'modify', 'report', 'delete', )
     attrs = {"class": "table table-striped"}
 
 

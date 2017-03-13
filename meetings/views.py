@@ -6,6 +6,7 @@ from datetime import date, timedelta, datetime
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.formtools.wizard.views import SessionWizardView
+from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.utils import timezone
 
@@ -21,9 +22,9 @@ from members.groups.functions import get_group_members
 from attendance.functions import gen_attendance_hashes, gen_invitation_message
 from attendance.models import Meeting_Attendance
 
-from .functions import gen_meeting_overview, gen_meeting_initial, gen_current_attendance, gen_report_message
+from .functions import gen_meeting_overview, gen_meeting_initial, gen_invitation_initial, gen_report_message
 from .models import Meeting, Invitation
-from .forms import  MeetingForm, ListMeetingsForm, MeetingReportForm
+from .forms import  MeetingForm, ListMeetingsForm, MeetingReportForm, DeleteMeetingForm
 from .tables  import MeetingTable, MgmtMeetingTable, MeetingMixin, MeetingListingTable
 
 
@@ -189,11 +190,12 @@ def details(r, meeting_id):
 ##########
 
 #modify helper functions
-def show_attendance_form(wizard):
-  return show_form(wizard,'meeting','attendance',True)
+def show_invitation_form(wizard):
+  return show_form(wizard,'meeting','invitation',True)
 
 #modify formwizard
 class ModifyMeetingWizard(SessionWizardView):
+  file_storage = FileSystemStorage()
 
   def get_template_names(self):
     return 'wizard.html'
@@ -209,9 +211,9 @@ class ModifyMeetingWizard(SessionWizardView):
                             ) )
 
     if self.steps.current != None:
-      title = u'réunion'
       meeting_id = self.kwargs['meeting_id']
-      title = Meeting.objects.get(pk=meeting_id).title
+      M = Meeting.objects.get(pk=meeting_id)
+      title = unicode(M.group) + ' meeting [about: ' + M.title + '] on ' + visualiseDateTime(M.when)
       context.update({'title': settings.TEMPLATE_CONTENT['meetings']['modify']['title']})
       context.update({'first': settings.TEMPLATE_CONTENT['meetings']['modify']['first']})
       context.update({'prev': settings.TEMPLATE_CONTENT['meetings']['modify']['prev']})
@@ -234,8 +236,12 @@ class ModifyMeetingWizard(SessionWizardView):
       form.initial = gen_meeting_initial(M)
       form.instance = M
 
-    if step == 'attendance':
-      form.initial = gen_current_attendance(M)
+    if step == 'invitation':
+      try:
+        I = Invitation.objects.get(meeting=M)
+        form.initial = gen_invitation_initial(I)
+        form.instance = I
+      except Invitation.DoesNotExist: pass
 
     return form
 
@@ -248,10 +254,17 @@ class ModifyMeetingWizard(SessionWizardView):
 
     template = settings.TEMPLATE_CONTENT['meetings']['modify']['done']['template']
 
-    M = None
+    M = I = None
     mf = form_dict['meeting']
     if mf.is_valid():
       M = mf.save()
+
+    if show_invitation_form(self):
+      invf = form_dict['invitation']
+      if invf.is_valid():
+        I = invf.save(commit=False)
+        I.meeting = M
+        I.save()
 
     title = settings.TEMPLATE_CONTENT['meetings']['modify']['done']['title'] % M
 
@@ -333,5 +346,47 @@ def report(r, meeting_id):
                 'form': form,
                 })
 
+
+# delete #
+########
+@permission_required('cms.BOARD',raise_exception=True)
+def delete(r, meeting_id):
+  r.breadcrumbs( ( 
+			('board','/board/'),
+                   	('meetings','/meetings/'),
+               ) )
+
+  Mt = Meeting.objects.get(id=meeting_id)
+  template	= settings.TEMPLATE_CONTENT['meetings']['delete']['done']['template']
+  title		= settings.TEMPLATE_CONTENT['meetings']['delete']['done']['title'] % { 'meeting': unicode(Mt), }
+
+  if r.POST:
+    done_message = ''
+
+    dmf = DeleteMeetingForm(r.POST)
+    if dmf.is_valid():
+      Mt.delete()
+      
+      # all fine -> done
+      return render(r, template, {
+                'title'		: title, 
+                })
+
+    # form not valid -> error
+    else:
+      return render(r, template, {
+                'title'		: title, 
+                'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in dmf.errors]),
+                })
+
+  # no post yet -> empty form
+  else:
+    form = DeleteMeetingForm()
+    return render(r, settings.TEMPLATE_CONTENT['meetings']['delete']['template'], {
+                'title': settings.TEMPLATE_CONTENT['meetings']['delete']['title'] % { 'meeting': unicode(Mt), },
+                'desc': settings.TEMPLATE_CONTENT['meetings']['delete']['desc'],
+                'submit': settings.TEMPLATE_CONTENT['meetings']['delete']['submit'],
+                'form': form,
+                })
 
 

@@ -8,7 +8,7 @@ from django.forms.models import modelformset_factory, BaseModelFormSet
 
 from members.functions import get_active_members
 
-from .models import Meeting
+from .models import Meeting, Invitation
 
 #meeting form
 class MeetingForm(ModelForm):
@@ -35,17 +35,25 @@ class ListMeetingsForm(Form):
   meetings = ModelChoiceField(queryset=Meeting.objects.all().order_by('-num'))
 
 class ModifyMeetingForm(ModelForm):
-#not used yet  attendance = BooleanField(label='Subscribe/excuse a membre',required=False)
+  invitation = BooleanField(label='Adjust invitation message/attachement',required=False)
 
   class Meta:
     model = Meeting
-#    fields = ( 'title', 'when', 'start', 'end', 'location', 'deadline', 'attendance', )
-    fields = ( 'title', 'when', 'start', 'end', 'location', 'deadline', )
+    fields = ( 'title', 'when', 'start', 'end', 'location', 'deadline', 'invitation', )
     widgets = {
       'when'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
       'start'	: TextInput(attrs={'type': 'time', 'id': 'tpicker', }),
       'end'	: TextInput(attrs={'type': 'time', 'id': 'tpicker', }),
       'deadline': TextInput(attrs={'type': 'datetime', 'id': 'dtpicker', }),
+    }
+
+class ModifyInvitationForm(ModelForm):
+
+  class Meta:
+    model = Invitation
+    fields = ( 'message', 'attachement', )
+    widgets = {
+      'message'	: Textarea(attrs={'placeholder': "Message to add to the invitation email.",}),
     }
 
 
@@ -54,3 +62,7 @@ class MeetingReportForm(Form):
   when		= CharField(label=u'Date',widget=TextInput(attrs={'readonly': 'readonly', }))
   report	= FileField(label='Minutes')
   send 		= BooleanField(label='Send invitations straight away!',required=False)
+
+#delete form
+class DeleteMeetingForm(Form):
+  sure 		= BooleanField(label='Really sure?')

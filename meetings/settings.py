@@ -65,7 +65,11 @@ Recipients:
       'next'    	: 'next',
     },
     'meeting' : {
-      'title'   	: u'Modify %(meeting)s',
+      'title'   	: u'Adjust %(meeting)s',
+      'next'    	: 'next',
+    },
+    'invitation' : {
+      'title'   	: u'Adjust invitation details',
       'next'    	: 'next',
     },
     'done' : {
@@ -81,7 +85,8 @@ Recipients:
       'modify'		: u'Modify',
       'topic'		: u'Main topic of the meeting:',
       'date'		: u'Date and time',
-      'attach'		: u'Supplementary information',
+      'message'		: u'Supplementary information:',
+      'attach'		: u'Attachement',
       'location'	: u'Location (venue)',
       'report'		: u'Minutes',
       'attendance'	: u'Present',
@@ -103,6 +108,16 @@ Recipients:
 	'template'	: 'meeting_report.txt',
 	'subject'	: u'[CLUSIL] Minutes of meeting: %(title)s',
       },
+    },
+  },
+  'delete': {
+    'template'		: 'form.html',
+    'title'     	: u'DELETE Meeting [%(meeting)s] ?',
+    'desc'          	: u'<strong>This will permanently DELETE the meeting! Be sure that this is your intended objective!</strong>',
+    'submit'   		: u'DELETE',
+    'done': {
+      'template'	: 'done.html',
+      'title'     	: u'Meeting [%(meeting)s] DELETED',
     },
   },
 }

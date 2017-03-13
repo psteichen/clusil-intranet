@@ -52,10 +52,12 @@ def generate_invoice(m,year=date.today().strftime('%Y')):
   #save invoice in Fee model
   try:
     F = Fee.objects.get(member=m,year=year)
+    F.paid = False
     F.paid_date = None
     F.invoice.save(fn,File(pdf),save=True)
   except Fee.DoesNotExist:
     F = Fee(member=m,year=year)
+    F.paid = False
     F.paid_date = None
     F.invoice.save(fn,File(pdf),save=True)
   pdf.close()

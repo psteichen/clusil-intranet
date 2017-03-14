@@ -197,3 +197,12 @@ def activate_member(member):
   # generate invoice (this will generate and send the invoice)
   generate_invoice(member)
 
+
+def add_user_to_all_group(user):
+  from groups.models import Group
+  from groups.functions import affiliate
+
+  all_group = Group.objects.get(acronym="ALL")
+  affiliate(user,all_group)
+
+

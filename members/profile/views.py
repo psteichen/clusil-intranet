@@ -14,7 +14,7 @@ from django_tables2 import RequestConfig
 
 from cms.functions import notify_by_email, gen_form_errors
 
-from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username
+from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group
 from members.models import Member, Renew
 
 from members.groups.functions import affiliate, get_affiliations
@@ -35,20 +35,25 @@ from .tables import InvoiceTable
 
 # profile #
 ###########
-@permission_required('cms.MEMBER')
+@login_required()
 def profile(r):
   r.breadcrumbs( ( 
 			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
 
+  U = r.user
   M = get_member_from_username(r.user.username)
   if M != None:  
     title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
-    actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
-    if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
+    template = settings.TEMPLATE_CONTENT['profile']['profile']['user_overview']['template']
+    actions = None
+    if U.has_perm('cms.MEMBER'): 
+      template = ettings.TEMPLATE_CONTENT['profile']['profile']['overview']['template']
+      actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
+      if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
 
-    overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template'], { 
+    overview = render_to_string(template, { 
                    			'title'		: title,
 					'member'	: M, 
 					'country'	: get_country_from_address(M.address), 
@@ -57,7 +62,7 @@ def profile(r):
 				})
 
   else: #none-member login, probably an admin
-    overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['user_overview']['template'], { 
+    overview = render_to_string(settings.TEMPLATE_CONTENT['profile']['profile']['admin_overview']['template'], { 
 					'user'	: r.user, 
 				})
 
@@ -173,6 +178,9 @@ def adduser(r): # only if membership-type is ORG
       #add user to member users 
       M.save()
       M.users.add(U)
+
+      #add user to ALL group
+      add_user_to_all_group(U)
 	
       message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(name=gen_fullname(U))
       return render(r,done_template, {
@@ -344,6 +352,52 @@ def make_delegate(r,user):
 			'title'		: title,
 			'message'	: message,
 	       })
+
+
+# modify user #
+###############
+@login_required()
+def moduser(r,user):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('member profile','/profile/'),
+               ) )
+ 
+  U = User.objects.get(username=user)
+  title 	= settings.TEMPLATE_CONTENT['profile']['moduser']['title'].format(name=gen_fullname(U))
+  template 	= settings.TEMPLATE_CONTENT['profile']['moduser']['template']
+  done_title 	= settings.TEMPLATE_CONTENT['profile']['moduser']['done']['title'].format(name=gen_fullname(U))
+  done_template = settings.TEMPLATE_CONTENT['profile']['moduser']['done']['template']
+
+  if r.POST:
+    uf = UserForm(r.POST,instance=U)
+    if uf.is_valid() and uf.has_changed():
+      U = uf.save()
+
+      #all fine
+      return render(r,done_template, {
+			'title'		: done_title,
+		   })
+
+    else: #from not valid -> error
+      return render(r,done_template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ' + gen_form_errors(uf),
+		   })
+
+  else:
+    #no POST data yet -> show working groups form
+    form = UserForm()
+    form.initial = gen_user_initial(U)
+    form.instance = U
+
+    return render(r,template, {
+			'title'	: title,
+  			'desc'	: settings.TEMPLATE_CONTENT['profile']['moduser']['desc'].format(name=gen_fullname(U)),
+  			'submit': settings.TEMPLATE_CONTENT['profile']['moduser']['submit'],
+			'form'	: form,
+		   })
+
 
 
 # remove user #

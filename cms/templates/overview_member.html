@@ -19,7 +19,7 @@
   	  </li>
 	{% endif %}
 	</ul>
-        {% if member.student_proof %} <a class="btn btn-sm btn-info }}" href="{{ media_url }}{{ member.student_proof }}" role="button"><span class="glyphicon glyphicon-education"></span>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
+        {% if member.student_proof %} <a class="btn btn-sm btn-info }}" href="{{ media_url }}{{ member.student_proof }}" role="button"><i class="fa fa-education"></i>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
       </div>
       <div class="col-sm-4">
         <blockquote>
@@ -38,12 +38,12 @@
     </div>
     <div class="row">
       <div class="col-sm-12">
-    <div class="pull-right">
-      <span class="text-muted">Global Actions:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      {% for a in actions %}
-        {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<span class="glyphicon glyphicon-{{ a.icon }}"></span>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
-      {% endfor %}
-    </div>
+        <div class="pull-right">
+          <span class="text-muted">Global Actions:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          {% for a in actions %}
+            {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
+          {% endfor %}
+        </div>
         <p>All users registered on this membership:</p>
         <table class="table table-condensed table-striped">
          <tr> {# headers #}
@@ -53,15 +53,15 @@
           <th>Email</th>
           <th>Login</th>
           <th>Affiliations</th>
-          <th>Actions</th>
+          <th class="text-center">Actions</th>
          </tr>
  
          {% for u in users %}
          <tr>
           <td>
-           {% if u.role == 'hol' %}<span class="glyphicon glyphicon-king text-success"></span>{% endif %}
-           {% if u.role == 'del' %}<span class="glyphicon glyphicon-queen text-info"></span>{% endif %}
-           {% if u.role == 'u' %}<span class="glyphicon glyphicon-user"></span>{% endif %}
+           {% if u.role == 'hol' %}<i class="fa fa-user-circle text-success" title="Head of list"></i>{% endif %}
+           {% if u.role == 'del' %}<i class="fa fa-user-secret text-info" title="Delegate"></i>{% endif %}
+           {% if u.role == 'u' %}<i class="fa fa-user"></i>{% endif %}
           </td>
           <td>{{ u.first_name }}</td>
           <td>{{ u.last_name|upper }}</td>
@@ -70,14 +70,17 @@
           <td>{{ u.affil|safe }}</td>
           <td>
             <div class="btn-group-vertical" role="group">
-	      <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ u.username }}/" title=""><span class="glyphicon glyphicon-th-list"></span>&nbsp;&nbsp;Affiliate User</a>
+	      <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ u.username }}/" title=""><i class="fa fa-th-list"></i>&nbsp;&nbsp;Affiliate User</a>
               {% if u.role != 'hol' %}
-	        <a class="btn btn-sm btn-success" role="button" href="/profile/make_head/{{ u.username }}/" title=""><span class="glyphicon glyphicon-king"></span>&nbsp;&nbsp;Assign as Head of List</a>
+	        <a class="btn btn-sm btn-success" role="button" href="/profile/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as Head of List</a>
               {% endif %}
               {% if u.role != 'del' %}
-	        <a class="btn btn-sm btn-warning" role="button" href="/profile/make_delegate/{{ u.username }}/" title=""><span class="glyphicon glyphicon-queen"></span>&nbsp;&nbsp;Assign as Delegate</a>
+	        <a class="btn btn-sm btn-warning" role="button" href="/profile/make_delegate/{{ u.username }}/" title=""><i class="fa fa-user-secret"></i>&nbsp;&nbsp;Assign as Delegate</a>
               {% endif %}
-	      <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ u.username }}/" title=""><span class="glyphicon glyphicon-minus"></span>&nbsp;&nbsp;Delete User</a>
+	      <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
+            </div>
+            <div class="btn-group-vertical pull-right" role="group">
+	      <a class="btn btn-sm btn-danger" role="button" href="/profile/moduser/{{ u.username }}/" title=""><i class="fa fa-pencil-square"></i><br/>Modify User</a>
             </div>
           </td>
          </tr>

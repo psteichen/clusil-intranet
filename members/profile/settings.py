@@ -58,6 +58,16 @@ PROFILE_TMPL_CONTENT = {
       'affil'          	: u'Affiliation',
     },
     'user_overview' : {
+      'template'        : 'overview_member_readonly.html',
+      'managers'       	: u'Managers',
+      'firstname'       : u'Firstname',
+      'name'            : u'Name',
+      'login'        	: u'Login',
+      'email'           : u'E-mail',
+      'role'            : u'Role',
+      'affil'          	: u'Affiliation',
+    },
+    'admin_overview' : {
       'template'        : 'overview_user.html',
       'firstname'       : u'Firstname',
       'name'            : u'Name',
@@ -115,6 +125,16 @@ PROFILE_TMPL_CONTENT = {
     'template'		: 'done.html',
     'title'     	: u'Changed Delegate for [{id}]',
     'message'     	: u'{head} is now your new Delegate!',
+  },
+  'moduser': {
+    'template'		: 'form.html',
+    'title'     	: u'Modify {name}',
+    'desc'     		: u'',
+    'submit'   		: u'Submit',
+    'done': {
+      'template'	: 'done.html',
+      'title'     	: u'{name} successfully modified.',
+    },
   },
   'rmuser': {
     'template'		: 'done.html',

@@ -14,7 +14,7 @@ from django_tables2 import RequestConfig
 
 from cms.functions import notify_by_email, gen_form_errors
 
-from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group
+from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group, gen_user_initial
 from members.models import Member, Renew
 
 from members.groups.functions import affiliate, get_affiliations

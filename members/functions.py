@@ -78,6 +78,15 @@ def gen_role_initial(r):
 
   return initial_data
 
+def gen_user_initial(u):
+  initial_data = {}
+
+  initial_data['first_name'] = u.first_name
+  initial_data['last_name'] =  u.last_name
+  initial_data['email'] = u.email
+
+  return initial_data
+
 def gen_member_id():
   from .models import Member
   num = 0

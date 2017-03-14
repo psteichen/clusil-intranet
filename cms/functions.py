@@ -94,7 +94,7 @@ def genIcal(event):
   from icalendar import Calendar, Event, Alarm
 
   #get details from event instance
-  title		= event.group
+  title		= event.title
   desc		= event.title
   start		= datetime.combine(event.when, event.start) 
   end		= datetime.combine(event.when, event.end) 

@@ -49,7 +49,7 @@ def profile(r):
     template = settings.TEMPLATE_CONTENT['profile']['profile']['user_overview']['template']
     actions = None
     if U.has_perm('cms.MEMBER'): 
-      template = ettings.TEMPLATE_CONTENT['profile']['profile']['overview']['template']
+      template = settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template']
       actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
       if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
 
@@ -59,6 +59,7 @@ def profile(r):
 					'country'	: get_country_from_address(M.address), 
 					'actions'	: actions, 
 					'users'		: get_all_users_for_membership(M), 
+					'U'		: U, 
 				})
 
   else: #none-member login, probably an admin

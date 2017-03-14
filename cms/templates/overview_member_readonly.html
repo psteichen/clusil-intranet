@@ -63,8 +63,8 @@
           <td>{{ u.affil|safe }}</td>
   	  <td>
             <div class="btn-group-vertical pull-right" role="group">
-              {% if user.is_authenticated %} {# HERE #}
-	        <a class="btn btn-sm btn-danger" role="button" href="/profile/moduser/{{ u.username }}/" title=""><i class="fa fa-pencil-square"></i><br/>Modify User</a>
+              {% if u.username == U.username %}
+	        <a class="btn btn-sm btn-danger" role="button" href="/profile/moduser/{{ u.username }}/" title=""><i class="fa fa-pencil-square"></i>&nbsp;&nbsp;Modify User</a>
               {% endif %}
             </div>
           </td>

@@ -24,7 +24,7 @@ def affiliate(u,g):
   a.save()
   
 
-def get_affiliations(u):
+def get_all_affiliations(u):
   from .models import Affiliation
   out='<ul class="list-group">'
   affils = Affiliation.objects.filter(user=u)
@@ -33,7 +33,19 @@ def get_affiliations(u):
 
   out+='</ul>'
   return out
+
+def get_affiliations(u):
+  from .models import Affiliation
+  out='<ul class="list-group">'
+  affils = Affiliation.objects.filter(user=u)
+  for a in affils:
+    if a.group.acronym == 'ALL': continue
+    else: out+='<li class="list-group-item">'+unicode(a.group)+'</li>'
+
+  out+='</ul>'
+  return out
   
+ 
 def get_group_members(g):
   from .models import Affiliation
   return Affiliation.objects.filter(group=g)

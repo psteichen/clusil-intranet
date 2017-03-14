@@ -275,22 +275,19 @@ TEMPLATE_CONTENT = {
 HOME_ACTIONS = (
   {
     'heading'		: 'Membership Management',
-    'has_perms'		: 'cms.MEMBER',
     'actions' : (
       {         
         'label'         : 'Profile', 
         'icon'     	: 'home',
         'grade'     	: 'success',
-        'desc'          : 'Manage your Membership profile and Users',
+        'desc'          : 'Manage your Membership profile',
         'url'           : '/profile/',
-        'has_perms'	: 'cms.MEMBER',
       },
     ),
   },
   {
     'heading'		: 'Suggestion Box',
     'desc'         	: 'An idea? A remark? A suggestion?',
-    'has_perms'		: 'cms.MEMBER',
     'actions' : (
       {         
         'label'        	: 'Submit your thought', 
@@ -298,7 +295,6 @@ HOME_ACTIONS = (
         'grade'  	: 'success',
     	'desc'         	: 'Please share with us your thoughts about CLUSIL!',
         'url'          	: '/ideabox/',
-        'has_perms'	: 'cms.MEMBER',
       },
 #      {         
 #        'label'        : 'Document Management', 

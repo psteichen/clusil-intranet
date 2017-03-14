@@ -1,11 +1,10 @@
 # coding=utf-8
 
 from django.conf import settings
-from django.template.loader import render_to_string
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
 
 from cms.functions import visualiseDateTime
-
 
 
 ################################
@@ -213,5 +212,52 @@ def add_user_to_all_group(user):
 
   all_group = Group.objects.get(acronym="ALL")
   affiliate(user,all_group)
+
+
+def member_initial_data(member):
+  member_data = {
+    'fn'	: member.head_of_list.first_name,
+    'ln'	: member.head_of_list.last_name,
+    'email'	: member.head_of_list.email,
+    'street'	: member.address.street,
+    'pc'	: member.address.postal_code,
+    'town'	: member.address.town,
+    'country'	: get_country_from_address(member.address),
+  }
+  if member.type == Member.ORG: member_data['orga'] = member.organisation.name
+  if member.type == Member.STD: member_data['sp'] = member.student_proof
+
+  return member_data
+
+
+def get_user_choice_list(member):
+  from members.functions import gen_fullname
+
+  user_list = [('','None identified')]
+  hol = member.head_of_list
+  user_list.append((hol,gen_fullname(hol)),)
+  if member.delegate: 
+    d = member.delegate
+    user_list.append((d,gen_fullname(hol)),)
+  if member.users.all(): 
+    users = member.users
+    for u in users.all():
+      user_list.append((u,gen_fullname(u)),)
+
+  return tuple(user_list)
+
+
+def member_is_full(member):
+  users = member.users.count() + 1
+  if member.delegate: users += 1
+  if users >= member.lvl: return True
+  else: return False
+
+
+#old stuff
+def is_hol_d(mid,u):
+  h = Member.objects.filter(pk=mid, head_of_list=u).exists()
+  d = Member.objects.filter(pk=mid, delegate=u).exists()
+  return h or d
 
 

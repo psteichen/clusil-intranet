@@ -8,8 +8,11 @@ from django_tables2 import Column
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
+from accounting.models import Fee
+
 from .functions import get_all_users_for_membership
 from .models import Member, Role
+
 
 #table for visualisation via django_tables2
 class MemberTable(Table):
@@ -56,5 +59,19 @@ class MemberTable(Table):
 #    fields = ( 'id', 'type', 'member', 'head_of_list', 'status', 'users', 'details', 'modify', 'activate' )
     fields = ( 'id', 'type', 'member', 'head_of_list', 'status', 'users', 'details', 'activate' )
     attrs = {"class": "table"}
+
+
+#table for visualisation via django_tables2
+class InvoiceTable(Table):
+  row_class     = Column(visible=False, empty_values=()) #used to highlight some rows
+
+  def render_row_class(self, value, record):
+    if record.paid:
+      return 'success'
+
+  class Meta:
+    model = Fee
+    fields = ( 'year', 'invoice', 'paid_date', )
+    attrs = {"class": "table table-stripped"}
 
 

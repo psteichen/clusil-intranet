@@ -1,32 +1,42 @@
+# coding=utf-8
 from datetime import date
 from random import random
 
+from django.conf import settings
 from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.formtools.wizard.views import SessionWizardView
-from django.conf import settings
-from django.contrib.auth.models import User
 
 from django_tables2  import RequestConfig
 
-from cms.functions import show_form, notify_by_email
+from cms.functions import show_form, notify_by_email, gen_form_errors
 
-from registration.functions import gen_hash
+from registration.functions import gen_hash, gen_username, gen_random_password
 
 from accounting.models import Fee
 from accounting.functions import generate_invoice
 
+from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group, gen_user_initial
+from members.models import Member, Renew
+
+from members.groups.functions import affiliate, get_affiliations
+from members.groups.models import Group, Affiliation
+
 from .profile.tables import InvoiceTable
 
-from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname, user_in_board
+from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname, user_in_board, member_initial_data, get_user_choice_list, member_is_full
+from .forms import AffiliateForm, UserForm, UserChangeForm, MemberForm, RoleForm
 from .models import Member, Role, Renew
-from .forms import MemberForm, RoleForm
-from .tables  import MemberTable
+from .tables  import MemberTable, InvoiceTable
 
 
-###############
-# BOARD views #
-###############
+################
+# MEMBER views #
+################
 
 # list #
 #########
@@ -105,7 +115,7 @@ def renew(r):
 
 # details #
 ###########
-@login_required
+@permission_required('cms.SECR')
 def details(r, member_id):
   member = Member.objects.get(id=member_id)
 
@@ -115,18 +125,10 @@ def details(r, member_id):
                    	('details of member: '+unicode(member_id),'/members/details/'+member_id+'/'),
                ) )
 
-  if r.user == member.head_of_list or r.user == member.delegate:
-#  if r.user == member.head_of_list or r.user == member.delegate or user_in_board(r.user):
-    message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,settings.TEMPLATE_CONTENT['members']['details']['overview']['actions'])
-  elif user_in_board(r.user):
-    actions = settings.TEMPLATE_CONTENT['members']['details']['overview']['admin_actions']
-    for a in actions:
-      a['url'] = a['url'].format(member_id)
-
-    message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,actions)
-  else:
-    message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['readonly']['template'],member)
-  
+  actions = settings.TEMPLATE_CONTENT['members']['details']['overview']['actions']
+  for a in actions:
+    a['url'] = a['url'].format(member_id)
+  message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,actions)
 
   return render(r, settings.TEMPLATE_CONTENT['members']['details']['template'], {
                    'message': message,
@@ -285,8 +287,6 @@ def new_invoice(r, member_id):
 	       })
 
 
-
-
 # role_add #
 ############
 @permission_required('cms.BOARD')
@@ -323,5 +323,318 @@ def role_add(r):
                 'submit': settings.TEMPLATE_CONTENT['members']['role']['add']['submit'],
                 'form': form,
                 })
+
+
+# NEW part #
+
+# add user #
+############
+@permission_required('cms.SECR')
+def adduser(r,member_id):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('members','/members/'),
+                       	(member_id+' details','/members/details/'+member_id),
+               ) )
+ 
+  M = Member.objects.get(pk=member_id)
+  template = settings.TEMPLATE_CONTENT['profile']['adduser']['template']
+  title = settings.TEMPLATE_CONTENT['profile']['adduser']['title'].format(id=M.id)
+  done_template = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['template']
+
+  if r.POST:
+    uf = UserForm(r.POST)
+    if uf.is_valid():
+      #save user
+      U=uf.save(commit=False)
+      U.username = gen_username(uf.cleaned_data['first_name'],uf.cleaned_data['last_name'])
+      U.password = make_password(gen_random_password())
+      U.save()
+    
+      #add user to member users 
+      M.save()
+      M.users.add(U)
+
+      #add user to ALL group
+      add_user_to_all_group(U)
+	
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(name=gen_fullname(U))
+      return render(r,done_template, {
+			'title'		: title,
+			'message'	: message,
+		   })
+
+    else: #from not valid -> error
+      return render(r,done_template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in uf.errors]),
+		   })
+
+  else: #no POST data yet, do pre-check or send to form if all fine
+    message=False
+    # if not ORG type -> something phishy -> out!
+    if M.type != Member.ORG:
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['no_org']
+
+    # if max users exist -> out!
+    if member_is_full(M): 
+      message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['max'].format(member_id=M.id)
+
+    if message:
+      return render(r,done_template, {
+				'title'		: title,
+				'message'	: message,
+			      })
+
+    else:
+      #show user creation form
+      return render(r,template, {
+			'title'		: title,
+			'desc'		: settings.TEMPLATE_CONTENT['profile']['adduser']['desc'],
+			'submit' 	: settings.TEMPLATE_CONTENT['profile']['adduser']['submit'],
+			'form'		: UserForm(),
+		   })
+
+
+# affiliate user #
+##################
+@permission_required('cms.SECR')
+def affiluser(r,member_id,user):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('members','/members/'),
+                       	(member_id+' details','/members/details/'+member_id),
+               ) )
+ 
+  M = Member.objects.get(pk=member_id)
+  U = User.objects.get(username=user)
+  title = settings.TEMPLATE_CONTENT['profile']['affiluser']['title'].format(name=gen_fullname(U))
+  template = settings.TEMPLATE_CONTENT['profile']['affiluser']['template']
+  done_title = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['title'].format(name=gen_fullname(U))
+  done_template = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['template']
+
+  if r.POST:
+    af = AffiliateForm(r.POST)
+    if af.is_valid() and af.has_changed():
+      # get selected wgs and affiliate to user
+      WGs = af.cleaned_data['wgs']
+      AGs = af.cleaned_data['ags']
+      TLs = af.cleaned_data['tls']
+#TODO: add ldap sync
+      for wg in WGs: 
+        affiliate(U,wg)
+      for ag in AGs: 
+        affiliate(U,ag)
+      for tl in TLs: 
+        affiliate(U,tl)
+
+
+      #all fine -> show working groups form
+      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(name=gen_fullname(U),groups=get_affiliations(U))
+      return render(r,done_template, {
+			'title'		: done_title,
+			'message'	: message,
+		   })
+
+    else: #from not valid -> error
+      return render(r,done_template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ' + gen_form_errors(af),
+		   })
+
+
+  else:
+    #no POST data yet -> show working groups form
+    form = AffiliateForm()
+    Affils = Affiliation.objects.filter(user=U)
+    init = { 'wgs': [], 'ags': [], 'tls': [], }
+    for a in Affils:
+      if a.group.type == Group.WG: init['wgs'].append(a.group.pk)
+      if a.group.type == Group.AG: init['ags'].append(a.group.pk)
+      if a.group.type == Group.TL: init['tls'].append(a.group.pk)
+    form.initial = init
+
+    return render(r,template, {
+			'title'	: title,
+  			'desc'	: settings.TEMPLATE_CONTENT['profile']['affiluser']['desc'].format(name=gen_fullname(U)),
+  			'submit': settings.TEMPLATE_CONTENT['profile']['affiluser']['submit'],
+			'form'	: form,
+		   })
+
+
+# make user the head of list #
+##############################
+@permission_required('cms.SECR')
+def make_head(r,member_id,user):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('members','/members/'),
+                       	(member_id+' details','/members/details/'+member_id),
+               ) )
+ 
+  M = Member.objects.get(pk=member_id)
+  old_H = M.head_of_list
+  new_H = User.objects.get(username=user)
+
+  #set new head-of-list
+  M.head_of_list = new_H
+  M.save()
+  M.users.add(old_H) #add old head to users
+  M.users.remove(new_H) #remove new head from users
+
+  #set perms
+  set_cms_perms(new_H) #set perms for new head
+  set_cms_perms(old_H,True) #remove perms for old head
+
+
+  title = settings.TEMPLATE_CONTENT['profile']['make_head']['title'].format(id=M.id)
+  template = settings.TEMPLATE_CONTENT['profile']['make_head']['template']
+  message = settings.TEMPLATE_CONTENT['profile']['make_head']['message'].format(head=gen_fullname(M.head_of_list))
+
+  return render(r,template, {
+			'title'		: title,
+			'message'	: message,
+	       })
+
+
+
+# make user the delegate #
+##########################
+@permission_required('cms.SECR')
+def make_delegate(r,member_id,user):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('members','/members/'),
+                       	(member_id+' details','/members/details/'+member_id),
+               ) )
+ 
+  M = Member.objects.get(pk=member_id)
+  old_D = M.delegate
+  new_D = User.objects.get(username=user)
+
+  #set new delegate
+  M.delegate = new_D
+  M.save()
+  if old_D: M.users.add(old_D) #add old delegate to users
+  M.users.remove(new_D) #remove new delegate from users
+
+  #set perms
+  if old_D: set_cms_perms(old_D,True) #remove perms for old delegate
+  set_cms_perms(new_D) #set perms for new delegate
+
+
+  title = settings.TEMPLATE_CONTENT['profile']['make_delegate']['title'].format(id=M.id)
+  template = settings.TEMPLATE_CONTENT['profile']['make_delegate']['template']
+  message = settings.TEMPLATE_CONTENT['profile']['make_delegate']['message'].format(head=gen_fullname(M.delegate))
+
+  return render(r,template, {
+			'title'		: title,
+			'message'	: message,
+	       })
+
+
+# modify user #
+###############
+@permission_required('cms.SECR')
+def moduser(r,member_id,user):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('members','/members/'),
+                       	(member_id+' details','/members/details/'+member_id),
+               ) )
+ 
+  M = Member.objects.get(pk=member_id)
+  U = User.objects.get(username=user)
+  title 	= settings.TEMPLATE_CONTENT['profile']['moduser']['title'].format(name=gen_fullname(U))
+  template 	= settings.TEMPLATE_CONTENT['profile']['moduser']['template']
+  done_title 	= settings.TEMPLATE_CONTENT['profile']['moduser']['done']['title'].format(name=gen_fullname(U))
+  done_template = settings.TEMPLATE_CONTENT['profile']['moduser']['done']['template']
+
+  if r.POST:
+    uf = UserForm(r.POST,instance=U)
+    if uf.is_valid() and uf.has_changed():
+      U = uf.save()
+
+      #all fine
+      return render(r,done_template, {
+			'title'		: done_title,
+		   })
+
+    else: #from not valid -> error
+      return render(r,done_template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ' + gen_form_errors(uf),
+		   })
+
+  else:
+    #no POST data yet -> show working groups form
+    form = UserForm()
+    form.initial = gen_user_initial(U)
+    form.instance = U
+
+    return render(r,template, {
+			'title'	: title,
+  			'desc'	: settings.TEMPLATE_CONTENT['profile']['moduser']['desc'].format(name=gen_fullname(U)),
+  			'submit': settings.TEMPLATE_CONTENT['profile']['moduser']['submit'],
+			'form'	: form,
+		   })
+
+
+
+# remove user #
+###############
+@permission_required('cms.SECR')
+def rmuser(r,member_id,user,really=False):
+  r.breadcrumbs( (      
+			('home','/home/'),
+                       	('members','/members/'),
+                       	(member_id+' details','/members/details/'+member_id),
+               ) )
+ 
+  M = Member.objects.get(pk=member_id)
+  U = User.objects.get(username=user)
+
+  title 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['title']
+  template 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['template']
+  message 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['message']
+
+  done_title 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['done']['title']
+  done_template 	= settings.TEMPLATE_CONTENT['profile']['rmuser']['done']['template']
+  done_message 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['done']['message']
+
+  error_title 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['error']['title']
+  error_message 	= settings.TEMPLATE_CONTENT['profile']['rmuser']['error']['message']
+
+  #check if hol
+  if not r.user.username == M.head_of_list.username:
+    return render(r,done_template, {
+			'title'		: error_title,
+                	'error_message'	: error_message,
+		 })
+  
+  #check if REALLY want to delete user
+  if really == 'REALLY':
+    msg = done_message.format(
+				name	= gen_fullname(U),
+				email	= U.email,
+				login	= U.username
+			     )
+    U.delete()
+    return render(r,done_template, {
+			'title'		: done_title,
+			'message'	: msg,
+	       })
+
+  else: #show user to delete and give a second chance to decide
+    return render(r,template, {
+			'title'		: title,
+			'message'	: message.format(
+								name	= gen_fullname(U),
+								email	= U.email,
+								login	= U.username,
+								affil	= get_affiliations(U),
+								url	= '/profile/rmuser/'+U.username+'/REALLY/'
+							),
+		 })
 
 

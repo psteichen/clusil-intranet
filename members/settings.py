@@ -23,39 +23,22 @@ ACTIONS = {
       'label'	: 'Change Member',
       'icon'	: 'pencil',
       'grade'	: 'warning',
-      'url'    	: '/profile/modify/',
-    },
-    {
-      'label'	: 'View Invoices',
-      'icon'	: 'euro',
-      'grade'	: 'info',
-      'url'    	: '/profile/invoice/',
-    },
-    {
-      'label'	: 'Add User',
-      'icon'	: 'plus',
-      'grade'	: 'success',
-      'url'	: '/profile/adduser/',
-    },
-  ),
-  'admin_details' : (
-    {
-      'label'	: 'Change Member',
-      'icon'	: 'pencil',
-      'grade'	: 'warning',
       'url'    	: '/members/modify/{}/',
+      'has_perms'	: 'cms.SECR',
     },
     {
       'label'	: 'View Invoices',
       'icon'	: 'euro',
       'grade'	: 'info',
       'url'    	: '/members/invoice/{}/',
+      'has_perms'	: 'cms.SECR',
     },
     {
       'label'	: 'Add User',
       'icon'	: 'plus',
       'grade'	: 'success',
       'url'	: '/members/adduser/{}/',
+      'has_perms'	: 'cms.SECR',
     },
   ),
   'roles' : (
@@ -93,12 +76,8 @@ MEMBERS_TMPL_CONTENT = {
   'details': {
     'template'  	: 'done.html',
     'overview' : {
-      'template'	: 'overview_member.html',
-      'actions'     	: ACTIONS['details'],
-      'admin_actions'  	: ACTIONS['admin_details'],
-    },
-    'readonly' : {
-      'template'	: 'overview_member_readonly.html',
+      'template'	: 'overview_member_board.html',
+      'actions'  	: ACTIONS['details'],
     },
   },
   'modify': {

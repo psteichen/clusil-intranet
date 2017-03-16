@@ -5,7 +5,7 @@ from .forms import ListMembersForm, ModifyMemberForm, RoleForm
 from .views import ModifyMemberWizard, show_role_form
 from .views import list, renew, details, invoice, new_invoice
 from .views import role_add
-from .views import moduser, affiluser,  make_head, make_delegate, rmuser
+from .views import adduser, moduser, affiluser,  make_head, make_delegate, rmuser
 
 # modify wizard #
 #forms
@@ -31,6 +31,7 @@ urlpatterns = patterns('',
   url(r'^details/(?P<member_id>.+?)/$', details, name='details'),
   url(r'^invoice/new/(?P<member_id>.+?)/$', new_invoice, name='new_invoice'),
   url(r'^invoice/(?P<member_id>.+?)/$', invoice, name='invoice'),
+  url(r'^adduser/(?P<member_id>.+?)/$', adduser, name='adduser'),
 
   url(r'^role/add/$', role_add, name='role_add'),
 

@@ -179,11 +179,14 @@ def user_in_board(u):
 
 
 def activate_member(member):
-  from django.contrib.auth.models import Permission
+  from django.contrib.auth.models import Permission, User
   from members.models import Member
   from groups.models import Group
   from groups.functions import affiliate
   from accounting.functions import generate_invoice
+  from attendance.functions import gen_attendance_hashes
+  from events.models import Event
+  from meetings.models import Meeting
 
   # set head-of-list (and delegate permissions)
   is_hol_d = Permission.objects.get(codename='MEMBER')
@@ -201,6 +204,13 @@ def activate_member(member):
   all_group = Group.objects.get(acronym="ALL")
   for u in get_all_users_for_membership(member):
     affiliate(User.objects.get(username=u['username']),all_group)
+
+    # gen attendance hashes for existing events
+    for e in Events.objects.all():
+      gen_attendance_hashes(e,Event.OTH,u)
+    # and meetings
+    for m in Meetings.objects.all():
+      gen_attendance_hashes(m,Event.MEET,u)
 
   # generate invoice (this will generate and send the invoice)
   generate_invoice(member)

@@ -20,11 +20,14 @@ from registration.functions import gen_hash, gen_username, gen_random_password
 from accounting.models import Fee
 from accounting.functions import generate_invoice
 
-from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group, gen_user_initial
+from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group, gen_user_initial, gen_attendance_hashes
 from members.models import Member, Renew
 
 from members.groups.functions import affiliate, get_affiliations
 from members.groups.models import Group, Affiliation
+
+from meetings.models import Meetings
+from events.models import Events
 
 from .profile.tables import InvoiceTable
 
@@ -358,6 +361,14 @@ def adduser(r,member_id):
       #add user to ALL group
       add_user_to_all_group(U)
 	
+      # gen attendance hashes for existing events
+      for e in Events.objects.all():
+        gen_attendance_hashes(e,Event.OTH,u)
+      # and meetings
+      for m in Meetings.objects.all():
+        gen_attendance_hashes(m,Event.MEET,u)
+
+
       message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(name=gen_fullname(U))
       return render(r,done_template, {
 			'title'		: title,

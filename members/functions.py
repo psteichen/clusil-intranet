@@ -206,10 +206,10 @@ def activate_member(member):
     affiliate(User.objects.get(username=u['username']),all_group)
 
     # gen attendance hashes for existing events
-    for e in Events.objects.all():
+    for e in Event.objects.all():
       gen_attendance_hashes(e,Event.OTH,u)
     # and meetings
-    for m in Meetings.objects.all():
+    for m in Meeting.objects.all():
       gen_attendance_hashes(m,Event.MEET,u)
 
   # generate invoice (this will generate and send the invoice)

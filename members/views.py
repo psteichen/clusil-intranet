@@ -27,8 +27,8 @@ from members.models import Member, Renew
 from members.groups.functions import affiliate, get_affiliations
 from members.groups.models import Group, Affiliation
 
-from meetings.models import Meetings
-from events.models import Events
+from meetings.models import Meeting
+from events.models import Event
 
 from .profile.tables import InvoiceTable
 

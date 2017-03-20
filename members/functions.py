@@ -207,10 +207,10 @@ def activate_member(member):
 
     # gen attendance hashes for existing events
     for e in Event.objects.all():
-      gen_attendance_hashes(e,Event.OTH,u)
+      gen_attendance_hashes(e,Event.OTH,User.objects.get(username=u['username']))
     # and meetings
     for m in Meeting.objects.all():
-      gen_attendance_hashes(m,Event.MEET,u)
+      gen_attendance_hashes(m,Event.MEET,User.objects.get(username=u['username']))
 
   # generate invoice (this will generate and send the invoice)
   generate_invoice(member)

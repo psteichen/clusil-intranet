@@ -57,6 +57,7 @@ target/
 */migrations/
 */*/migrations/
 cms/db.sqlite
+cms/db.sqlite*
 cms/wsgi.py
 local_settings.py
 cms/local_settings.py

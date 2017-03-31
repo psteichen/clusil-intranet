@@ -81,31 +81,29 @@ def renew(r):
 
   #loop throu all active members and send membership renewal request
   for m in get_active_members():
-    salt2=float(year)*random()
-    renew_hash_code = gen_hash(settings.RENEW_SALT,unicode(m.head_of_list.email)+unicode(m.address).encode('ascii', 'ignore'),15,salt2)
-    # build request mail
-    message_content = {
+    try:
+      f = Fee.objects.get(member=m,year=year)
+    except:
+      # if member didn't get an invoice yet for this year
+      salt2=float(year)
+      renew_hash_code = gen_hash(settings.RENEW_SALT,unicode(m.head_of_list.email)+unicode(m.address).encode('ascii', 'ignore'),15,salt2)
+      # build request mail
+      message_content = {
         'FULLNAME'	: gen_member_fullname(m),
         'YEAR'		: year,
 	'LINK'		: gen_renewal_link(renew_hash_code),
-    }
-    # send confirmation
-    ok=notify_by_email(m.head_of_list.email,email_title,message_content,email_template)
-    if not ok:
-      return render(r, error_template, { 
+      }
+      # send confirmation
+      ok=notify_by_email(m.head_of_list.email,email_title,message_content,email_template)
+      if not ok:
+        return render(r, error_template, { 
 				'mode': 'Error in email request', 
 				'message': settings.TEMPLATE_CONTENT['error']['email'],
 		   })
 
-    try:
       renew = Renew(member=m,year=year,renew_code=renew_hash_code)
       renew.save()
-    except:
-      renew = Renew.objects.get(member=m,year=year)
-      renew.renew_code = renew_hash_code
-      renew.save()
-
-    m_list += '<li>'+gen_member_fullname(m)+'</li>'
+      m_list += '<li>'+gen_member_fullname(m)+'</li>'
    
   m_list += '</ul>'
   # all fine

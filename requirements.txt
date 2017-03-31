@@ -1,4 +1,4 @@
-django>=1.7
+django==1.7.6
 django-breadcrumbs
 django-tables2
 django-password-reset

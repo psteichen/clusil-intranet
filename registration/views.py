@@ -45,11 +45,15 @@ class RegistrationWizard(SessionWizardView):
     return 'wizard.html'
 
   def get_context_data(self, form, **kwargs):
+    context = super(RegistrationWizard, self).get_context_data(form=form, **kwargs)
+
+    ty = self.kwargs['type']
+
     self.request.breadcrumbs( ( 
-				('registration','/reg/'),
+				('registration ['+unicode(ty)+']','/reg/'+unicode(ty)+'/'),
                              ) )
 
-    context = super(RegistrationWizard, self).get_context_data(form=form, **kwargs)
+
 
     if self.steps.current != None:
       if self.request.user.has_perm('cms.SECR'):
@@ -65,8 +69,7 @@ class RegistrationWizard(SessionWizardView):
       context.update({'next': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['next']})
 
     if self.steps.current == 'head':
-      cleaned_data = self.get_cleaned_data_for_step('type') or {}
-      if int(cleaned_data['member_type']) != Member.ORG:
+      if unicode(ty) != unicode(Member.MEMBER_TYPES[Member.ORG]):
         context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['alttitle']})
         context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['altdesc']})
 
@@ -79,10 +82,10 @@ class RegistrationWizard(SessionWizardView):
     if step is None:
       step = self.steps.current
 
+    ty = self.kwargs['type']
+
     if step == 'address':
-      cleaned_data = self.get_cleaned_data_for_step('type') or False
       if cleaned_data:
-        ty = int(cleaned_data['member_type'])
         if ty == Member.ORG:
           del form.fields['first_name']
           del form.fields['last_name']

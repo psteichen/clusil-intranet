@@ -54,9 +54,9 @@ class Member(Model):
   ORG = 1
   STD = 2
   MEMBER_TYPES = (
-    (IND, 'Individual'),
-    (ORG, 'Organisation'),
-    (STD, 'Student'),
+    (IND, 'individual'),
+    (ORG, 'organisation'),
+    (STD, 'student'),
   )
 
   SINGLE 	= 1

@@ -8,13 +8,13 @@
   <li><a data-toggle="tab" href="#reg">{{ auth.reg.title }}</a></li>
 </ul>
 
-<div class="panel panel-success">
+<div class="panel panel-info">
   <div class="panel-body">
    <div class="col-xs-4"></div>
 
    <div class="tab-content">
      <div id="auth" class="tab-pane fade in active col-xs-4">
-       <h2 class="text-success">{{ auth.title }}</h2>
+       <h2 class="text-info">{{ auth.title }}</h2>
        <form role="form" class="form-horizontal" method="post" action="{% url 'login' %}">
          {% csrf_token %}
          {% bootstrap_form form %}
@@ -26,7 +26,7 @@
        </form>
      </div>
      <div id="reg" class="tab-pane fade col-xs-4">
-       <h2 class="text-success">{{ auth.reg.title }}</h2>
+       <h2 class="text-info">{{ auth.reg.title }}</h2>
        <p class="lead">{{ auth.reg.desc|safe }}</p>
      </div>
    </div>

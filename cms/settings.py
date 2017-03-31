@@ -212,13 +212,14 @@ TEMPLATE_CONTENT = {
     'title'             : 'Club Management System',
     'logo' : {
       'url'		: "/",
-      'img'		: 'https://clusil.lu/pics/clusil_picto.png',
+      'img'		: STATIC_URL + 'pics/logo.png',
     },
     'description'       : '',
     'keywords'          : '',
     'css' : {
-        'bt'            : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css',
-        'bt_theme'      : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css',
+        'bt'            : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
+#        'bt_theme'      : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css',
+        'bt_theme'      : '//maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css',
         'jumbotron'	: '//clusil.lu/css/jumbotron.css',
         'jt_narrow'	: '//clusil.lu/css/jumbotron-narrow.css',
         'own'           : STATIC_URL + 'css/bt-clusil.css',
@@ -279,7 +280,7 @@ HOME_ACTIONS = (
       {         
         'label'         : 'Profile', 
         'icon'     	: 'home',
-        'grade'     	: 'success',
+        'grade'     	: 'info',
         'desc'          : 'Manage your Membership profile',
         'url'           : '/profile/',
       },
@@ -292,14 +293,14 @@ HOME_ACTIONS = (
       {         
         'label'        	: 'Submit your thought', 
         'icon' 		: 'commenting-o',
-        'grade'  	: 'success',
+        'grade'  	: 'info',
     	'desc'         	: 'Please share with us your thoughts about CLUSIL!',
         'url'          	: '/ideabox/',
       },
 #      {         
 #        'label'        : 'Document Management', 
 #        'icon'  	: 'folder-open',
-#        'grade'  	: 'success',
+#        'grade'  	: 'info',
 #        'desc'         : 'Filesharing and document management platform (SeaFile based)',
 #        'url'          : 'https://cloud.clusil.lu/',
 #    	'has_perms'	: 'cms.MEMBER',
@@ -307,7 +308,7 @@ HOME_ACTIONS = (
 #      {         
 #        'label'        : 'Team Collaboration', 
 #        'icon'     	: 'comment',
-#        'grade'  	: 'success',
+#        'grade'  	: 'info',
 #        'desc'         : 'Wiki, Workflows and Calendar platform (Confluence based)',
 #        'url'          : 'https://collab.clusil.lu/',
 #    	'has_perms'	: 'cms.MEMBER',
@@ -323,7 +324,7 @@ HOME_ACTIONS = (
       {         
         'label'         : 'Dashboard', 
         'icon'     	: 'tasks',
-        'grade'  	: 'success',
+        'grade'  	: 'info',
         'desc'          : 'Club management tools and functions',
         'url'           : '/board/',
         'has_perms'	: 'cms.SECR',
@@ -381,7 +382,7 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Meetings and <i>members-only</i> Events', 
         'icon'     	: 'calendar',
-        'grade'     	: 'success',
+        'grade'     	: 'info',
         'desc'          : 'Manage regular meetings (board, working groups...) or members-only events.',
         'url'           : '/meetings/',
 	'has_perms'	: 'cms.SECR',
@@ -412,7 +413,7 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Members', 
         'icon'     	: 'user',
-        'grade'     	: 'success',
+        'grade'     	: 'info',
         'desc'          : 'Manage members.',
         'url'           : '/members/',
 	'has_perms'	: 'cms.SECR',
@@ -420,7 +421,7 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Organisation', 
         'icon'     	: 'users',
-        'grade'     	: 'success',
+        'grade'     	: 'info',
         'desc'          : 'Manage and affiliate members to groups.',
         'url'           : '/members/groups/',
 	'has_perms'	: 'cms.BOARD',
@@ -428,7 +429,7 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Treasury', 
         'icon'     	: 'euro',
-        'grade'     	: 'success',
+        'grade'     	: 'info',
         'desc'          : 'Manage and check payments or other financial figures.',
         'url'           : '/accounting/',
 	'has_perms'	: 'cms.BOARD',
@@ -499,13 +500,13 @@ FEE = {
 
 ACCOUNTING = {
   'invoice' : {
-    'logo'		: STATIC_ROOT + 'pics/logo.jpg',
+    'logo'		: STATIC_ROOT + 'pics/logo.png',
     'currency' 		: 'EUR',
     'subject' 		: 'Invoice for membership: %s',
     'mail_template' 	: 'invoice.txt',
   },
   'credit' : {
-    'logo'		: STATIC_ROOT + 'pics/logo.jpg',
+    'logo'		: STATIC_ROOT + 'pics/logo.png',
     'currency' 		: 'EUR',
     'subject' 		: 'Credit note for: %s',
     'mail_template' 	: 'credit.txt',

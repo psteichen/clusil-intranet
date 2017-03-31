@@ -1,5 +1,5 @@
 <div class="overview">
-<div class="panel panel-success">
+<div class="panel panel-info">
   <div class="panel-heading">
     <center><h2>{{ title|safe }}</h2></center>
   </div>
@@ -13,13 +13,13 @@
 	    {{ member.head_of_list.first_name }} {{ member.head_of_list.last_name|upper }} ({{ member.head_of_list.email }})
   	  </li>
         {% if member.delegate %}
-	  <li class="list-group-item list-group-item-info">
+	  <li class="list-group-item list-group-item-warning">
     	    <span class="badge">Delegate</span>
 	    {{ member.delegate.first_name }} {{ member.delegate.last_name|upper }} ({{ member.delegate.email }})
   	  </li>
 	{% endif %}
 	</ul>
-        {% if member.student_proof %} <a class="btn btn-sm btn-info }}" href="{{ media_url }}{{ member.student_proof }}" role="button"><i class="fa fa-education"></i>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
+        {% if member.student_proof %} <a class="btn btn-sm btn-default }}" href="{{ media_url }}{{ member.student_proof }}" role="button"><i class="fa fa-education"></i>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
       </div>
       <div class="col-sm-4">
         <blockquote>
@@ -60,7 +60,7 @@
          <tr>
           <td>
            {% if u.role == 'hol' %}<i class="fa fa-user-circle text-success" title="Head of list"></i>{% endif %}
-           {% if u.role == 'del' %}<i class="fa fa-user-secret text-info" title="Delegate"></i>{% endif %}
+           {% if u.role == 'del' %}<i class="fa fa-user-secret text-warning" title="Delegate"></i>{% endif %}
            {% if u.role == 'u' %}<i class="fa fa-user"></i>{% endif %}
           </td>
           <td>{{ u.first_name }}</td>

@@ -11,11 +11,10 @@ from members.models import Member
 
 def draw_header(canvas):
     """ Draws the invoice header """
-    canvas.setStrokeColorRGB(0.02,0.5,0.3)
-#    canvas.setFillColorRGB(0.02,0.5,0.3)
+    canvas.setStrokeColorRGB(0,0.5,1)
     canvas.setFont('Helvetica', 16)
     canvas.drawString(10 * cm, -1.5 * cm, 'INVOICE')
-    canvas.drawInlineImage(settings.ACCOUNTING['invoice']['logo'], 17.5 * cm, -2.1 * cm, 75, 50)
+    canvas.drawInlineImage(settings.ACCOUNTING['invoice']['logo'], 17.5 * cm, -2.1 * cm, 100, 50)
     canvas.setLineWidth(4)
     canvas.line(0, -2.5 * cm, 21.7 * cm, -2.5 * cm)
 
@@ -38,7 +37,7 @@ def draw_address(canvas):
 def draw_footer(canvas):
     """ Draws the invoice footer """
     canvas.setFont('Helvetica', 9)
-    canvas.setStrokeColorRGB(0.02,0.5,0.3)
+    canvas.setStrokeColorRGB(0,0.5,1)
     canvas.setLineWidth(4)
     canvas.line(0, -27.5 * cm, 21.7 * cm, -27.5 * cm)
     footer = (

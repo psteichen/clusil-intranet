@@ -1,5 +1,5 @@
 <div class="overview">
-<div class="panel panel-success">
+<div class="panel panel-info">
   <div class="panel-heading">
     <center><h2>{{ title|safe }}</h2></center>
   </div>
@@ -13,7 +13,7 @@
 	    {{ member.head_of_list.first_name }} {{ member.head_of_list.last_name|upper }} ({{ member.head_of_list.email }})
   	  </li>
         {% if member.delegate %}
-	  <li class="list-group-item list-group-item-info">
+	  <li class="list-group-item list-group-item-warning">
     	    <span class="badge">Delegate</span>
 	    {{ member.delegate.first_name }} {{ member.delegate.last_name|upper }} ({{ member.delegate.email }})
   	  </li>
@@ -53,7 +53,7 @@
          <tr>
           <td>
            {% if u.role == 'hol' %}<span class="fa fa-user-circle text-success"></span>{% endif %}
-           {% if u.role == 'del' %}<span class="fa fa-user-secret text-info"></span>{% endif %}
+           {% if u.role == 'del' %}<span class="fa fa-user-secret text-warning"></span>{% endif %}
            {% if u.role == 'u' %}<span class="fa fa-user"></span>{% endif %}
           </td>
           <td>{{ u.first_name }}</td>

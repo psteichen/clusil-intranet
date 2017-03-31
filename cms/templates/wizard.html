@@ -9,7 +9,7 @@
 {% csrf_token %}
  {{ wizard.management_form }}
  {{ wizard.form.non_form_errors }}
- <div class="panel panel-success">
+ <div class="panel panel-info">
   <div class="panel-heading">
    <h2 class="panel-title">{{ step_title }}&nbsp;<span class="badge pull-right">step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span></h2>
   </div>
@@ -30,7 +30,7 @@
  {% buttons %}
  <div class="btn-toolbar">
   <div class="btn-group pull-right">
-   <button class="btn btn-success" type="submit" value="{{ next }}">{{ next }}&nbsp;&nbsp{% bootstrap_icon "play" %}</button>
+   <button class="btn btn-info" type="submit" value="{{ next }}">{{ next }}&nbsp;&nbsp{% bootstrap_icon "play" %}</button>
   </div>
  {% if wizard.steps.prev %}
   <div class="btn-group pull-left">

@@ -18,6 +18,15 @@ registration_forms = [
         ('group'	, AffiliationForm),
 #        ('captcha'	, CaptchaForm),
 ]
+registration_forms_alt = [
+        ('address'	, AddressForm),
+        ('head'		, RegisterUserForm),
+        ('delegate'	, RegisterUserForm),
+        ('more'		, MultiUserFormSet),
+        ('student_proof', StudentProofForm),
+        ('group'	, AffiliationForm),
+#        ('captcha'	, CaptchaForm),
+]
 #condition dict
 registration_condition_dict = {
 	'delegate'	: show_delegate_form,
@@ -27,8 +36,10 @@ registration_condition_dict = {
 #view
 registration_wizard = RegistrationWizard.as_view(registration_forms, condition_dict=registration_condition_dict)
 
+registration_wizard_alt = RegistrationWizard.as_view(registration_forms_alt, condition_dict=registration_condition_dict)
 
 urlpatterns = patterns('',
   url(r'^$', registration_wizard, name='register'),
+  url(r'^(?P<type>.+?)/$', registration_wizard_alt, name='register'),
   url(r'^validate/(?P<val_hash>.+?)/$', validate, name='validate'),
 )

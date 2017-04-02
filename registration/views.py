@@ -25,14 +25,28 @@ from .functions import gen_member_id, add_to_groups, gen_username, gen_random_pa
 ## registration helper functions
 ##
 def show_delegate_form(wizard):
-  return show_form(wizard,'type','member_type',Member.ORG) and show_form(wizard,'head','delegate',True)
+  if wizard.kwargs: #alt mode 
+    [item for item in Member.MEMBER_TYPES if item[0] == wizard.kwargs['type']]
+    ty = int(item[0])
+    return ty == Member.ORG and show_form(wizard,'head','delegate',True)
+  else: #normal mode
+    return show_form(wizard,'type','member_type',Member.ORG) and show_form(wizard,'head','delegate',True)
 
 def show_multi_user_form(wizard):
-  return show_form(wizard,'type','member_type',Member.ORG)
-
+  if wizard.kwargs: #alt mode 
+    [item for item in Member.MEMBER_TYPES if item[0] == wizard.kwargs['type']]
+    ty = int(item[0])
+    return ty == Member.ORG
+  else: #normal mode
+    return show_form(wizard,'type','member_type',Member.ORG)
 
 def show_student_proof_form(wizard):
-  return show_form(wizard,'type','member_type',Member.STD)
+  if wizard.kwargs: #alt mode 
+    [item for item in Member.MEMBER_TYPES if item[0] == wizard.kwargs['type']]
+    ty = int(item[0])
+    return ty == Member.STD
+  else: #normal mode
+    return show_form(wizard,'type','member_type',Member.STD)
 
 
 ###########################
@@ -57,7 +71,6 @@ class RegistrationWizard(SessionWizardView):
     self.request.breadcrumbs( ( 
 				('registration ['+unicode(ty)+']','/reg/'+unicode(ty)+'/'),
                              ) )
-
 
 
     if self.steps.current != None:
@@ -90,7 +103,7 @@ class RegistrationWizard(SessionWizardView):
     ty = None
     if self.kwargs: 
       [item for item in Member.MEMBER_TYPES if item[0] == self.kwargs['type']]
-      ty = item[0]
+      ty = int(item[0])
 
     if step == 'address':
       cleaned_data = self.get_cleaned_data_for_step('type') or False
@@ -118,9 +131,9 @@ class RegistrationWizard(SessionWizardView):
       t_data = self.get_cleaned_data_for_step('type') or False
       if t_data:
         ty = int(t_data['member_type'])
-        if ty != Member.ORG:
-          del form.fields['delegate']
-          del form.fields['more']
+      if ty != Member.ORG:
+        del form.fields['delegate']
+        del form.fields['more']
 
     if step == 'delegate':
       del form.fields['delegate']
@@ -151,8 +164,14 @@ class RegistrationWizard(SessionWizardView):
     M = lvl = O = A = U = D = Gs = None
     Us = []
 
-    t_f = form_dict['type']
-    ty = int(t_f.cleaned_data['member_type'])
+    ty = None
+    if self.kwargs: 
+      [item for item in Member.MEMBER_TYPES if item[0] == self.kwargs['type']]
+      ty = int(item[0])
+    else: 
+      t_f = form_dict['type']
+      ty = int(t_f.cleaned_data['member_type'])
+
     a_f = form_dict['address']
     h_f = form_dict['head']
     if a_f.is_valid() and h_f.is_valid():
@@ -224,10 +243,10 @@ class RegistrationWizard(SessionWizardView):
       # add all Users for ORG type
       if Us != []: M.users=Us
 
-      g_f = form_dict['group']
-      if g_f.is_valid():
-        Gs = g_f.cleaned_data['groups']
-        add_to_groups(U,Gs)
+#      g_f = form_dict['group']
+#      if g_f.is_valid():
+#        Gs = g_f.cleaned_data['groups']
+#        add_to_groups(U,Gs)
 
       reg_hash_code = gen_hash(settings.REG_SALT,M.head_of_list.email,15,M.address)
       # create registration entry for out-of-bound validation

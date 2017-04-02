@@ -15,7 +15,7 @@ registration_forms = [
         ('delegate'	, RegisterUserForm),
         ('more'		, MultiUserFormSet),
         ('student_proof', StudentProofForm),
-        ('group'	, AffiliationForm),
+#        ('group'	, AffiliationForm),
 #        ('captcha'	, CaptchaForm),
 ]
 registration_forms_alt = [
@@ -24,7 +24,7 @@ registration_forms_alt = [
         ('delegate'	, RegisterUserForm),
         ('more'		, MultiUserFormSet),
         ('student_proof', StudentProofForm),
-        ('group'	, AffiliationForm),
+#        ('group'	, AffiliationForm),
 #        ('captcha'	, CaptchaForm),
 ]
 #condition dict

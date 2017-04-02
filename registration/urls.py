@@ -40,6 +40,6 @@ registration_wizard_alt = RegistrationWizard.as_view(registration_forms_alt, con
 
 urlpatterns = patterns('',
   url(r'^$', registration_wizard, name='register'),
-  url(r'^(?P<type>.+?)/$', registration_wizard_alt, name='register'),
   url(r'^validate/(?P<val_hash>.+?)/$', validate, name='validate'),
+  url(r'^(?P<type>.+?)/$', registration_wizard_alt, name='register'),
 )

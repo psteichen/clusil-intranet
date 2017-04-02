@@ -47,7 +47,12 @@ class RegistrationWizard(SessionWizardView):
   def get_context_data(self, form, **kwargs):
     context = super(RegistrationWizard, self).get_context_data(form=form, **kwargs)
 
-    ty = self.kwargs['type']
+    ty = None
+    if self.kwargs: 
+      ty = self.kwargs['type']
+    else:
+      cleaned_data = self.get_cleaned_data_for_step('type') or False
+      if cleaned_data: ty = Member.MEMBER_TYPES[int(cleaned_data['member_type'])][1]
 
     self.request.breadcrumbs( ( 
 				('registration ['+unicode(ty)+']','/reg/'+unicode(ty)+'/'),
@@ -57,10 +62,10 @@ class RegistrationWizard(SessionWizardView):
 
     if self.steps.current != None:
       if self.request.user.has_perm('cms.SECR'):
-        context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title']})
+        context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title'].format(type=ty)})
         context.update({'step_desc': ''})
       else:
-        context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title']})
+        context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title'].format(type=ty)})
         context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['desc']})
 
       context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['title']})
@@ -75,23 +80,28 @@ class RegistrationWizard(SessionWizardView):
 
     return context
 
-  def get_form(self, step=None, data=None, files=None):
+  def get_form(self, step=None, data=None, files=None, **kwargs):
     form = super(RegistrationWizard, self).get_form(step, data, files)
 
     # determine the step if not given
     if step is None:
       step = self.steps.current
 
-    ty = self.kwargs['type']
+    ty = None
+    if self.kwargs: 
+      [item for item in Member.MEMBER_TYPES if item[0] == self.kwargs['type']]
+      ty = item[0]
 
     if step == 'address':
-      if cleaned_data:
-        if ty == Member.ORG:
-          del form.fields['first_name']
-          del form.fields['last_name']
-          del form.fields['email']
-        if ty != Member.ORG:
-          del form.fields['organisation']
+      cleaned_data = self.get_cleaned_data_for_step('type') or False
+      if cleaned_data: # we're in normal mode 
+        ty = int(cleaned_data['member_type'])
+      if ty == Member.ORG:
+        del form.fields['first_name']
+        del form.fields['last_name']
+        del form.fields['email']
+      if ty != Member.ORG:
+        del form.fields['organisation']
 
     if step == 'head':
       cleaned_data = self.get_cleaned_data_for_step('address') or False

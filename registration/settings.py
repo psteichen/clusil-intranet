@@ -4,7 +4,7 @@
 
 REGISTRATION_TMPL_CONTENT = {
   'register' : {
-    'title'		: 'Registration',
+    'title'		: 'Registration as <i>{type}</i>',
     'first'		: 'first',
     'prev'		: 'previous',
     'overview' : {

@@ -2,7 +2,7 @@
 {% load bootstrap3 %}
 
 {% block content %}
-<h2>{{ title }}</h2>
+<h2>{{ title|safe }}</h2>
 {% if desc %}<p class="well well-sm">{{ desc }}</p>{% endif %}
 {% if error_message %}<p class="error">{{ error_message }}</p>{% endif %}
 <form role="form" class="form-horizontal" action="" method="post" enctype="multipart/form-data">

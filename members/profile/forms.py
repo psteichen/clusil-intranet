@@ -1,4 +1,4 @@
-from django.forms import  ModelForm, Form, CharField, Select, Textarea, ChoiceField, FileField, TextInput, ModelChoiceField, ModelMultipleChoiceField, RadioSelect, CheckboxSelectMultiple
+from django.forms import  ModelForm, Form, CharField, Select, Textarea, ChoiceField, FileField, TextInput, ModelChoiceField, ModelMultipleChoiceField, RadioSelect, CheckboxSelectMultiple, HiddenInput
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, UserChangeForm, ReadOnlyPasswordHashField
 from django.contrib.auth.models import User
 
@@ -81,3 +81,10 @@ class HolForm(Form):
   head_of_list = ModelChoiceField(queryset=User.objects.only('username').filter(username__in=Member.objects.only('users').values_list('users__username',flat=True)),widget=RadioSelect(),label='Head of list',empty_label=None)
 class DForm(Form):
   delegate = ModelChoiceField(queryset=User.objects.only('username').filter(username__in=Member.objects.only('users').values_list('users__username',flat=True)),widget=RadioSelect(),label='Delegate',empty_label=None)
+
+
+class StudentProofForm(Form):
+  code 		= CharField(widget=HiddenInput())
+  member 	=  CharField(widget=HiddenInput())
+  student_proof	= FileField(label='Student proof',required=False)
+

@@ -101,8 +101,14 @@ def renew(r):
 				'message': settings.TEMPLATE_CONTENT['error']['email'],
 		   })
 
-      renew = Renew(member=m,year=year,renew_code=renew_hash_code)
-      renew.save()
+      try:
+        renew = Renew.objects.get(member=m,year=year)
+        renew.ok = False
+        renew.save()
+      except Renew.DoesNotExist:
+        renew = Renew(member=m,year=year,renew_code=renew_hash_code)
+        renew.save()
+
       m_list += '<li>'+gen_member_fullname(m)+'</li>'
    
   m_list += '</ul>'

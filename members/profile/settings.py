@@ -197,5 +197,12 @@ The invoice will reach you by email, please pay in a timely manner.
 Looking forward meeting you again at one of our next events.
 ''',  
     'error_message' 	: '<strong>ERROR!</strong> Validation code not known or already used.',
+    'sp': {
+      'template'	: 'form.html',
+      'title'     	: u'Provide Student proof for the year {year}',
+      'desc'     	: u'''<p>To continue with the reduced membership fee, please provide "student proof" for the year {year}.</p>
+<p>If you want to switch to the standard membership as "individual", simply submit without uploading a document.</p>''',
+      'submit'   	: u'Submit',
+    },
   },
 }

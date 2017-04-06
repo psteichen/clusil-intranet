@@ -26,7 +26,7 @@ from accounting.functions import generate_invoice
 from registration.functions import gen_username, gen_random_password
 
 from .functions import member_initial_data, get_user_choice_list, member_is_full
-from .forms import ProfileForm, AffiliateForm, UserForm, UserChangeForm
+from .forms import ProfileForm, AffiliateForm, UserForm, UserChangeForm, StudentProofForm
 from .tables import InvoiceTable
 
 #################
@@ -536,12 +536,56 @@ def password(r):
 
 # renew validation #
 ####################
+def validate_renewal(renew,member,year):
+  # save renewal as OK
+  renew.ok = True 
+  renew.save()
+
+  # save Member as active
+  member.status = Member.ACT
+  member.save()
+
+  # generate invoice for given year (this will generate and send the invoice)
+  generate_invoice(member,year)
+
+
+
 def renew(r, code):
 
   title 		= settings.TEMPLATE_CONTENT['profile']['renew']['title']
   template		= settings.TEMPLATE_CONTENT['profile']['renew']['template']
   done_message		= settings.TEMPLATE_CONTENT['profile']['renew']['done_message']
   error_message		= settings.TEMPLATE_CONTENT['profile']['renew']['error_message']
+
+  if r.POST: #get student_proof
+    spf = StudentProofForm(r.POST,r.FILES)
+    if spf.is_valid():
+      code = spf.cleaned_data['code']
+      R = Renew.objects.get(renew_code=code)
+      M = R.member
+      y = R.year
+
+      if spf.cleaned_data['student_proof']:
+        M.student_proof = spf.cleaned_data['student_proof']
+      else: #switch to "individual" type and remove student proof
+        M.type = Member.IND
+        M.student_proof = None
+        M.save()
+
+      #all fine
+      validate_renewal(R,M,y)
+  
+      message = done_message.format(name=gen_fullname(M.head_of_list),member_id=M.pk)
+      return render(r, template, {
+				'title'		: title,
+	                   	'message'	: message,
+                   })
+
+    else: #from not valid -> error
+      return render(r,template, {
+			'title'		: title,
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ' + gen_form_errors(uf),
+		   })
 
   try:
     # if hash code match: it's a renewal to be validated
@@ -555,22 +599,24 @@ def renew(r, code):
     M = R.member
     y = R.year
 
-    # save renewal as OK
-    R.ok = True 
-    R.save()
+    # check if student
+    if M.type == Member.STD:
+      # ask for student_proof renewal 
+      form = StudentProofForm(initial={'code': code, 'member': M.pk, })
 
-    # save Member as active
-    M.status = Member.ACT
-    M.save()
-
-    # generate invoice for given year (this will generate and send the invoice)
-    generate_invoice(M,y)
-
-    message = done_message.format(name=gen_fullname(M.head_of_list),member_id=M.pk)
-    return render(r, template, {
-                   'title'	: title,
-                   'message'	: message,
-               })
+      return render(r,settings.TEMPLATE_CONTENT['profile']['renew']['sp']['template'], {
+  			'title'	: settings.TEMPLATE_CONTENT['profile']['renew']['sp']['title'].format(year=y),
+  			'desc'	: settings.TEMPLATE_CONTENT['profile']['renew']['sp']['desc'].format(year=y),
+  			'submit': settings.TEMPLATE_CONTENT['profile']['renew']['sp']['submit'],
+			'form'	: form,
+		   })
+    else:
+      validate_renewal(R,M,y)
+      message = done_message.format(name=gen_fullname(M.head_of_list),member_id=M.pk)
+      return render(r, template, {
+				'title'		: title,
+	                   	'message'	: message,
+                   })
 
   except Renew.DoesNotExist:
     # else: error

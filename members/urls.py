@@ -39,5 +39,5 @@ urlpatterns = patterns('',
   url(r'^(?P<member_id>.+?)/affiluser/(?P<user>.+?)/$', affiluser, name='affiluser'),
   url(r'^(?P<member_id>.+?)/make_head/(?P<user>.+?)/$', make_head, name='make_head'),
   url(r'^(?P<member_id>.+?)/make_delegate/(?P<user>.+?)/$', make_delegate, name='make_delegate'),
-  url(r'^(?P<member_id>.+?)/rmuser/(?P<user>.+?)/$', rmuser, name='rmuser'),
+  url(r'^(?P<member_id>.+?)/rmuser/(?P<user>.+?)/((?P<really>.+?)/)?$', rmuser, name='rmuser'),
 )

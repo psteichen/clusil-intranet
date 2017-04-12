@@ -621,13 +621,7 @@ def rmuser(r,member_id,user,really=False):
   error_title 		= settings.TEMPLATE_CONTENT['profile']['rmuser']['error']['title']
   error_message 	= settings.TEMPLATE_CONTENT['profile']['rmuser']['error']['message']
 
-  #check if hol
-  if not r.user.username == M.head_of_list.username:
-    return render(r,done_template, {
-			'title'		: error_title,
-                	'error_message'	: error_message,
-		 })
-  
+    
   #check if REALLY want to delete user
   if really == 'REALLY':
     msg = done_message.format(
@@ -641,7 +635,8 @@ def rmuser(r,member_id,user,really=False):
 			'message'	: msg,
 	       })
 
-  else: #show user to delete and give a second chance to decide
+  #check if hol, del or admin
+  if r.user.username in (M.head_of_list.username, M.delegate.username) or r.user.is_superuser :
     return render(r,template, {
 			'title'		: title,
 			'message'	: message.format(
@@ -649,8 +644,13 @@ def rmuser(r,member_id,user,really=False):
 								email	= U.email,
 								login	= U.username,
 								affil	= get_affiliations(U),
-								url	= '/profile/rmuser/'+U.username+'/REALLY/'
+								url	= '/members/'+M.pk+'/rmuser/'+U.username+'/REALLY/'
 							),
+		 })
+  else: #error page
+    return render(r,done_template, {
+			'title'		: error_title,
+                	'error_message'	: error_message,
 		 })
 
 

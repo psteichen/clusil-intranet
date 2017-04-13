@@ -72,13 +72,15 @@
             <div class="btn-group-vertical" role="group">
 	      <a class="btn btn-sm btn-default" role="button" href="/members/{{ member.id }}/moduser/{{ u.username }}/" title="Modify User"><i class="fa fa-pencil-square text-danger">&nbsp;&nbsp;Modify User</i></a>
 	      <a class="btn btn-sm btn-info" role="button" href="/members/{{ member.id }}/affiluser/{{ u.username }}/" title=""><i class="fa fa-th-list"></i>&nbsp;&nbsp;Affiliate User</a>
-              {% if u.role != 'hol' %}
-	        <a class="btn btn-sm btn-success" role="button" href="/members/{{ member.id }}/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
+              {% if member.organisation %} {# functions only available for ORG type #}
+                {% if u.role != 'hol' %}
+		  <a class="btn btn-sm btn-success" role="button" href="/members/{{ member.id }}/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
+                {% endif %}
+                {% if u.role != 'del' %}
+	          <a class="btn btn-sm btn-warning" role="button" href="/members/{{ member.id }}/make_delegate/{{ u.username }}/" title=""><i class="fa fa-user-secret"></i>&nbsp;&nbsp;Assign as Delegate</a>
+                {% endif %}
+		<a class="btn btn-sm btn-danger" role="button" href="/members/{{ member.id }}/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
               {% endif %}
-              {% if u.role != 'del' %}
-	        <a class="btn btn-sm btn-warning" role="button" href="/members/{{ member.id }}/make_delegate/{{ u.username }}/" title=""><i class="fa fa-user-secret"></i>&nbsp;&nbsp;Assign as Delegate</a>
-              {% endif %}
-	      <a class="btn btn-sm btn-danger" role="button" href="/members/{{ member.id }}/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
             </div>
           </td>
          </tr>

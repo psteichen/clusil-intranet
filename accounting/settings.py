@@ -63,7 +63,7 @@ ACCOUNTING_TMPL_CONTENT = {
   'invoice': {
     'template'		: 'done.html',
     'title'     	: 'New Invoice generated for',
-    'message'     	: '''<ul class="list-group">
+    'message'     	: u'''<ul class="list-group">
 	<li class="list-group-item">Member: {member}</li>
 	<li class="list-group-item">Year: {year}</li>
 	<li class="list-group-item">Head-of-list: {head}</li>

@@ -102,7 +102,7 @@ def invoice(r,member,year):
 
   template = settings.TEMPLATE_CONTENT['accounting']['invoice']['template']
   title = settings.TEMPLATE_CONTENT['accounting']['invoice']['title'].format(id=M.id)
-  message = settings.TEMPLATE_CONTENT['accounting']['invoice']['message'].format(member=M,year=year,head=gen_fullname(M.head_of_list))
+  message = settings.TEMPLATE_CONTENT['accounting']['invoice']['message'].format(member=unicode(M),year=year,head=gen_fullname(M.head_of_list))
 
   # generate invoice and sent to head-of-list
   generate_invoice(M,year)
@@ -125,7 +125,7 @@ def credit(r,member,year): #year is not used, but for sake of easiness keep it
 
   template = settings.TEMPLATE_CONTENT['accounting']['credit']['template']
   title = settings.TEMPLATE_CONTENT['accounting']['credit']['title'].format(id=M.id)
-  message = settings.TEMPLATE_CONTENT['accounting']['credit']['message'].format(member=M,year=year,head=gen_fullname(M.head_of_list))
+  message = settings.TEMPLATE_CONTENT['accounting']['credit']['message'].format(member=unicode(M),year=year,head=gen_fullname(M.head_of_list))
 
   # generate credit note and sent to head-of-list
   generate_credit_note(M)

@@ -72,7 +72,11 @@ def add(r):
     if mf.is_valid():
       Mt = mf.save(commit=False)
       Mt.save()
-      
+
+      # gen attendance hashes for new users
+      for u in Users.objects.all():
+        gen_attendance_hashes(Mt,Event.MEET,u)
+
       user_member = get_member_from_username(r.user.username)
 
       if r.FILES:

@@ -55,8 +55,6 @@ def attendance(r, event_type, event_id, attendance_hash):
       if event_type == 'meetings':
         for a in get_group_members(M.group):
           U = a.user
-#      for u in get_all_users_for_membership(m):
-#	U = User.objects.get(username=u['username'])
 
           try:
             A = Meeting_Attendance.objects.get(meeting=M,user=U)

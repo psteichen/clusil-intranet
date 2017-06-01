@@ -373,7 +373,6 @@ def adduser(r,member_id):
       for m in Meeting.objects.all():
         gen_attendance_hashes(m,Event.MEET,u)
 
-
       message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(name=gen_fullname(U))
       return render(r,done_template, {
 			'title'		: title,

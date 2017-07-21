@@ -4,7 +4,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 from django.template.loader import render_to_string
 
-from cms.functions import notify_by_email
+from cms.functions import notify_by_email, gen_form_errors
+
 from members.functions import gen_fullname
 
 from .forms import IdeaForm

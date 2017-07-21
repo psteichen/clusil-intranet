@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -36,9 +36,10 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
   email = EmailMessage(
                 subject=subject, 
                 from_email=settings.EMAILS['email']['no-reply'], 
-                to=[to], 
-                cc=[settings.EMAILS['email']['secgen']] #always Cc to secgen
-          )
+                to=[to]
+		)
+#                cc=[settings.EMAILS['email']['secgen']] #always Cc to secgen
+#          )
   # add default footer (questions, salutation and disclaimer)
   message_content['SALUTATION'] = settings.EMAILS['salutation']
   message_content['DISCLAIMER'] = settings.EMAILS['disclaimer']
@@ -101,7 +102,7 @@ def genIcal(event):
   location	= event.location
  
   # Timezone to use for our dates - change as needed
-  reminderHours = 1
+  reminderHours = 3
 
   cal = Calendar()
   cal.add('prodid', '-//CLUSIL calendar application//clusil.lu//')
@@ -127,7 +128,7 @@ def genIcal(event):
   alarm = Alarm()
   alarm.add("action", "DISPLAY")
   alarm.add('description', "Reminder")
-  #alarm.add("trigger", dt.timedelta(hours=-reminderHours))
+  alarm.add("trigger", timedelta(hours=-reminderHours))
   # The only way to convince Outlook to do it correctly
   alarm.add("TRIGGER;RELATED=START", "-PT{0}H".format(reminderHours))
   vevent.add_component(alarm)

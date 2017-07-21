@@ -9,6 +9,7 @@ from django.contrib.formtools.wizard.views import SessionWizardView
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 from django_tables2  import RequestConfig
 
@@ -74,7 +75,7 @@ def add(r):
       Mt.save()
 
       # gen attendance hashes for new users
-      for u in Users.objects.all():
+      for u in User.objects.all():
         gen_attendance_hashes(Mt,Event.MEET,u)
 
       user_member = get_member_from_username(r.user.username)

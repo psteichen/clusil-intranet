@@ -368,10 +368,10 @@ def adduser(r,member_id):
 	
       # gen attendance hashes for existing events
       for e in Event.objects.all():
-        gen_attendance_hashes(e,Event.OTH,u)
+        gen_attendance_hashes(e,Event.OTH,U)
       # and meetings
       for m in Meeting.objects.all():
-        gen_attendance_hashes(m,Event.MEET,u)
+        gen_attendance_hashes(m,Event.MEET,U)
 
       message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(name=gen_fullname(U))
       return render(r,done_template, {

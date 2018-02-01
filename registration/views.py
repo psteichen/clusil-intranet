@@ -26,17 +26,15 @@ from .functions import gen_member_id, add_to_groups, gen_username, gen_random_pa
 ##
 def show_delegate_form(wizard):
   if wizard.kwargs: #alt mode 
-    [item for item in Member.MEMBER_TYPES if item[0] == wizard.kwargs['type']]
-    ty = int(item[0])
-    return ty == Member.ORG and show_form(wizard,'head','delegate',True)
+    if Member.MEMBER_TYPES[Member.ORG][1] == unicode(wizard.kwargs['type']): 
+      return True and show_form(wizard,'head','delegate',True)
   else: #normal mode
     return show_form(wizard,'type','member_type',Member.ORG) and show_form(wizard,'head','delegate',True)
 
 def show_multi_user_form(wizard):
   if wizard.kwargs: #alt mode 
-    [item for item in Member.MEMBER_TYPES if item[0] == wizard.kwargs['type']]
-    ty = int(item[0])
-    return ty == Member.ORG
+    if Member.MEMBER_TYPES[Member.ORG][1] == unicode(wizard.kwargs['type']): 
+      return True
   else: #normal mode
     return show_form(wizard,'type','member_type',Member.ORG)
 
@@ -106,8 +104,9 @@ class RegistrationWizard(SessionWizardView):
 
     ty = None
     if self.kwargs: 
-      [item for item in Member.MEMBER_TYPES if item[0] == self.kwargs['type']]
-      ty = int(item[0])
+      for item in Member.MEMBER_TYPES:
+        if unicode(item[1]) == unicode(self.kwargs['type']):
+          ty = int(item[0])
 
     if step == 'address':
       cleaned_data = self.get_cleaned_data_for_step('type') or False
@@ -170,8 +169,9 @@ class RegistrationWizard(SessionWizardView):
 
     ty = None
     if self.kwargs: 
-      [item for item in Member.MEMBER_TYPES if item[0] == self.kwargs['type']]
-      ty = int(item[0])
+      for item in Member.MEMBER_TYPES: 
+        if unicode(item[1]) == unicode(self.kwargs['type']):
+          ty = int(item[0])
     else: 
       t_f = form_dict['type']
       ty = int(t_f.cleaned_data['member_type'])
@@ -186,6 +186,7 @@ class RegistrationWizard(SessionWizardView):
       Ro.save()
       #organisation
       if ty == Member.ORG:
+        var = a_f.cleaned_data
         o = a_f.cleaned_data['organisation']
         O = Organisation(name=o,address=A)
         O.save()
@@ -241,6 +242,9 @@ class RegistrationWizard(SessionWizardView):
 
       # add delegate if exists
       if D != None: M.delegate=D
+
+      # add member_type if in alt mode
+      M.type = ty
 
       # save Member model
       M.save()

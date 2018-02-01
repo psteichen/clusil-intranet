@@ -41,11 +41,15 @@ def show_multi_user_form(wizard):
     return show_form(wizard,'type','member_type',Member.ORG)
 
 def show_student_proof_form(wizard):
+#  if wizard.kwargs: #alt mode 
+#    [item for item in Member.MEMBER_TYPES if item[0] == wizard.kwargs['type']]
+#    ty = int(item[0])
+#    return ty == Member.STD
+#  else: #normal mode
   if wizard.kwargs: #alt mode 
-    [item for item in Member.MEMBER_TYPES if item[0] == wizard.kwargs['type']]
-    ty = int(item[0])
-    return ty == Member.STD
-  else: #normal mode
+    if Member.MEMBER_TYPES[Member.STD][1] == unicode(wizard.kwargs['type']): 
+      return True
+  else:
     return show_form(wizard,'type','member_type',Member.STD)
 
 

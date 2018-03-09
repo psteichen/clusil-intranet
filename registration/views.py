@@ -268,7 +268,7 @@ class RegistrationWizard(SessionWizardView):
 	'LINK'		: gen_confirmation_link(reg_hash_code),
       }
       # send confirmation
-      ok=notify_by_email(M.head_of_list.email,done_title,message_content,email_template)
+      ok=notify_by_email(M.head_of_list.email,done_title,message_content,email_template,None,settings.EMAILS['email']['secgen'])
       if not ok:
         return render(self.request, error_template, { 
 				'mode': 'Error in email confirmation', 
@@ -346,7 +346,7 @@ def validate(r, val_hash):
       message_content['USERS']=users_msg.format(users=gen_user_list(M))
 
     #send email
-    ok=notify_by_email(M.head_of_list.email,title,message_content,email_template)
+    ok=notify_by_email(M.head_of_list.email,title,message_content,email_template,None,settings.EMAILS['email']['secgen'])
 
     return render(r, template, {
                    'title'	: title,

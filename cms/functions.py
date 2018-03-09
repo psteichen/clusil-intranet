@@ -27,7 +27,7 @@ def attach_to_email(email,attachment):
       email.attach_file(tmp_file)
       tmp_file = default_storage.delete(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name))
 
-def notify_by_email(to,subject,message_content,template='default.txt',attachment=None):
+def notify_by_email(to,subject,message_content,template='default.txt',attachment=None,copy):
   from django.core.mail import EmailMessage
   is_array = lambda var: isinstance(var, (list, tuple))
 
@@ -37,9 +37,8 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
                 subject=subject, 
                 from_email=settings.EMAILS['email']['no-reply'], 
                 to=[to]
-		)
-#                cc=[settings.EMAILS['email']['secgen']] #always Cc to secgen
-#          )
+                cc=[copy]
+          )
   # add default footer (questions, salutation and disclaimer)
   message_content['SALUTATION'] = settings.EMAILS['salutation']
   message_content['DISCLAIMER'] = settings.EMAILS['disclaimer']

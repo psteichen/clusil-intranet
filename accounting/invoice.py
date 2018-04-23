@@ -23,10 +23,10 @@ def draw_address(canvas):
     """ Draws the business address """
     canvas.setFont('Helvetica', 9)
     business_details = (
-        u'CLUSIL a.s.b.l.',
-        u'41, ave de la gare L-1611 Luxembourg',
-        u'info@clusil.lu - www.clusil.lu',
-        u'RCS Luxembourg: F3043',
+        u"CLUSIL a.s.b.l.",
+        u"16, blvd d'Avranche L-1160 Luxembourg",
+        u"info@clusil.lu - www.clusil.lu",
+        u"RCS Luxembourg: F3043",
     )
     textobject = canvas.beginText(1 * cm, -1 * cm)
     for line in business_details:

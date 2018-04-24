@@ -36,9 +36,10 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
   email = EmailMessage(
                 subject=subject, 
                 from_email=settings.EMAILS['email']['no-reply'], 
-                to=[to],
-                cc=[copy]
+                to=[to]
           )
+  if copy: email.cc=[copy]
+
   # add default footer (questions, salutation and disclaimer)
   message_content['SALUTATION'] = settings.EMAILS['salutation']
   message_content['DISCLAIMER'] = settings.EMAILS['disclaimer']
@@ -48,11 +49,13 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
       for a in attachment: attach_to_email(email,a)
     else: attach_to_email(email,attachment)
 
-  try:
-    email.send()
-    return True
-  except:
-    return False
+  return email.send()
+
+#  try:
+#    email.send()
+#    return True
+#  except:
+#    return False
 
 def show_form(wiz,step,field,const):
   cleaned_data = wiz.get_cleaned_data_for_step(step) or {}

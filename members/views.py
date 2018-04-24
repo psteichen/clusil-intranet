@@ -13,7 +13,7 @@ from django.contrib.formtools.wizard.views import SessionWizardView
 
 from django_tables2  import RequestConfig
 
-from cms.functions import show_form, notify_by_email, gen_form_errors
+from cms.functions import show_form, notify_by_email, gen_form_errors, debug
 
 from registration.functions import gen_hash, gen_username, gen_random_password
 
@@ -85,6 +85,10 @@ def renew(r):
       f = Fee.objects.get(member=m,year=year)
     except:
       # if member didn't get an invoice yet for this year
+#TODO:
+# renewal link only for students to renew student_proof
+# for all others send invoice directly, cf members.profile.renew()
+#
       salt2=float(year)
       renew_hash_code = gen_hash(settings.RENEW_SALT,unicode(m.head_of_list.email)+unicode(m.address).encode('ascii', 'ignore'),15,salt2)
       # build request mail
@@ -93,10 +97,13 @@ def renew(r):
         'YEAR'		: year,
 	'LINK'		: gen_renewal_link(renew_hash_code),
       }
+
+      debug('members.renew','renewing member: '+unicode(m))
+
       # send confirmation
       ok=notify_by_email(m.head_of_list.email,email_title,message_content,email_template)
       if not ok:
-        return render(r, error_template, { 
+        return render(r, template, { 
 				'mode': 'Error in email request', 
 				'message': settings.TEMPLATE_CONTENT['error']['email'],
 		   })

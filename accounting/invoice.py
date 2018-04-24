@@ -24,7 +24,7 @@ def draw_address(canvas):
     canvas.setFont('Helvetica', 9)
     business_details = (
         u"CLUSIL a.s.b.l.",
-        u"16, blvd d'Avranche L-1160 Luxembourg",
+        u"16, blvd d'Avranches L-1160 Luxembourg",
         u"info@clusil.lu - www.clusil.lu",
         u"RCS Luxembourg: F3043",
     )

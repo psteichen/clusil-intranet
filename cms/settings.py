@@ -227,8 +227,8 @@ Your CLUSIL team
 TEMPLATE_CONTENT = {
   #basic/generic content for all templates/views:
   'meta' : {
-    'author'            : 'Pascal Steichen - pst@clusil.lu ; 2012, 2014, 2015',
-    'copyright'         : 'CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014, 2015',
+    'author'            : 'Pascal Steichen - pst@clusil.lu ; 2012, 2014, 2015, 2018',
+    'copyright'         : 'CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014, 2015, 2018',
     'title'             : 'Club Management System',
     'logo' : {
       'url'		: "/",
@@ -305,7 +305,7 @@ HOME_ACTIONS = (
       {         
         'label'         : 'Profile', 
         'icon'     	: 'home',
-        'grade'     	: 'info',
+        'grade'     	: 'primary',
         'desc'          : 'Manage your Membership profile',
         'url'           : '/profile/',
       },
@@ -318,7 +318,7 @@ HOME_ACTIONS = (
       {         
         'label'        	: 'Submit your thought', 
         'icon' 		: 'commenting-o',
-        'grade'  	: 'info',
+        'grade'  	: 'primary',
     	'desc'         	: 'Please share with us your thoughts about CLUSIL!',
         'url'          	: '/ideabox/',
       },

@@ -39,7 +39,7 @@
 
   <body role="document">
 
-   <div class="container">
+   <div class="container-fluid">
 
   {% block navbar %}
     {% include "navigation.html" %}
@@ -56,13 +56,19 @@
     {% endfor %}
   {% endblock %}
 
+<!--
     <div class="jumbotron">
+-->
 
-     <div class="content">
+   <div class="card bg-light">
+     <div class="card-body">
      {% block content %}{% endblock %}
      </div>
+   </div>
 
-    </div> <!-- end jumbotron -->
+<!--
+    </div>
+-->
 
     <div class="footer">
      <p class="text-muted pull-right">&copy; {{ meta.copyright }}</p>

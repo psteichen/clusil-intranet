@@ -1,19 +1,19 @@
-{% extends "base.html" %}
+{% extends "default.html" %}
 
 {% load bootstrap4 %}
 
 {% block content %}
 <ul class="nav nav-pills">
-  <li class="active"><a data-toggle="tab" href="#auth">{{ auth.title }}</a></li>
-  <li><a data-toggle="tab" href="#reg">{{ auth.reg.title }}</a></li>
+  <li class="nav-item"><a class="nav-link active" data-toggle="tab" role="tab" href="#auth">{{ auth.title }}</a></li>
+  <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#reg">{{ auth.reg.title }}</a></li>
 </ul>
 
-<div class="panel panel-info">
-  <div class="panel-body">
+<div class="card card-info">
+  <div class="card-body">
    <div class="col-xs-4"></div>
 
    <div class="tab-content">
-     <div id="auth" class="tab-pane fade in active col-xs-4">
+     <div id="auth" class="tab-pane fade show active col-xs-4" role="tabpanel">
        <h2 class="text-info">{{ auth.title }}</h2>
        <form role="form" class="form-horizontal" method="post" action="{% url 'login' %}">
          {% csrf_token %}
@@ -25,7 +25,7 @@
          </center>
        </form>
      </div>
-     <div id="reg" class="tab-pane fade col-xs-4">
+     <div id="reg" class="tab-pane fade col-xs-4" role="tabpanel">
        <h2 class="text-info">{{ auth.reg.title }}</h2>
        <p class="lead">{{ auth.reg.desc|safe }}</p>
      </div>

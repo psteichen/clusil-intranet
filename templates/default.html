@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  {% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="none">
+
+    <meta name="author" content="{{ meta.author }}">
+    <meta name="copyright" content="{{ meta.copyright }}">
+    
+    <title>{{ meta.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    <meta name="keywords" content="{{ meta.keywords }}">
+    
+    <link rel="index" href="/" title="{{ meta.title }}">
+
+    <!-- LogRocket -->
+{% comment %}
+    <script src="https://cdn.logrocket.com/LogRocket.min.js"></script>
+    <script>window.LogRocket && window.LogRocket.init('0hp5bw/clusil');</script>
+{% endcomment %}
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{{ meta.css.bt }}">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="{{ meta.css.bt_theme }}">
+   
+    <!-- custom stylesheet -->
+    <link rel="stylesheet" href="{{ meta.css.own }}">
+
+   <!-- fontawesome //-->
+   <script src="{{ meta.js.fontawesome }}"></script>
+
+  {% endblock %}
+  </head>
+
+  <body role="document">
+
+  <div class="container">
+
+    <br/>
+    <div class="jumbotron">
+
+      <div class="container">
+        <h1><a href="{{ meta.logo.url }}"><img src="{{ meta.logo.img }}" class="d-inline-block align-middle" height="80" alt=""></a>&nbsp;&nbsp;&nbsp;{{ meta.title|safe }}</h1>
+        <hr/>
+
+      {% block content %}{% endblock %}
+      </div>
+
+    </div>
+
+    <div class="footer">
+     <p class="text-muted pull-right">&copy; {{ meta.copyright }}</p>
+    </div>
+
+  </div> <!-- end container -->
+
+  <!-- jquery //-->
+  <script src="{{ meta.js.jq }}"></script>
+  <!-- popper //-->
+  <script src="{{ meta.js.popper }}"></script>
+
+  <!-- bootstrap -->
+  <script src="{{ meta.js.bt }}"></script>
+  <!-- bootstrap bundle -->
+  <script src="{{ meta.js.bt_bundle }}"></script>
+
+  </body>
+</html>
+

@@ -1,0 +1,15 @@
+{% extends 'admin/base_site.html' %}
+
+{% load static %}
+{% load bootstrap4 %}
+
+{% block nav-global %}
+    <img class="brand_img" src="{% static 'pics/logo.png'%}" height="40" alt="logo">
+{% endblock %}
+
+{% block branding %}
+    <div class="head">
+        <h1 id="name">CLUSIL Admin Dashboard</h1>
+    </div>
+{% endblock %}
+

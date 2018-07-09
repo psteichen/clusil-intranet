@@ -2,7 +2,7 @@
 
   <a class="navbar-brand" href="{{ meta.logo.url }}">
     <img src="{{ meta.logo.img }}" class="d-inline-block align-middle" alt="">
-    <em>{{ meta.title }}</em>
+    <em>{{ meta.title|safe }}</em>
   </a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.formtools.wizard.views import SessionWizardView
 
+from formtools.wizard.views import SessionWizardView
 from django_tables2  import RequestConfig
 
 from cms.functions import show_form, notify_by_email, gen_form_errors, debug

@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.formtools.wizard.views import SessionWizardView
 from django.conf import settings
 from django.forms.models import model_to_dict
 
+from formtools.wizard.views import SessionWizardView
 from django_tables2  import RequestConfig
 
 from .functions import gen_group_initial

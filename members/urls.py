@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib.auth.decorators import permission_required
 
 from .forms import ListMembersForm, ModifyMemberForm, RoleForm
@@ -23,7 +23,7 @@ modify_member_wizard = ModifyMemberWizard.as_view(modify_member_forms, condition
 #wrapper with specific permissions
 modify_member_wrapper = permission_required('cms.SECR')(modify_member_wizard)
 
-urlpatterns = patterns('',
+urlpatterns = [
   url(r'^$', list, name='list'),
 
   url(r'^renew/$', renew, name='renew'),
@@ -40,4 +40,4 @@ urlpatterns = patterns('',
   url(r'^(?P<member_id>.+?)/make_head/(?P<user>.+?)/$', make_head, name='make_head'),
   url(r'^(?P<member_id>.+?)/make_delegate/(?P<user>.+?)/$', make_delegate, name='make_delegate'),
   url(r'^(?P<member_id>.+?)/rmuser/(?P<user>.+?)/((?P<really>.+?)/)?$', rmuser, name='rmuser'),
-)
+]

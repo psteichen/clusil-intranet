@@ -28,8 +28,10 @@ ALLOWED_HOSTS = [ 'cms.clusil.lu', 'intranet.clusil.lu', ]
 # Application definition
 
 INSTALLED_APPS = (
-# global bootstrap3 integration
-  'bootstrap3',
+# global bootstrap4 integration
+#  'bootstrap3',
+  'bootstrap4',
+  'bootstrap4_datetime',
 # django core apps
   'django.contrib.admin',
   'django.contrib.auth',
@@ -37,24 +39,29 @@ INSTALLED_APPS = (
   'django.contrib.sessions',
   'django.contrib.messages',
   'django.contrib.staticfiles',
+  'django.contrib.sites',
+  'django.contrib.flatpages', #needed by breadcrumbs
 # specific supporting apps
+  'formtools',
   'django_tables2',
   'breadcrumbs',
   'captcha',
-  'password_reset',
+#  'password_reset',
   'import_export',
 # my apps
-  'cms',
-  'registration',
-  'members',
-  'members.groups',
-  'meetings',
-  'attendance',
-  'events',
-  'accounting',
-  'upload',
-  'ideabox',
+  'cms.apps.CmsConfig',
+  'registration.apps.RegistrationConfig',
+  'members.apps.MembersConfig',
+  'members.groups.apps.GroupsConfig',
+  'meetings.apps.MeetingsConfig',
+  'attendance.apps.AttendanceConfig',
+  'events.apps.EventsConfig',
+  'accounting.apps.AccountingConfig',
+  'upload.apps.UploadConfig',
+  'ideabox.apps.IdeaboxConfig',
 )
+
+SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (
 #    'django_auth_ldap.backend.LDAPBackend', #won't be needed anymore probably
@@ -87,18 +94,6 @@ MIDDLEWARE_CLASSES = (
   'breadcrumbs.middleware.BreadcrumbsMiddleware',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-  'django.contrib.auth.context_processors.auth',
-  'django.core.context_processors.request', #needed for django-tables2
-  'django.core.context_processors.debug',
-  'django.core.context_processors.i18n',
-  'django.core.context_processors.media',
-  'django.core.context_processors.static',
-  'django.core.context_processors.tz',
-  'django.contrib.messages.context_processors.messages',
-  'cms.context_processors.template_content',
-)
-
 ROOT_URLCONF = 'cms.urls'
 
 WSGI_APPLICATION = 'cms.wsgi.application'
@@ -112,14 +107,14 @@ DATABASES = {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': os.path.join(BASE_DIR, 'cms/db.sqlite'),
   },
- 'ldap': {
-   'ENGINE': 'ldapdb.backends.ldap',
-   'NAME': 'ldap://localhost/',
-   'USER': 'cn=admin,dc=clusil,dc=lu',
-   'PASSWORD': 'DklIBGzcKA4i',
-  }
+# 'ldap': {
+#   'ENGINE': 'ldapdb.backends.ldap',
+#   'NAME': 'ldap://localhost/',
+#   'USER': 'cn=admin,dc=clusil,dc=lu',
+#   'PASSWORD': 'DklIBGzcKA4i',
+#  }
 }
-DATABASE_ROUTERS = ['ldapdb.router.Router']
+#DATABASE_ROUTERS = ['ldapdb.router.Router']
 
 FIXTURE_DIRS = (
     os.path.join(BASE_DIR, 'fixtures/'),
@@ -168,11 +163,30 @@ LOGIN_URL="/login/"
 LOGIN_REDIRECT_URL="/home/"
 
 #where to find templates
-TEMPLATE_DIRS = (
-  os.path.join(BASE_DIR, 'cms/templates/'),
-  os.path.join(BASE_DIR, 'cms/templates/email/'),
-  os.path.join(BASE_DIR, 'cms/templates/documentation/'),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+	'DIRS': [
+		os.path.join(BASE_DIR, 'templates/'),
+  		os.path.join(BASE_DIR, 'templates/email/'),
+  		os.path.join(BASE_DIR, 'templates/documentation/'),
+		],
+	'OPTIONS': {
+	  'context_processors': [
+		'django.template.context_processors.debug',
+                'django.template.context_processors.request', #tables2 needs this
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                'cms.context_processors.template_content', #for own templating system
+	  	],
+	  },
+    },
+]
 
 #ReCAPTCHA stuff (not used anymore, keeping 'in case of')
 RECAPTCHA_USE_SSL = True
@@ -223,20 +237,25 @@ TEMPLATE_CONTENT = {
     'description'       : '',
     'keywords'          : '',
     'css' : {
-        'bt'            : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
+#        'bt'            : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
+        'bt'            : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
 #        'bt_theme'      : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css',
-        'bt_theme'      : '//maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css',
+        'bt_theme'      : '//stackpath.bootstrapcdn.com/bootswatch/4.1.1/lux/bootstrap.min.css',
         'jumbotron'	: '//clusil.lu/css/jumbotron.css',
         'jt_narrow'	: '//clusil.lu/css/jumbotron-narrow.css',
         'own'           : STATIC_URL + 'css/bt-clusil.css',
         'dtpicker'      : '//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css',
     },
     'js' : {
-	'jq'            : '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js',
-        'bt'            : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
+#        'jq'            : '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js',
+#        'bt'            : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
+	'jq'            : '//code.jquery.com/jquery-3.3.1.slim.min.js',
+	'popper'        : '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js',
+        'bt'            : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js',
+        'bt_bundle'     : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js',
         'fontawesome'   : '//use.fontawesome.com/42b7f0ba56.js',
-        'momentjs'      : '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js',
-        'dtpicker'      : '//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js',
+#        'momentjs'      : '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js',
+#        'dtpicker'      : '//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js',
     },
   },
   'error' : {
@@ -495,14 +514,14 @@ EVENTS_REG_BASE_URL = 'https://' + ALLOWED_HOSTS[0] + '/events/reg/'
 from accounting.settings import *
 TEMPLATE_CONTENT['accounting'] = ACCOUNTING_TMPL_CONTENT
 
-from members.models import Member
-FEE = {
-  Member.IND	: 100,
-  Member.STD 	: 25,
-  Member.ORG_6	: 400,
-  Member.ORG_12	: 700,
-  Member.ORG_18 : 1000,
-}
+#from members.models import Member
+#FEE = {
+#  Member.IND	: 100,
+#  Member.STD 	: 25,
+#  Member.ORG_6	: 400,
+#  Member.ORG_12	: 700,
+#  Member.ORG_18 : 1000,
+#}
 
 ACCOUNTING = {
   'invoice' : {

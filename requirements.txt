@@ -1,9 +1,11 @@
-django==1.7.6
+django==1.11
 django-breadcrumbs
+django-formtools
 django-tables2
 django-password-reset
 reportlab
 django-recaptcha
-django-bootstrap3
+django-bootstrap4
+django-bootstrap4-datetimepicker
 django-ldapdb
 django-import-export

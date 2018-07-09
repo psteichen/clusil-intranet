@@ -1,9 +1,9 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
 from .views import profile, invoice
 from .views import modify, adduser, affiluser, make_head, make_delegate, rmuser, moduser, invoice, new_invoice, renew
 
-urlpatterns = patterns('',
+urlpatterns = [
   #info
   url(r'^$', profile, name='profile'),
   url(r'^invoice/$', invoice, name='invoice'),
@@ -20,4 +20,4 @@ urlpatterns = patterns('',
   url(r'^rmuser/(?P<user>.+?)/((?P<really>.+?)/)?$', rmuser, name='rmuser'),
 
   url(r'^renew/(?P<code>.+?)/$', renew, name='renew'),
-)
+]

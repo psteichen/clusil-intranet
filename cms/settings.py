@@ -233,6 +233,7 @@ TEMPLATE_CONTENT = {
     'logo' : {
       'url'		: "/",
       'img'		: STATIC_URL + 'pics/logo.png',
+      'thumb'		: STATIC_URL + 'pics/thumb.png',
     },
     'description'       : '',
     'keywords'          : '',

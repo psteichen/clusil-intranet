@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-  {% block head %}
+<head>
+{% block head %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,57 +35,47 @@
    <script src="{{ meta.js.fontawesome }}"></script>
 
   {% endblock %}
-  </head>
+</head>
 
-  <body role="document">
+<body role="document">
 
-   <div class="container-fluid">
+  <div class="container-fluid">
 
-  {% block navbar %}
-    {% include "navigation.html" %}
-  {% endblock %}
+    {% block navbar %}
+      {% include "navigation.html" %}
+    {% endblock %}
 
-  {% block breadcrumbs %}
-    {% for breadcrumb in request.breadcrumbs %}
-      {% if forloop.first %}<ol class="breadcrumb">{% endif %}
-      {% if forloop.last %}
-        <li class="active">&nbsp;::&nbsp;<a class="active" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>&nbsp;::&nbsp;</li></ol>
-      {% else %}
-        <li>&nbsp;::&nbsp;<a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>&nbsp;::&nbsp;</li>
-      {% endif %}
-    {% endfor %}
-  {% endblock %}
+    {% block breadcrumbs %}
+      {% for breadcrumb in request.breadcrumbs %}
+        {% if forloop.first %}<ol class="breadcrumb my-auto">{% endif %}
+        {% if forloop.last %}
+          <li class="active">&nbsp;::&nbsp;<a class="text-info" href="{{ breadcrumb.url }}"><i>{{ breadcrumb.name }}</i></a>&nbsp;::&nbsp;</li></ol>
+        {% else %}
+          <li>&nbsp;::&nbsp;<a class="text-light" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+        {% endif %}
+      {% endfor %}
+    {% endblock %}
 
-<!--
     <div class="jumbotron">
--->
-
-   <div class="card bg-light">
-     <div class="card-body">
-     {% block content %}{% endblock %}
-     </div>
-   </div>
-
-<!--
+      {% block content %}{% endblock %}
     </div>
--->
 
     <div class="footer">
      <p class="text-muted pull-right">&copy; {{ meta.copyright }}</p>
     </div>
 
-   </div> <!-- end container -->
+  </div> <!-- end container -->
 
-   <!-- jquery //-->
-   <script src="{{ meta.js.jq }}"></script>
-   <!-- popper //-->
-   <script src="{{ meta.js.popper }}"></script>
+  <!-- jquery //-->
+  <script src="{{ meta.js.jq }}"></script>
+  <!-- popper //-->
+  <script src="{{ meta.js.popper }}"></script>
 
-   <!-- bootstrap -->
-   <script src="{{ meta.js.bt }}"></script>
-   <!-- bootstrap bundle -->
-   <script src="{{ meta.js.bt_bundle }}"></script>
+  <!-- bootstrap -->
+  <script src="{{ meta.js.bt }}"></script>
+  <!-- bootstrap bundle -->
+  <script src="{{ meta.js.bt_bundle }}"></script>
 
-  </body>
+</body>
 </html>
 

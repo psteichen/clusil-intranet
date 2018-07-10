@@ -10,6 +10,10 @@ from members.models import Member, Address
 from members.groups.models import Group, Affiliation
 
 
+class ErrorForm(Form):
+  error 	= BooleanField(label='Input error! Try again?',required=False)
+
+
 class MemberTypeForm(Form):
   member_type = ChoiceField(label='Membership type',choices=Member.MEMBER_TYPES)
 #  captcha = ReCaptchaField(attrs={'theme' : 'clean'}) #doesn't work -> do via email confirmation (!)

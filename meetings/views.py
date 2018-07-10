@@ -5,12 +5,12 @@ from datetime import date, timedelta, datetime
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.formtools.wizard.views import SessionWizardView
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+from formtools.wizard.views import SessionWizardView
 from django_tables2  import RequestConfig
 
 from cms.functions import notify_by_email, show_form, visualiseDateTime, genIcal

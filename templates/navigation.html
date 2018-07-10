@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-xl navbar-light bg-light">
+
+  <h2><a class="navbar-brand mx-0" href="{{ meta.logo.url }}"><img src="{{ meta.logo.thumb }}" class="d-inline-block align-middle" height="40" alt=""></a>{{ meta.title|safe }}</h2>
+
+<!--
+  <button class="navbar-toggler float-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+-->
+
+  <div class="navbar-collapse justify-content-end">
+    {% if user.is_authenticated %}
+    <ul class="navbar-nav">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="text-muted">Welcome, </span><span class="text-primary">{{ user.first_name }} <span class="text-uppercase">{{ user.last_name }}</span> ({{ user }})</span><span class="text-muted caret"></span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/profile/"><span class="text-muted">Member profile</span></a>
+          <a class="dropdown-item" href="/pwd/change/"><span class="text-muted">Change password</span></a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/logout/"><span class="text-primary">Logout</span></a>
+        </div>
+      </li>
+    </ul>
+    {% else %}
+    <ul class="navbar-nav">
+      <li class="nav-item"><a class="nav-link" href="/login/"><span class="text-primary">Login</span></a></li>
+    </ul>
+    {% endif %}
+  </div>
+
+</nav>
+

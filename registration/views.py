@@ -7,9 +7,10 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
-from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib.auth.models import Permission
 from django.contrib.auth.hashers import make_password
+
+from formtools.wizard.views import SessionWizardView
 
 from cms.functions import show_form, notify_by_email, replicate_to_ldap, debug
 
@@ -24,6 +25,15 @@ from .functions import gen_member_id, add_to_groups, gen_username, gen_random_pa
 ##
 ## registration helper functions
 ##
+def show_error_message(wizard):
+  if wizard.kwargs: #alt mode 
+    ty = None
+    for item in Member.MEMBER_TYPES:
+        if unicode(item[1]) == unicode(wizard.kwargs['type']):
+          ty = self.kwargs['type']
+  
+    if ty == None: show_form(wizard,'error','error',True)
+
 def show_delegate_form(wizard):
   if wizard.kwargs: #alt mode 
     if Member.MEMBER_TYPES[Member.ORG][1] == unicode(wizard.kwargs['type']): 
@@ -65,7 +75,10 @@ class RegistrationWizard(SessionWizardView):
 
     ty = None
     if self.kwargs: 
-      ty = self.kwargs['type']
+      for item in Member.MEMBER_TYPES: 
+        if unicode(item[1]) == unicode(self.kwargs['type']):
+          ty = self.kwargs['type']
+
     else:
       cleaned_data = self.get_cleaned_data_for_step('type') or False
       if cleaned_data: ty = Member.MEMBER_TYPES[int(cleaned_data['member_type'])][1]

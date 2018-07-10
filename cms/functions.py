@@ -38,7 +38,7 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
                 from_email=settings.EMAILS['email']['no-reply'], 
                 to=[to]
           )
-  if copy: email.cc=[copy]
+  if copy: email.cc=[settings.EMAILS[]'email']['secgen']]
 
   # add default footer (questions, salutation and disclaimer)
   message_content['SALUTATION'] = settings.EMAILS['salutation']

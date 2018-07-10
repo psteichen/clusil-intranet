@@ -359,7 +359,7 @@ def validate(r, val_hash):
       message_content['USERS']=users_msg.format(users=gen_user_list(M))
 
     #send email
-    ok=notify_by_email(M.head_of_list.email,title,message_content,email_template,None,settings.EMAILS['email']['secgen'])
+    ok=notify_by_email(M.head_of_list.email,title,message_content,email_template,None,True)
 
     return render(r, template, {
                    'title'	: title,

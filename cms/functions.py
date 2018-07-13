@@ -14,6 +14,21 @@ def debug(app,message):
     from sys import stderr as errlog
     print >>errlog, 'DEBUG ['+str(app)+']: '+str(message)
 
+def group_required(*group_names):
+  from django.contrib.auth.decorators import user_passes_test
+  from django.core.exceptions import PermissionDenied
+
+  """Requires user membership in at least one of the groups passed in."""
+  def in_groups(user):
+    if user.is_authenticated():
+      if bool(user.groups.filter(name__in=group_names)) or user.is_superuser:
+        return True
+      else:
+        raise PermissionDenied
+
+  return user_passes_test(in_groups)
+
+
 def attach_to_email(email,attachment):
   from os import path
   from django.core.files.storage import default_storage

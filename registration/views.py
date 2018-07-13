@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 from django.contrib.auth.hashers import make_password
 
 from formtools.wizard.views import SessionWizardView
@@ -16,7 +16,6 @@ from cms.functions import show_form, notify_by_email, replicate_to_ldap, debug
 
 from members.functions import get_members_to_validate, gen_member_fullname, activate_member
 from members.models import Member, Organisation, Address, Role
-from members.groups.models import Group, Affiliation
 
 from .models import Registration
 from .functions import gen_member_id, add_to_groups, gen_username, gen_random_password, gen_hash, gen_confirmation_link, gen_user_list
@@ -263,11 +262,6 @@ class RegistrationWizard(SessionWizardView):
       M.save()
       # add all Users for ORG type
       if Us != []: M.users=Us
-
-#      g_f = form_dict['group']
-#      if g_f.is_valid():
-#        Gs = g_f.cleaned_data['groups']
-#        add_to_groups(U,Gs)
 
       reg_hash_code = gen_hash(settings.REG_SALT,M.head_of_list.email,15,M.address)
       # create registration entry for out-of-bound validation

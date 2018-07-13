@@ -2,7 +2,7 @@ from django.db.models import Model, EmailField, DateField, IntegerField, CharFie
 from django.db.models.deletion import SET_NULL
 from django.contrib.auth.models import User
 
-from members.groups.models import Group
+from django.contrib.auth.models import Group
 
 from .functions import gen_fulluser
 
@@ -91,7 +91,7 @@ class Member(Model):
   address	= ForeignKey(Address,blank=True,null=True)
   head_of_list 	= ForeignKey(User,related_name='head_of_list+',null=True,on_delete=SET_NULL)
   delegate 	= ForeignKey(User,related_name='delegate+',blank=True,null=True,on_delete=SET_NULL)
-  users 	= ManyToManyField(User, related_name='users+',blank=True,null=True)
+  users 	= ManyToManyField(User, related_name='users+',blank=True)
   student_proof	= FileField(upload_to=rename_sp,blank=True,null=True)
 
   def __unicode__(self):

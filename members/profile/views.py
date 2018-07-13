@@ -12,9 +12,9 @@ from django.contrib.auth.hashers import make_password
 
 from django_tables2 import RequestConfig
 
-from cms.functions import notify_by_email, gen_form_errors
+from cms.functions import notify_by_email, gen_form_errors, group_required
 
-from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group, gen_user_initial
+from members.functions import set_hol, unset_hol, is_hol, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, set_member, gen_user_initial
 from members.models import Member, Renew
 
 from members.groups.functions import affiliate, get_affiliations
@@ -48,7 +48,7 @@ def profile(r):
     title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
     template = settings.TEMPLATE_CONTENT['profile']['profile']['user_overview']['template']
     actions = None
-    if U.has_perm('cms.MEMBER'): 
+    if is_hol(U): 
       template = settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template']
       actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
       if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
@@ -74,7 +74,7 @@ def profile(r):
 
 # modify #
 ###########
-@permission_required('cms.MEMBER')
+@group_required('HeadOfLists')
 def modify(r):
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -154,7 +154,7 @@ def modify(r):
 
 # add user #
 ############
-@permission_required('cms.MEMBER')
+@group_required('HeadOfLists')
 def adduser(r): # only if membership-type is ORG
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -181,7 +181,7 @@ def adduser(r): # only if membership-type is ORG
       M.users.add(U)
 
       #add user to ALL group
-      add_user_to_all_group(U)
+      set_member(U)
 	
       message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(name=gen_fullname(U))
       return render(r,done_template, {
@@ -223,7 +223,7 @@ def adduser(r): # only if membership-type is ORG
 
 # affiliate user #
 ##################
-@permission_required('cms.MEMBER')
+@group_required('HeadOfLists')
 def affiluser(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -288,7 +288,7 @@ def affiluser(r,user):
 
 # make user the head of list #
 ##############################
-@permission_required('cms.MEMBER')
+@group_required('HeadOfLists')
 def make_head(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -306,8 +306,8 @@ def make_head(r,user):
   M.users.remove(new_H) #remove new head from users
 
   #set perms
-  set_cms_perms(new_H) #set perms for new head
-  set_cms_perms(old_H,True) #remove perms for old head
+  set_hol(new_H) #set as head
+  unset_hol(old_H) #remove as head
 
 
   title = settings.TEMPLATE_CONTENT['profile']['make_head']['title'].format(id=M.id)
@@ -323,7 +323,7 @@ def make_head(r,user):
 
 # make user the delegate #
 ##########################
-@permission_required('cms.MEMBER')
+@group_required('HeadOfLists')
 def make_delegate(r,user):
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -341,8 +341,8 @@ def make_delegate(r,user):
   M.users.remove(new_D) #remove new delegate from users
 
   #set perms
-  if old_D: set_cms_perms(old_D,True) #remove perms for old delegate
-  set_cms_perms(new_D) #set perms for new delegate
+  if old_D: unset_hol(old_D) #remove perms for old delegate
+  set_hol(new_D) #set perms for new delegate
 
 
   title = settings.TEMPLATE_CONTENT['profile']['make_delegate']['title'].format(id=M.id)
@@ -403,7 +403,7 @@ def moduser(r,user):
 
 # remove user #
 ###############
-@permission_required('cms.MEMBER')
+@group_required('HeadOfLists')
 def rmuser(r,user,really=False): # only if membership-type is ORG
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -458,7 +458,7 @@ def rmuser(r,user,really=False): # only if membership-type is ORG
 
 # invoice #
 ###########
-@permission_required('cms.MEMBER')
+@group_required('HeadOfLists')
 def invoice(r):
   r.breadcrumbs( ( 
 			('home','/home/'),
@@ -492,7 +492,7 @@ def invoice(r):
 
 # new invoice #
 ###############
-@permission_required('cms.MEMBER')
+@group_required('HeadOfLists')
 def new_invoice(r):
   r.breadcrumbs( ( 
 			('home','/home/'),

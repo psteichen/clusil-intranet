@@ -100,22 +100,55 @@ def gen_member_id():
   mid = 'CLUSIL-%(year)s-%(num)04d' % { 'year': date.today().strftime('%Y'), 'num': num }
   return mid
 
-def add_group(u,g):
-  from groups.models import Group, Affiliation
-  group = Affiliation(user=u,group=g)
-  group.save()
-  default = Affiliation(user=u,group=Group(pk='default'))
-  default.save()
+# Group setting functions
+def set_group(u,g):
+  u.groups.add(g)
+  u.save()
+
+def unset_group(u,g):
+  u.groups.remove(g)
+  u.save()
+
+def set_member(u):
+  from django.auth.groups.models import Group
+  members = Group.objects.get(pk='Members')
+  set_group(u,members)
+
+def is_member(user):
+  return user.groups.filter(name='Members').exists()
+
+def set_hol(u):
+  from django.auth.groups.models import Group
+  members = Group.objects.get(pk='HeadOfList')
+  set_group(u,members)
+
+def unset_hol(u):
+  from django.auth.groups.models import Group
+  members = Group.objects.get(pk='HeadOfList')
+  unset_group(u,members)
+
+def is_hol(user):
+  return user.groups.filter(name='HeadOfLists').exists()
 
 
-def set_cms_perms(user,remove=False):
-  from django.contrib.auth.models import Permission
+def set_board(u):
+  from django.auth.groups.models import Group
+  members = Group.objects.get(pk='Board')
+  set_group(u,members)
+ 
+def is_board(user):
+  return user.groups.filter(name='board').exists()
 
-  is_hol_d = Permission.objects.get(codename='MEMBER')
-  user.user_permissions.add(is_hol_d)
-  user.is_active = True
-  if remove: user.user_permissions.remove(is_hol_d)
-  user.save()
+
+def set_admin(u):
+  from django.auth.groups.models import Group
+  members = Group.objects.get(pk='Admins')
+  set_group(u,members)
+ 
+def is_admin(user):
+  return user.groups.filter(name='Admins').exists()
+
+ 
 
 
 def gen_user_line(r,u):
@@ -174,10 +207,6 @@ def gen_renewal_link(code):
   return c_url
 
 
-def user_in_board(u):
-  return u.has_perm('cms.BOARD') 
-
-
 def activate_member(member):
   from django.contrib.auth.models import Permission, User
   from members.models import Member
@@ -188,10 +217,9 @@ def activate_member(member):
   from events.models import Event
   from meetings.models import Meeting
 
-  # set head-of-list (and delegate permissions)
-  is_hol_d = Permission.objects.get(codename='MEMBER')
-  member.head_of_list.user_permissions.add(is_hol_d)
-  if member.delegate: member.delegate.user_permissions.add(is_hol_d)
+  # set head-of-list (and delegate)
+  set_hol(member.head_of_list)
+  if member.delegate: set_hol(member.delegate)
 
   # member confirmation Ok -> replicate Users to LDAP
   #replicate_to_ldap(member)
@@ -200,28 +228,20 @@ def activate_member(member):
   member.status = Member.ACT
   member.save()
 
-  # add all users for Member to "all" group
-  all_group = Group.objects.get(acronym="ALL")
+  # set all users as Member
   for u in get_all_users_for_membership(member):
-    affiliate(User.objects.get(username=u['username']),all_group)
+    U = User.objects.get(username=u['username'])
+    set_member(U)
 
     # gen attendance hashes for existing events
     for e in Event.objects.all():
-      gen_attendance_hashes(e,Event.OTH,User.objects.get(username=u['username']))
+      gen_attendance_hashes(e,Event.OTH,U)
     # and meetings
     for m in Meeting.objects.all():
-      gen_attendance_hashes(m,Event.MEET,User.objects.get(username=u['username']))
+      gen_attendance_hashes(m,Event.MEET,U)
 
   # generate invoice (this will generate and send the invoice)
   generate_invoice(member)
-
-
-def add_user_to_all_group(user):
-  from groups.models import Group
-  from groups.functions import affiliate
-
-  all_group = Group.objects.get(acronym="ALL")
-  affiliate(user,all_group)
 
 
 def member_initial_data(member):
@@ -262,12 +282,5 @@ def member_is_full(member):
   if member.delegate: users += 1
   if users >= member.lvl: return True
   else: return False
-
-
-#old stuff
-def is_hol_d(mid,u):
-  h = Member.objects.filter(pk=mid, head_of_list=u).exists()
-  d = Member.objects.filter(pk=mid, delegate=u).exists()
-  return h or d
 
 

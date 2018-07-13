@@ -21,7 +21,7 @@ from accounting.models import Fee
 from accounting.functions import generate_invoice
 
 from attendance.functions import gen_attendance_hashes
-from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group, gen_user_initial
+from members.functions import set_member, set_hol, unset_hol, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, gen_user_initial
 from members.models import Member, Renew
 
 from members.groups.functions import affiliate, get_affiliations
@@ -32,7 +32,7 @@ from events.models import Event
 
 from .profile.tables import InvoiceTable
 
-from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname, user_in_board, member_initial_data, get_user_choice_list, member_is_full
+from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname, member_initial_data, get_user_choice_list, member_is_full
 from .forms import AffiliateForm, UserForm, UserChangeForm, MemberForm, RoleForm
 from .models import Member, Role, Renew
 from .tables  import MemberTable, InvoiceTable
@@ -371,7 +371,7 @@ def adduser(r,member_id):
       M.users.add(U)
 
       #add user to ALL group
-      add_user_to_all_group(U)
+      set_member(U)
 	
       # gen attendance hashes for existing events
       for e in Event.objects.all():
@@ -505,8 +505,8 @@ def make_head(r,member_id,user):
   M.users.remove(new_H) #remove new head from users
 
   #set perms
-  set_cms_perms(new_H) #set perms for new head
-  set_cms_perms(old_H,True) #remove perms for old head
+  set_hol(new_H) #set perms for new head
+  unset_hol(old_H) #remove perms for old head
 
 
   title = settings.TEMPLATE_CONTENT['profile']['make_head']['title'].format(id=M.id)
@@ -541,8 +541,8 @@ def make_delegate(r,member_id,user):
   M.users.remove(new_D) #remove new delegate from users
 
   #set perms
-  if old_D: set_cms_perms(old_D,True) #remove perms for old delegate
-  set_cms_perms(new_D) #set perms for new delegate
+  if old_D: unset_hol(old_D) #remove perms for old delegate
+  set_hol(new_D) #set perms for new delegate
 
 
   title = settings.TEMPLATE_CONTENT['profile']['make_delegate']['title'].format(id=M.id)

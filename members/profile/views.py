@@ -301,6 +301,8 @@ def make_head(r,user):
 
   #set new head-of-list
   M.head_of_list = new_H
+  if M.delegate and M.delegate == new_H: 
+    M.delegate = None
   M.save()
   M.users.add(old_H) #add old head to users
   M.users.remove(new_H) #remove new head from users
@@ -336,6 +338,8 @@ def make_delegate(r,user):
 
   #set new delegate
   M.delegate = new_D
+  if M.head_of_list == new_D: 
+    M.head_of_list = None
   M.save()
   if old_D: M.users.add(old_D) #add old delegate to users
   M.users.remove(new_D) #remove new delegate from users

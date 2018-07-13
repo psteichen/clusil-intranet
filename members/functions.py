@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.template.loader import render_to_string
 
 from cms.functions import visualiseDateTime
@@ -110,21 +110,18 @@ def unset_group(u,g):
   u.save()
 
 def set_member(u):
-  from django.auth.groups.models import Group
-  members = Group.objects.get(pk='Members')
+  members = Group.objects.get(name='Members')
   set_group(u,members)
 
 def is_member(user):
   return user.groups.filter(name='Members').exists()
 
 def set_hol(u):
-  from django.auth.groups.models import Group
-  members = Group.objects.get(pk='HeadOfList')
+  members = Group.objects.get(name='HeadOfLists')
   set_group(u,members)
 
 def unset_hol(u):
-  from django.auth.groups.models import Group
-  members = Group.objects.get(pk='HeadOfList')
+  members = Group.objects.get(name='HeadOfLists')
   unset_group(u,members)
 
 def is_hol(user):
@@ -132,17 +129,15 @@ def is_hol(user):
 
 
 def set_board(u):
-  from django.auth.groups.models import Group
-  members = Group.objects.get(pk='Board')
+  members = Group.objects.get(name='Board')
   set_group(u,members)
  
 def is_board(user):
-  return user.groups.filter(name='board').exists()
+  return user.groups.filter(name='Board').exists()
 
 
 def set_admin(u):
-  from django.auth.groups.models import Group
-  members = Group.objects.get(pk='Admins')
+  members = Group.objects.get(name='Admins')
   set_group(u,members)
  
 def is_admin(user):

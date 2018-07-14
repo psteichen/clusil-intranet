@@ -182,6 +182,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'cms.context_processors.template_content', #for own templating system
+                'cms.context_processors.group_perms', #for perms model using groups
 	  	],
 	  },
     },
@@ -343,7 +344,7 @@ HOME_ACTIONS = (
   },
   {
     'heading'   	: 'Management Console (BOARD)',
-    'has_perms'		: 'cms.SECR',
+    'perms'		: 'Board',
     'cols'		: '12',
     'actions' : (
       {         
@@ -352,7 +353,7 @@ HOME_ACTIONS = (
         'grade'  	: 'info',
         'desc'          : 'Club management tools and functions',
         'url'           : '/board/',
-        'has_perms'	: 'cms.SECR',
+        'perms'		: 'Board',
       },
     ),
   },

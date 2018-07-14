@@ -1,10 +1,12 @@
 <div class="overview">
-<div class="card card-info">
-  <center><h2 class="card-header">{{ title|safe }}</h2></center>
+<div class="card">
+  <center><h2 class="card-header text-danger">{{ title|safe }}</h2></center>
   <div class="card-body">
-    <div class="row">
+    <div class="row mb-4">
       <div class="col-sm-8">
-	<h4>Managers</h4>
+       <div class="card">
+	<h4 class="card-header">Managers</h4>
+        <div class="card-body">
 	<ul class="list-group">
 	  <li class="list-group-item list-group-item-success">
     	    <span class="badge">Head of List</span>
@@ -17,10 +19,14 @@
   	  </li>
 	{% endif %}
 	</ul>
+       </div>
         {% if member.student_proof %} <a class="btn btn-sm btn-default }}" href="{{ media_url }}{{ member.student_proof }}" role="button"><i class="fa fa-education"></i>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
       </div>
+      </div>
       <div class="col-sm-4">
-        <blockquote>
+       <div class="card">
+	<h4 class="card-header">Address</h4>
+        <div class="card-body">
         <address>
           {% if member.organisation %}
 	    <b>{{ member.organisation.name }}</b><br/>
@@ -31,7 +37,8 @@
           {{ member.address.postal_code }} {{ member.address.town }}<br/>
           {{ country|upper }}
         </address>
-        </blockquote>
+        </div>
+       </div>
       </div>
     </div>
     <div class="row">
@@ -68,16 +75,15 @@
           <td>{{ u.affil|safe }}</td>
           <td>
             <div class="btn-group-vertical" role="group">
-	      <a class="btn btn-sm btn-default" role="button" href="/profile/moduser/{{ u.username }}/" title="Modify User"><i class="fa fa-pencil-square text-danger">&nbsp;&nbsp;Modify User</i></a>
-	      <a class="btn btn-sm btn-info" role="button" href="/profile/affiluser/{{ u.username }}/" title=""><i class="fa fa-th-list"></i>&nbsp;&nbsp;Affiliate User</a>
+	      <a class="btn btn-sm btn-outline-primary mb-1" role="button" href="/profile/moduser/{{ u.username }}/" title="Modify User"><i class="fa fa-pencil-square">&nbsp;&nbsp;Modify User</i></a>
               {% if member.organisation %} {# functions only available for ORG type #}
                 {% if u.role != 'hol' %}
-	          <a class="btn btn-sm btn-success" role="button" href="/profile/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
+	          <a class="btn btn-sm btn-success mb-1" role="button" href="/profile/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
                 {% endif %}
                 {% if u.role != 'del' %}
-	          <a class="btn btn-sm btn-warning" role="button" href="/profile/make_delegate/{{ u.username }}/" title=""><i class="fa fa-user-secret"></i>&nbsp;&nbsp;Assign as Delegate</a>
+	          <a class="btn btn-sm btn-warning mb-1" role="button" href="/profile/make_delegate/{{ u.username }}/" title=""><i class="fa fa-user-secret"></i>&nbsp;&nbsp;Assign as Delegate</a>
                 {% endif %}
-	        <a class="btn btn-sm btn-danger" role="button" href="/profile/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
+	        <a class="btn btn-sm btn-danger mb-1" role="button" href="/profile/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
               {% endif %}
             </div>
           </td>

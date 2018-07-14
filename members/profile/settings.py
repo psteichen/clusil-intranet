@@ -105,17 +105,17 @@ PROFILE_TMPL_CONTENT = {
 <p>If you want more Users, you'll have to get the next membership level. Contact us to <a href="mailto:membership@clusil.lu?Subject=Upgrade membership [{member_id}]">upgrade your membership</a>.</p>''',
     },
   },
-  'affiluser': {
-    'template'		: 'form.html',
-    'title'     	: u'Affiliate {name}',
-    'desc'     		: u'Procede to affiliate <i>{name}</i> to a Working Group, Ad-Hoc Group or Tool',
-    'submit'   		: u'Affiliate',
-    'done': {
-      'template'	: 'done.html',
-      'title'     	: u'{name} successfully affiliated.',
-      'message'     	: u'User <i>{name}</i> is now affiliated to the following groups: <b>{groups}</b>',
-    },
-  },
+#  'affiluser': {
+#    'template'		: 'form.html',
+#    'title'     	: u'Affiliate {name}',
+#    'desc'     		: u'Procede to affiliate <i>{name}</i> to a Working Group, Ad-Hoc Group or Tool',
+#    'submit'   		: u'Affiliate',
+#    'done': {
+#      'template'	: 'done.html',
+#      'title'     	: u'{name} successfully affiliated.',
+#      'message'     	: u'User <i>{name}</i> is now affiliated to the following groups: <b>{groups}</b>',
+#    },
+#  },
   'make_head': {
     'template'		: 'done.html',
     'title'     	: u'Changed Head of List for [{id}]',

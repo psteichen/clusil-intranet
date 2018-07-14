@@ -4,7 +4,10 @@ A member submitted an idea/thought/suggestion via the MemberIdeaBox. Please find
 ---------------------------------------------------------------------
 Member: 	{{ name }}
 
-Idea:
+Idea/thought/suggestion:
+------------------------
+
 {{ idea }}
+
 ---------------------------------------------------------------------
 {% endautoescape %}

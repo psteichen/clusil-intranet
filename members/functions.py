@@ -125,7 +125,9 @@ def unset_hol(u):
   unset_group(u,members)
 
 def is_hol(user):
-  return user.groups.filter(name='HeadOfLists').exists()
+  if user.is_superuser: return True
+  else:
+    return user.groups.filter(name='HeadOfLists').exists()
 
 
 def set_board(u):
@@ -133,7 +135,9 @@ def set_board(u):
   set_group(u,members)
  
 def is_board(user):
-  return user.groups.filter(name='Board').exists()
+  if user.is_superuser: return True
+  else:
+    return user.groups.filter(name='Board').exists()
 
 
 def set_admin(u):
@@ -141,21 +145,19 @@ def set_admin(u):
   set_group(u,members)
  
 def is_admin(user):
-  return user.groups.filter(name='Admins').exists()
+  if user.is_superuser: return True
+  else:
+    return user.groups.filter(name='Admins').exists()
 
- 
 
 
 def gen_user_line(r,u):
-  from groups.functions import get_affiliations
-  affil = get_affiliations(u)
   ul = { 
 	 'role'		: r, 
 	 'first_name'	: u.first_name, 
 	 'last_name'	: u.last_name, 
 	 'email'	: u.email, 
 	 'username'	: u.username,
-	 'affil'	: affil,
        }
   return ul
   

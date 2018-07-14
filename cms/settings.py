@@ -182,7 +182,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'cms.context_processors.template_content', #for own templating system
-                'cms.context_processors.group_perms', #for perms model using groups
+                'cms.context_processors.user_context', #for perms model using groups
 	  	],
 	  },
     },
@@ -229,7 +229,7 @@ TEMPLATE_CONTENT = {
   'meta' : {
     'author'            : 'Pascal Steichen - pst@clusil.lu ; 2012, 2014, 2015, 2018',
     'copyright'         : 'CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014, 2015, 2018',
-    'title'             : 'Club Management System',
+    'title'             : 'CLUSIL Club Management System',
     'logo' : {
       'url'		: "/",
       'img'		: STATIC_URL + 'pics/logo.png',

@@ -43,12 +43,14 @@
     </div>
 
     <!-- global actions -->
+    {% if is_hol %}
     <h5>Global Actions</h5>
-    <div class="btn-group" role="group">
     {% for a in actions %}
-      {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
+      <div class="btn-group" role="group">
+        {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
+      </div>
     {% endfor %}
-    </div>
+    {% endif %}
 
   </div>
 
@@ -82,8 +84,11 @@
         <td>{{ u.username }}</td>
         <td class="text-center">
           <div class="btn-group-vertical" role="group">
+            {% if U.username == u.username %}
 	    <a class="btn btn-sm btn-outline-primary mb-1" role="button" href="/profile/moduser/{{ u.username }}/" title="Modify User"><i class="fa fa-pencil-square">&nbsp;&nbsp;Modify User</i></a>
+            {% endif %}
             {% if member.organisation %} {# functions only available for ORG type #}
+            {% if 'HeadOfLists' in groups %}
               {% if u.role != 'hol' %}
 	        <a class="btn btn-sm btn-success mb-1" role="button" href="/profile/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
               {% endif %}
@@ -92,11 +97,11 @@
               {% endif %}
 	        <a class="btn btn-sm btn-danger mb-1" role="button" href="/profile/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
             {% endif %}
+            {% endif %}
           </div>
         </td>
       </tr>
       {% endfor %}
     </tbody>
-
   </table>
 </div>

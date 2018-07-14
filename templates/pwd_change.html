@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+{% block errors %}
+  {% if error_message %}<p class="alert alert-danger">{{ error_message }}</p>{% endif %}
+{% endblock %}
+
+{% block form %}
+  <div class="card">
+    <h2 class="card-header">{{ pwd.change.title }}&nbsp;{{ user }}</h2>
+    <div class="panel-body">
+      <p>{{ desc }}</p>
+      <form role="form" class="form-horizontal" action="." method="post">
+        {% csrf_token %}
+        <div class="col-xs-10">
+          {% bootstrap_form form %}
+          {% buttons %}
+          <div class="btn-toolbar">
+            <div class="btn-group pull-right">
+              <button class="btn btn-info" type="submit" value="{{ pwd.change.submit }}">{{ pwd.change.submit }}</button>
+            </div>
+          </div>
+          {% endbuttons %}
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% endblock %}
+

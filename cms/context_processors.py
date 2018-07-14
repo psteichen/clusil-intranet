@@ -16,3 +16,11 @@ def group_perms(request):
     'groups': gl
   }
 
+def user_context(request):
+  from members.functions import is_hol, is_board, is_admin
+
+  return {
+    'is_hol': is_hol(request.user),
+    'is_board': is_board(request.user),
+    'is_admin': is_admin(request.user),
+  }

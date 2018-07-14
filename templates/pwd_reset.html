@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+
+{% block content %}
+<form role="form" class="form-horizontal" method="post" action="{{ url }}">
+  {% csrf_token %}
+  <div class="card mx-5">
+    <h2 class="card-header text-danger text-center">{{ pwd.recover.title }}</h2>
+    <div class="card-body">
+      {% bootstrap_form form %}
+      <button class="btn btn-warning" type="submit">{{ pwd.recover.submit }}</button>
+    </div>
+  </div>
+</form>
+{% endblock %}

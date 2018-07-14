@@ -25,12 +25,12 @@ urlpatterns = [
   url(r'^login/', auth_views.LoginView.as_view(template_name='auth.html'), name='login'),
   url(r'^logout/', auth_views.logout_then_login, name='logout'),
   url(r'^pwd/change/', auth_views.PasswordChangeView.as_view(template_name='chgpwd.html', success_url='/pwd/chg/done/'), name='password_change'),
-  url(r'^pwd/change/done/$', auth_views.PasswordChangeDoneView.as_view(template_name='done/chgpwd.html'), name='password_change_done'),
+  url(r'^pwd/change/done/$', auth_views.PasswordChangeDoneView.as_view(template_name='done.html'), name='password_change_done'),
 
-  url(r'^pwd/recover/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
-  url(r'^pwd/recover/done/$', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-  url(r'^pwd/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-  url(r'^pwd/reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+  url(r'^pwd/recover/$', auth_views.PasswordResetView.as_view(template_name='pwd_recovery.html', success_url='/pwd/recover/done/'), name='password_reset'),
+  url(r'^pwd/recover/done/$', auth_views.PasswordResetDoneView.as_view(template_name='done.html'), name='password_reset_done'),
+  url(r'^pwd/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', auth_views.PasswordResetConfirmView.as_view(template_name='pwd_reset.html', success_url='/pwd/reset/done/'), name='password_reset_confirm'),
+  url(r'^pwd/reset/done/$', auth_views.PasswordResetCompleteView.as_view(template_name='done.html'), name='password_reset_complete'),
 
 #  url(r'^pwd/recover/$', recover, name='password_reset_recover'),
 #  url(r'^pwd/recover/(?P<signature>.+)/$', recover_done, name='password_reset_sent'),

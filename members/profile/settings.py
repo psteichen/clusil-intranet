@@ -7,12 +7,14 @@ ACTIONS = (
     'icon'	: 'pencil',
     'grade'	: 'warning',
     'url'    	: '/profile/modify/',
+    'group'	: 'HeadOfLists',
   },
   {
     'label'	: 'Invoices',
     'icon'	: 'euro',
     'grade'	: 'info',
     'url'    	: '/profile/invoice/',
+    'group'	: 'HeadOfLists',
   },
 )
 ACTIONS_ORG = (
@@ -21,6 +23,7 @@ ACTIONS_ORG = (
     'icon'	: 'plus',
     'grade'	: 'success',
     'url'	: '/profile/adduser/',
+    'group'	: 'HeadOfLists',
   },
 )
 INV_ACTIONS = (
@@ -29,6 +32,7 @@ INV_ACTIONS = (
     'icon'	: 'euro',
     'grade'	: 'warning',
     'url'	: '/profile/invoice/new/',
+    'group'	: 'HeadOfLists',
   },
 )
 ADMIN_INV_ACTIONS = (
@@ -58,7 +62,7 @@ PROFILE_TMPL_CONTENT = {
       'affil'          	: u'Affiliation',
     },
     'user_overview' : {
-      'template'        : 'overview_member_readonly.html',
+      'template'        : 'overview_member.html',
       'managers'       	: u'Managers',
       'firstname'       : u'Firstname',
       'name'            : u'Name',

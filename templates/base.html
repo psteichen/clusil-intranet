@@ -46,14 +46,16 @@
     {% endblock %}
 
     {% block breadcrumbs %}
+      <ol class="breadcrumb my-auto">
+        <li>&nbsp;::&nbsp;<a class="text-light" href="/">home</a>&nbsp;::&nbsp;</li>
       {% for breadcrumb in request.breadcrumbs %}
-        {% if forloop.first %}<ol class="breadcrumb my-auto">{% endif %}
         {% if forloop.last %}
-          <li class="active">&nbsp;::&nbsp;<a class="text-info" href="{{ breadcrumb.url }}"><i>{{ breadcrumb.name }}</i></a>&nbsp;::&nbsp;</li></ol>
+          <li class="active"><a class="text-info" href="{{ breadcrumb.url }}"><i>{{ breadcrumb.name }}</i></a>&nbsp;::&nbsp;</li></ol>
         {% else %}
-          <li>&nbsp;::&nbsp;<a class="text-light" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+          <li><a class="text-light" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>&nbsp;::&nbsp;</li>
         {% endif %}
       {% endfor %}
+      </ol>
     {% endblock %}
 
     <div class="jumbotron">

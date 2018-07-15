@@ -8,9 +8,9 @@
 {% endblock %}
 
 {% block form %}
-  <div class="card">
-    <h2 class="card-header">{{ pwd.change.title }}&nbsp;{{ user }}</h2>
-    <div class="panel-body">
+  <div class="card mx-5">
+    <h2 class="card-header">{{ pwd.change.title }}&nbsp;<i>{{ user }}</i></h2>
+    <div class="card-body">
       <p>{{ desc }}</p>
       <form role="form" class="form-horizontal" action="." method="post">
         {% csrf_token %}

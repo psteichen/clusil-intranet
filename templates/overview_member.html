@@ -88,7 +88,7 @@
 	    <a class="btn btn-sm btn-outline-primary mb-1" role="button" href="/profile/moduser/{{ u.username }}/" title="Modify User"><i class="fa fa-pencil-square">&nbsp;&nbsp;Modify User</i></a>
             {% endif %}
             {% if member.organisation %} {# functions only available for ORG type #}
-            {% if 'HeadOfLists' in groups %}
+            {% if is_hol %}
               {% if u.role != 'hol' %}
 	        <a class="btn btn-sm btn-success mb-1" role="button" href="/profile/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
               {% endif %}

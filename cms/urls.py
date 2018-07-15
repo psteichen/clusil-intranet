@@ -24,7 +24,7 @@ urlpatterns = [
   #login stuff
   url(r'^login/', auth_views.LoginView.as_view(template_name='auth.html'), name='login'),
   url(r'^logout/', auth_views.logout_then_login, name='logout'),
-  url(r'^pwd/change/', auth_views.PasswordChangeView.as_view(template_name='chgpwd.html', success_url='/pwd/chg/done/'), name='password_change'),
+  url(r'^pwd/change/', auth_views.PasswordChangeView.as_view(template_name='pwd_change.html', success_url='/pwd/chg/done/'), name='password_change'),
   url(r'^pwd/change/done/$', auth_views.PasswordChangeDoneView.as_view(template_name='done.html'), name='password_change_done'),
 
   url(r'^pwd/recover/$', auth_views.PasswordResetView.as_view(template_name='pwd_recovery.html', success_url='/pwd/recover/done/'), name='password_reset'),

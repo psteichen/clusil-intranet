@@ -38,8 +38,7 @@ from .tables import InvoiceTable
 @login_required()
 def profile(r):
   r.breadcrumbs( ( 
-			('home','/home/'),
-                       	('member profile','/profile/'),
+                  ('member profile','/profile/'),
                ) )
 
   U = r.user
@@ -77,7 +76,6 @@ def profile(r):
 @group_required('HeadOfLists')
 def modify(r):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                        	('modify','/profile/modify/'),
                ) )
@@ -157,7 +155,6 @@ def modify(r):
 @group_required('HeadOfLists')
 def adduser(r): # only if membership-type is ORG
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                        	('add user','/profile/adduser/'),
                ) )
@@ -226,7 +223,6 @@ def adduser(r): # only if membership-type is ORG
 @group_required('HeadOfLists')
 def affiluser(r,user):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -291,7 +287,6 @@ def affiluser(r,user):
 @group_required('HeadOfLists')
 def make_head(r,user):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -328,7 +323,6 @@ def make_head(r,user):
 @group_required('HeadOfLists')
 def make_delegate(r,user):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -364,7 +358,6 @@ def make_delegate(r,user):
 @login_required()
 def moduser(r,user):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -410,7 +403,6 @@ def moduser(r,user):
 @group_required('HeadOfLists')
 def rmuser(r,user,really=False): # only if membership-type is ORG
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -465,7 +457,6 @@ def rmuser(r,user,really=False): # only if membership-type is ORG
 @group_required('HeadOfLists')
 def invoice(r):
   r.breadcrumbs( ( 
-			('home','/home/'),
                        	('member profile','/profile/'),
                        	('invoices','/profile/invoice/'),
                ) )
@@ -499,7 +490,6 @@ def invoice(r):
 @group_required('HeadOfLists')
 def new_invoice(r):
   r.breadcrumbs( ( 
-			('home','/home/'),
                        	('member profile','/profile/'),
                        	('invoices','/profile/invoice/'),
                ) )

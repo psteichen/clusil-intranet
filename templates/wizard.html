@@ -2,22 +2,25 @@
 {% load bootstrap4 %}
 
 {% block content %}
-<h2>{{ title|safe }}</h2>
+<h2 class="text-center text-danger mb-5">{{ title|safe }}</h2>
 {% if desc %}<p class="well well-sm">{{ desc }}</p>{% endif %}
 {% if error_message %}<p class="error">{{ error_message }}</p>{% endif %}
 
-<form role="form" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ wizard.management_form }}
-  {{ wizard.form.non_form_errors }}
-
-  <div class="card border-info">
-    <h2 class="card-header text-info">{{ step_title }}&nbsp;&nbsp;<span class="badge badge-pill badge-primary float-right">step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span></h2>
-    <div class="card-body">
+<div class="card border-info">
+  <div class="card-header">
+    <h2 class="text-info">{{ step_title }}&nbsp;&nbsp;<span class="badge badge-pill badge-primary float-right">step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span></h2>
     {% if step_desc %}
       <p class="text-primary">{{ step_desc|safe }}</p>
      {% endif %}
-    {% if wizard.form.forms %}
+  </div>
+ 
+  <div class="card-body">
+  <form role="form" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+    {{ wizard.form.non_form_errors }}
+
+   {% if wizard.form.forms %}
       {{ wizard.form.management_form }}
       {% for form in wizard.form.forms %}
         {% bootstrap_form form %}
@@ -36,8 +39,8 @@
       </div>
       {% endif %}
     {% endbuttons %}
-    </div>
+  </form>
   </div>
-</form>
-  {{ overview }}
+</div>
+{{ overview }}
 {% endblock %}

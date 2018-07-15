@@ -231,6 +231,7 @@ TEMPLATE_CONTENT = {
     'author'            : 'Pascal Steichen - pst@clusil.lu ; 2012, 2014, 2015, 2018',
     'copyright'         : 'CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014, 2015, 2018',
     'title'             : 'CLUSIL Club Management System',
+    'header'            : 'Club Management System',
     'logo' : {
       'url'		: "/",
       'img'		: STATIC_URL + 'pics/logo.png',
@@ -243,6 +244,11 @@ TEMPLATE_CONTENT = {
         'bt'            : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
 #        'bt_theme'      : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css',
         'bt_theme'      : '//stackpath.bootstrapcdn.com/bootswatch/4.1.1/lux/bootstrap.min.css',
+        'fontawesome' : {
+          'url'		: "//use.fontawesome.com/releases/v5.1.0/css/all.css",
+          'integrity'	: "sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt",
+          'crossorigin'	: "anonymous",
+        },
         'jumbotron'	: '//clusil.lu/css/jumbotron.css',
         'jt_narrow'	: '//clusil.lu/css/jumbotron-narrow.css',
         'own'           : STATIC_URL + 'css/bt-clusil.css',
@@ -255,7 +261,7 @@ TEMPLATE_CONTENT = {
 	'popper'        : '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js',
         'bt'            : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js',
         'bt_bundle'     : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js',
-        'fontawesome'   : '//use.fontawesome.com/42b7f0ba56.js',
+#        'fontawesome'   : '//use.fontawesome.com/42b7f0ba56.js',
 #        'momentjs'      : '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js',
 #        'dtpicker'      : '//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js',
     },
@@ -271,7 +277,6 @@ TEMPLATE_CONTENT = {
     'submit'	: 'Login',
     'reg' : {
       'title'	: 'Sign Up',
-      'content'	: '[will be overwritten below]',
     },
   },
   'pwd' : {
@@ -297,37 +302,6 @@ TEMPLATE_CONTENT = {
 }
 
 ## registration
-REG_ACTIONS = (
-  {
-    'label'	: 'Individual',
-    'price'	: '1 user: 100',
-    'icon'    	: 'user',
-    'grade'    	: 'info',
-    'url'     	: '/reg/individual/',
-  },
-  {
-    'label'	: 'Organisation',
-    'price'	: 'per group of 6 users: 400',
-    'icon'    	: 'building',
-    'grade'    	: 'success',
-    'url'     	: '/reg/organisation/',
-  },
-  {
-    'label'	: 'Student',
-    'price'	: '1 user: 25',
-    'icon'    	: 'student',
-    'grade'    	: 'warning',
-    'url'     	: '/reg/student/',
-  },
-)
-
-TEMPLATE_CONTENT['auth']['reg']['content'] = {
-  'template'	: 'action-list.html',
-  'title'	: 'Sign Up as <i>CLUSIL member</i>',
-  'desc'  	: 'CLUSIL memberships come in 3 flavours:', 
-  'actions'	: REG_ACTIONS,
-}
-
 from registration.settings import *
 
 MEMBER_ID_SALT     = u']*8/bi83}7te!TJZ(IL!K?&+U'

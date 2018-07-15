@@ -20,7 +20,7 @@ ACTIONS = (
   {
     'label'	: 'Student',
     'price'	: '1 user: 25',
-    'icon'    	: 'student',
+    'icon'    	: 'user-graduate',
     'grade'    	: 'warning',
     'url'     	: '/reg/student/',
   },
@@ -35,7 +35,7 @@ REGISTRATION_TMPL_CONTENT = {
     'actions'		: ACTIONS,
   },
   'register' : {
-    'title'		: 'Registration as <i>CLUSIL member</i> - {type}',
+    'title'		: 'Register as <i>{type}</i>',
     'first'		: 'first',
     'prev'		: 'previous',
     'overview' : {
@@ -49,8 +49,6 @@ REGISTRATION_TMPL_CONTENT = {
     'head' : {
       'title'   	: 'Head of List',
       'desc'   		: '''The head-of-list is the main point of contact and does have full rights to manage the membership (create/delete users, change membership profile, etc.).''',
-      'alttitle'   	: 'User',
-      'altdesc' 	: 'Create a user for the CLUSIL Member Intranet Platform.',
       'next'          	: 'next',
     },
     'delegate' : {

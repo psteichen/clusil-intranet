@@ -8,6 +8,8 @@ admin.autodiscover()
 
 #from password_reset.views import recover, recover_done, reset, reset_done
 
+from cms.functions import gen_signup_content
+
 from .views import home, documentation
 
 from .views import board
@@ -22,7 +24,7 @@ urlpatterns = [
   url(r'^upload/', include('upload.urls')),
 
   #login stuff
-  url(r'^login/', auth_views.LoginView.as_view(template_name='auth.html'), name='login'),
+  url(r'^login/', auth_views.LoginView.as_view(template_name='auth.html',extra_context={'signup_content': gen_signup_content() }), name='login'),
   url(r'^logout/', auth_views.logout_then_login, name='logout'),
   url(r'^pwd/change/', auth_views.PasswordChangeView.as_view(template_name='pwd_change.html', success_url='/pwd/chg/done/'), name='password_change'),
   url(r'^pwd/change/done/$', auth_views.PasswordChangeDoneView.as_view(template_name='done.html'), name='password_change_done'),

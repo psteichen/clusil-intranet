@@ -12,7 +12,7 @@ from django.contrib.auth.hashers import make_password
 
 from formtools.wizard.views import SessionWizardView
 
-from cms.functions import show_form, notify_by_email, replicate_to_ldap, debug
+from cms.functions import show_form, notify_by_email, debug
 
 from members.functions import get_members_to_validate, gen_member_fullname, activate_member, is_board
 from members.models import Member, Organisation, Address, Role
@@ -106,22 +106,17 @@ class RegistrationWizard(SessionWizardView):
     if self.steps.current != None:
       if is_board(self.request.user):
         context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title']})
-        if ty != None: context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title'] + " - " +ty})
+        if ty != None: context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title'].format(type=ty)})
         context.update({'step_desc': ''})
       else:
         context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title']})
-        if ty != None: context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title'] + " - " +ty})
+        if ty != None: context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title'].format(type=ty)})
         context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['desc']})
 
       context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['title']})
       context.update({'first': settings.TEMPLATE_CONTENT['reg']['register']['first']})
       context.update({'prev': settings.TEMPLATE_CONTENT['reg']['register']['prev']})
       context.update({'next': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['next']})
-
-    if self.steps.current == 'head':
-      if unicode(ty) != unicode(Member.MEMBER_TYPES[Member.ORG]):
-        context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['alttitle']})
-        context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['altdesc']})
 
     return context
 

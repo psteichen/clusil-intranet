@@ -3,7 +3,7 @@ from django.conf.urls import url
 from .forms import MemberTypeForm, AddressForm, RegisterUserForm, AffiliationForm, StudentProofForm, MultiUserFormSet, ErrorForm
 from .views import RegistrationWizard, show_delegate_form, show_multi_user_form, show_student_proof_form, show_error_message
 
-from .views import validate
+from .views import reg_home, validate
 
 
 # registration wizard #
@@ -16,7 +16,6 @@ registration_forms = [
         ('more'		, MultiUserFormSet),
         ('student_proof', StudentProofForm),
         ('error'	, ErrorForm),
-#        ('group'	, AffiliationForm),
 #        ('captcha'	, CaptchaForm),
 ]
 registration_forms_alt = [
@@ -25,7 +24,6 @@ registration_forms_alt = [
         ('delegate'	, RegisterUserForm),
         ('more'		, MultiUserFormSet),
         ('student_proof', StudentProofForm),
-#        ('group'	, AffiliationForm),
 #        ('captcha'	, CaptchaForm),
 ]
 #condition dict
@@ -41,7 +39,8 @@ registration_wizard = RegistrationWizard.as_view(registration_forms, condition_d
 registration_wizard_alt = RegistrationWizard.as_view(registration_forms_alt, condition_dict=registration_condition_dict)
 
 urlpatterns = [
-  url(r'^$', registration_wizard, name='register'),
+#  url(r'^$', registration_wizard, name='register'),
+  url(r'^$', reg_home, name='register'),
   url(r'^validate/(?P<val_hash>.+?)/$', validate, name='validate'),
   url(r'^(?P<type>.+?)/$', registration_wizard_alt, name='register'),
 ]

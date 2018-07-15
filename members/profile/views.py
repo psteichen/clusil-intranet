@@ -5,7 +5,6 @@ from django.shortcuts import render #uses a RequestContext by default
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.template.loader import render_to_string
 from django.contrib.auth.hashers import make_password
@@ -35,7 +34,7 @@ from .tables import InvoiceTable
 
 # profile #
 ###########
-@login_required()
+@group_required('MEMBER')
 def profile(r):
   r.breadcrumbs( ( 
                   ('member profile','/profile/'),
@@ -291,7 +290,7 @@ def make_delegate(r,user):
 
 # modify user #
 ###############
-@login_required()
+@group_required('MEMBER')
 def moduser(r,user):
   r.breadcrumbs( (      
                        	('member profile','/profile/'),
@@ -443,7 +442,7 @@ def new_invoice(r):
 
 # password #
 ############
-@login_required
+@group_required('MEMBER')
 def password(r):
   if r.POST:
     pwd = PasswordChangeForm(r.user,r.POST)

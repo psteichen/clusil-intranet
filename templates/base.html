@@ -45,6 +45,7 @@
       {% include "navigation.html" %}
     {% endblock %}
 
+    {% if user.is_authenticated %}
     {% block breadcrumbs %}
       <ol class="breadcrumb my-auto">
         <li>&nbsp;::&nbsp;<a class="text-light" href="/">home</a>&nbsp;::&nbsp;</li>
@@ -57,6 +58,7 @@
       {% endfor %}
       </ol>
     {% endblock %}
+    {% endif %}
 
     <div class="jumbotron">
       {% block content %}{% endblock %}

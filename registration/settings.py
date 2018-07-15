@@ -2,23 +2,44 @@
 # coding=utf-8
 
 
+ACTIONS = (
+  {
+    'label'	: 'Individual',
+    'price'	: '1 user: 100',
+    'icon'    	: 'user',
+    'grade'    	: 'info',
+    'url'     	: '/reg/individual/',
+  },
+  {
+    'label'	: 'Organisation',
+    'price'	: 'per group of 6 users: 400',
+    'icon'    	: 'building',
+    'grade'    	: 'success',
+    'url'     	: '/reg/organisation/',
+  },
+  {
+    'label'	: 'Student',
+    'price'	: '1 user: 25',
+    'icon'    	: 'student',
+    'grade'    	: 'warning',
+    'url'     	: '/reg/student/',
+  },
+)
+ 
+
 REGISTRATION_TMPL_CONTENT = {
+  'home' : {
+    'template'		: 'action-list.html',
+    'title'		: 'Registration as <i>CLUSIL member</i>',
+    'desc'  		: 'CLUSIL memberships come in 3 flavours:', 
+    'actions'		: ACTIONS,
+  },
   'register' : {
-    'title'		: 'Registration as <i>{type}</i>',
+    'title'		: 'Registration as <i>CLUSIL member</i> - {type}',
     'first'		: 'first',
     'prev'		: 'previous',
     'overview' : {
       'title'		: 'Overview',
-    },
-    'type' : {
-      'title'   	: 'Membership',
-      'desc'   		: '''CLUSIL memberships come in 3 variants: 
-<ul>
- <li>Individual (1 user:  100€) ;</li>
- <li>Organisation (per group of 6 users: 400€) ;</li>
- <li>Student (1 user: 25€ [student proof required])</li>
-</ul>''',  
-      'next'    	: 'next',
     },
     'address' : {
       'title'   	: 'Address',

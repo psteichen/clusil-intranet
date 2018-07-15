@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card mx-5">
+{% if title %}<h2 class="card-header text-center text-dark">{{ title|safe }}</h2>{% endif %}
+<div class="card-body">
+  {% if desc %}<p>{{ desc|safe }}</p>{% endif %}
+  <div class="list-group">
+    {% for a in actions %}
+    {% if a.perms in groups or not a.perms %}
+    <a class="list-group-item list-group-item-action list-group-item-{{ a.grade }} flex-column align-items-start" href="{{ a.url }}">
+      <h5 class="mb-1">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}</h5>
+      {% if price %}<small>{{ a.price }}&nbsp;&euro;&nbsp;</small>{% endif %}
+    </a>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

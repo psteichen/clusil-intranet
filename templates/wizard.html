@@ -5,39 +5,39 @@
 <h2>{{ title|safe }}</h2>
 {% if desc %}<p class="well well-sm">{{ desc }}</p>{% endif %}
 {% if error_message %}<p class="error">{{ error_message }}</p>{% endif %}
+
 <form role="form" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
-{% csrf_token %}
- {{ wizard.management_form }}
- {{ wizard.form.non_form_errors }}
- <div class="card card-info">
-  <h2 class="card-header">{{ step_title }}&nbsp;<span class="badge pull-right">step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span></h2>
-  <div class="card-body">
-  {% if step_desc %}<div class="well well-sm">{{ step_desc|safe }}</div>{% endif %}
-   <div class="col-xs-10">
-   {% if wizard.form.forms %}
-    {{ wizard.form.management_form }}
-    {% for form in wizard.form.forms %}
-      {% bootstrap_form form %}
-    {% endfor %}
-   {% else %}
-    {% bootstrap_form wizard.form %}
-   {% endif %}
-   </div>
+  {% csrf_token %}
+  {{ wizard.management_form }}
+  {{ wizard.form.non_form_errors }}
+
+  <div class="card border-info">
+    <h2 class="card-header text-info">{{ step_title }}&nbsp;&nbsp;<span class="badge badge-pill badge-primary float-right">step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span></h2>
+    <div class="card-body">
+    {% if step_desc %}
+      <p class="text-primary">{{ step_desc|safe }}</p>
+     {% endif %}
+    {% if wizard.form.forms %}
+      {{ wizard.form.management_form }}
+      {% for form in wizard.form.forms %}
+        {% bootstrap_form form %}
+      {% endfor %}
+    {% else %}
+      {% bootstrap_form wizard.form %}
+    {% endif %}
+    {% buttons %}
+      <div class="btn-group float-right">
+        <button class="btn btn-info" type="submit" value="{{ next }}">{{ next }}&nbsp;&nbsp;<i class="fa fa-play"></i></button>
+      </div>
+      {% if wizard.steps.prev %}
+      <div class="btn-group float-left">
+        <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}"><i class="fa fa-backward"></i>&nbsp;&nbsp;{{ first }}</button>
+        <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}"><i class="fa fa-step-backward"></i>&nbsp;&nbsp;{{ prev }}</button>
+      </div>
+      {% endif %}
+    {% endbuttons %}
+    </div>
   </div>
- </div>
- {% buttons %}
- <div class="btn-toolbar">
-  <div class="btn-group float-right">
-   <button class="btn btn-info" type="submit" value="{{ next }}">{{ next }}&nbsp;&nbsp;<i class="fa fa-play"></i></button>
-  </div>
- {% if wizard.steps.prev %}
-  <div class="btn-group float-left">
-   <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}"><i class="fa fa-backward"></i>&nbsp;&nbsp;{{ first }}</button>
-   <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}"><i class="fa fa-step-backward"></i>&nbsp;&nbsp;{{ prev }}</button>
-  </div>
- {% endif %}
- </div>
- {% endbuttons %}
 </form>
   {{ overview }}
 {% endblock %}

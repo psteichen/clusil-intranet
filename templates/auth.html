@@ -8,7 +8,7 @@
   <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#reg">{{ auth.reg.title }}</a></li>
 </ul>
 
-<div class="card card-info">
+<div class="card mx-5">
   <div class="card-body">
    <div class="col-xs-4"></div>
 
@@ -26,8 +26,7 @@
        </form>
      </div>
      <div id="reg" class="tab-pane fade col-xs-4" role="tabpanel">
-       <h2 class="text-info">{{ auth.reg.title }}</h2>
-       <p class="lead">{{ auth.reg.desc|safe }}</p>
+       {{ auth.reg.content|safe }}
      </div>
    </div>
 

@@ -14,11 +14,22 @@ from formtools.wizard.views import SessionWizardView
 
 from cms.functions import show_form, notify_by_email, replicate_to_ldap, debug
 
-from members.functions import get_members_to_validate, gen_member_fullname, activate_member
+from members.functions import get_members_to_validate, gen_member_fullname, activate_member, is_board
 from members.models import Member, Organisation, Address, Role
 
 from .models import Registration
 from .functions import gen_member_id, add_to_groups, gen_username, gen_random_password, gen_hash, gen_confirmation_link, gen_user_list
+
+#
+## registration home
+# (choose your flavour)
+#
+def reg_home(r):
+  return render(r, settings.TEMPLATE_CONTENT['reg']['home']['template'], { 
+			'title': settings.TEMPLATE_CONTENT['reg']['home']['title'], 
+			'desc': settings.TEMPLATE_CONTENT['reg']['home']['desc'], 
+			'actions': settings.TEMPLATE_CONTENT['reg']['home']['actions'], 
+		})
 
 
 ##
@@ -82,17 +93,24 @@ class RegistrationWizard(SessionWizardView):
       cleaned_data = self.get_cleaned_data_for_step('type') or False
       if cleaned_data: ty = Member.MEMBER_TYPES[int(cleaned_data['member_type'])][1]
 
+    mem_type = ''
+    mem_type_url = ''
+    if ty  != None: 
+      mem_type = ' ['+unicode(ty)+']'
+      mem_type_url = unicode(ty)+'/'
     self.request.breadcrumbs( ( 
-				('registration ['+unicode(ty)+']','/reg/'+unicode(ty)+'/'),
+				('registration'+mem_type,'/reg/'+mem_type_url),
                              ) )
 
 
     if self.steps.current != None:
-      if self.request.user.has_perm('cms.SECR'):
-        context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title'].format(type=ty)})
+      if is_board(self.request.user):
+        context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title']})
+        if ty != None: context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title'] + " - " +ty})
         context.update({'step_desc': ''})
       else:
-        context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title'].format(type=ty)})
+        context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title']})
+        if ty != None: context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title'] + " - " +ty})
         context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['desc']})
 
       context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['title']})

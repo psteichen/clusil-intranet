@@ -271,10 +271,7 @@ TEMPLATE_CONTENT = {
     'submit'	: 'Login',
     'reg' : {
       'title'	: 'Sign Up',
-      'desc'	: '''and become a member
-<br/><br/>
-&gt;&nbsp;<a href="/reg/">Member registration</a>&nbsp;&lt;
-''',
+      'content'	: '[will be overwritten below]',
     },
   },
   'pwd' : {
@@ -298,6 +295,47 @@ TEMPLATE_CONTENT = {
     },
   },
 }
+
+## registration
+REG_ACTIONS = (
+  {
+    'label'	: 'Individual',
+    'price'	: '1 user: 100',
+    'icon'    	: 'user',
+    'grade'    	: 'info',
+    'url'     	: '/reg/individual/',
+  },
+  {
+    'label'	: 'Organisation',
+    'price'	: 'per group of 6 users: 400',
+    'icon'    	: 'building',
+    'grade'    	: 'success',
+    'url'     	: '/reg/organisation/',
+  },
+  {
+    'label'	: 'Student',
+    'price'	: '1 user: 25',
+    'icon'    	: 'student',
+    'grade'    	: 'warning',
+    'url'     	: '/reg/student/',
+  },
+)
+
+TEMPLATE_CONTENT['auth']['reg']['content'] = {
+  'template'	: 'action-list.html',
+  'title'	: 'Sign Up as <i>CLUSIL member</i>',
+  'desc'  	: 'CLUSIL memberships come in 3 flavours:', 
+  'actions'	: REG_ACTIONS,
+}
+
+from registration.settings import *
+
+MEMBER_ID_SALT     = u']*8/bi83}7te!TJZ(IL!K?&+U'
+REG_VAL_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/reg/validate/'
+REG_SALT	= u'CLUSIL 1996-2016, 20 years of CHEEBANG!'
+
+TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
+
 
 ## home
 HOME_ACTIONS = (
@@ -384,15 +422,6 @@ TEMPLATE_CONTENT['documentation'] = {
     },
   ),
 }
-
-## registration
-from registration.settings import *
-
-MEMBER_ID_SALT     = u']*8/bi83}7te!TJZ(IL!K?&+U'
-REG_VAL_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/reg/validate/'
-REG_SALT	= u'CLUSIL 1996-2016, 20 years of CHEEBANG!'
-
-TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
 
 ## upload
 from upload.settings import *

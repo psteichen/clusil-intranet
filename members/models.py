@@ -27,13 +27,16 @@ class Address(Model):
   town 		= CharField(max_length=250)
   country 	= IntegerField(choices=COUNTRIES,default=LU)
   c_other 	= CharField(max_length=250,blank=True,null=True)
- 
-  def __unicode__(self):
+
+  def gen_country(self):
     c = self.COUNTRIES[int(self.country)][1]
     if self.country == self.OTH:
       c = unicode(self.c_other)
 
-    return self.street + ' ; ' + self.postal_code + ' ' + self.town + ' ; ' + c
+    return c
+
+  def __unicode__(self):
+    return self.street + ' ' + self.postal_code + ' ' + self.town +  ' ' + self.gen_country()
 
 
 # Organisation model
@@ -41,9 +44,6 @@ class Organisation(Model):
   name 		= CharField(max_length=250)
   address	= ForeignKey(Address)
 
-  def __unicode__(self):
-#    return self.name + ' (' + unicode(self.address) + ')'
-    return self.name
 
 def rename_sp(i,f):
   return 'REG/students/'+i.id+'_'+f
@@ -94,15 +94,21 @@ class Member(Model):
   users 	= ManyToManyField(User, related_name='users+',blank=True)
   student_proof	= FileField(upload_to=rename_sp,blank=True,null=True)
 
-  def __unicode__(self):
+  def gen_name(self):
     o = ''
+    hol = ''
+    t = self.MEMBER_TYPES[int(self.type)][1]
+
+    if self.head_of_list: hol = gen_fulluser(self.head_of_list)
     if self.type == Member.ORG and self.organisation:
-      o += unicode(self.organisation) + ' - head-of-list: ' + gen_fulluser(self.head_of_list)
+      o += unicode(self.organisation) + ' - head-of-list: ' + hol
     else:
-      o += gen_fulluser(self.head_of_list)
+      o += hol
 
-    return self.id + ' [ ' + o + ' ]'
+    return self.id + ' [ ' + t + ' ] - ' + o
 
+  def nb_users(self):
+    return self.users.count()
 
 # Renew model
 class Renew(Model):

@@ -35,15 +35,6 @@ def reg_home(r):
 ##
 ## registration helper functions
 ##
-def show_error_message(wizard):
-  if wizard.kwargs: #alt mode 
-    ty = None
-    for item in Member.MEMBER_TYPES:
-        if unicode(item[1]) == unicode(wizard.kwargs['type']):
-          ty = self.kwargs['type']
-  
-    if ty == None: show_form(wizard,'error','error',True)
-
 def show_delegate_form(wizard):
   if wizard.kwargs: #alt mode 
     if Member.MEMBER_TYPES[Member.ORG][1] == unicode(wizard.kwargs['type']): 

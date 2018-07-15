@@ -34,7 +34,7 @@
 <body role="document">
 
   {% if user.is_authenticated %}
-  <div class="container-fluid">
+  <div class="container-fluid mt-5">
 
     {% block navbar %}
       {% include "navigation.html" %}
@@ -53,19 +53,19 @@
       </ol>
     {% endblock %}
   {% else %}
-  <div class="container">
+  <div class="container mt-5">
 
     <div class="container bg-light">
       <h1><a href="{{ meta.logo.url }}"><img src="{{ meta.logo.img }}" class="d-inline-block align-middle" height="80" alt=""></a>&nbsp;&nbsp;&nbsp;{{ meta.header|safe }}</h1>
     </div>
   {% endif %}
 
-    <div class="jumbotron">
+    <div class="jumbotron mb-1">
       {% block content %}{% endblock %}
     </div>
 
     <div class="footer">
-     <p class="text-muted pull-right">&copy; {{ meta.copyright }}</p>
+     <p class="text-muted float-right">&copy; {{ meta.copyright }}</p>
     </div>
 
   </div> <!-- end container -->

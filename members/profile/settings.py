@@ -6,15 +6,14 @@ ACTIONS = (
     'label'	: 'Change Profile',
     'icon'	: 'pencil',
     'grade'	: 'warning',
-    'url'    	: '/profile/modify/',
-    'group'	: 'HeadOfLists',
+    'has_perms'	: 'HEAD-OF-LIST',
   },
   {
     'label'	: 'Invoices',
     'icon'	: 'euro',
     'grade'	: 'info',
     'url'    	: '/profile/invoice/',
-    'group'	: 'HeadOfLists',
+    'has_perms'	: 'HEAD-OF-LIST',
   },
 )
 ACTIONS_ORG = (
@@ -23,7 +22,7 @@ ACTIONS_ORG = (
     'icon'	: 'plus',
     'grade'	: 'success',
     'url'	: '/profile/adduser/',
-    'group'	: 'HeadOfLists',
+    'has_perms'	: 'HEAD-OF-LIST',
   },
 )
 INV_ACTIONS = (
@@ -32,7 +31,7 @@ INV_ACTIONS = (
     'icon'	: 'euro',
     'grade'	: 'warning',
     'url'	: '/profile/invoice/new/',
-    'group'	: 'HeadOfLists',
+    'has_perms'	: 'HEAD-OF-LIST',
   },
 )
 ADMIN_INV_ACTIONS = (

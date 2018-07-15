@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 
 from .views import profile, invoice
-from .views import modify, adduser, affiluser, make_head, make_delegate, rmuser, moduser, invoice, new_invoice, renew
+from .views import modify, adduser, make_head, make_delegate, rmuser, moduser, invoice, new_invoice, renew
 
 urlpatterns = [
   #info
@@ -13,7 +13,6 @@ urlpatterns = [
   url(r'^modify/$', modify, name='modify'),
   url(r'^adduser/$', adduser, name='adduser'),
 
-  url(r'^affiluser/(?P<user>.+?)/$', affiluser, name='affiluser'),
   url(r'^make_head/(?P<user>.+?)/$', make_head, name='make_head'),
   url(r'^make_delegate/(?P<user>.+?)/$', make_delegate, name='make_delegate'),
   url(r'^moduser/(?P<user>.+?)/$', moduser, name='moduser'),

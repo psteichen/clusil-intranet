@@ -47,7 +47,9 @@
     <h5>Global Actions</h5>
     {% for a in actions %}
       <div class="btn-group" role="group">
+        {% if a.has_perms in groups %}
         {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
+        {% endif %}
       </div>
     {% endfor %}
     {% endif %}

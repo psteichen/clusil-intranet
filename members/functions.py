@@ -110,44 +110,44 @@ def unset_group(u,g):
   u.save()
 
 def set_member(u):
-  members = Group.objects.get(name='Members')
+  members = Group.objects.get(name='MEMBER')
   set_group(u,members)
 
 def is_member(user):
-  return user.groups.filter(name='Members').exists()
+  return user.groups.filter(name='MEMBER').exists()
 
 def set_hol(u):
-  members = Group.objects.get(name='HeadOfLists')
+  members = Group.objects.get(name='HEAD-OF-LIST')
   set_group(u,members)
 
 def unset_hol(u):
-  members = Group.objects.get(name='HeadOfLists')
+  members = Group.objects.get(name='HEAD-OF-LIST')
   unset_group(u,members)
 
 def is_hol(user):
   if user.is_superuser: return True
   else:
-    return user.groups.filter(name='HeadOfLists').exists()
+    return user.groups.filter(name='HEAD-OF-LIST').exists()
 
 
 def set_board(u):
-  members = Group.objects.get(name='Board')
+  members = Group.objects.get(name='BOARD')
   set_group(u,members)
  
 def is_board(user):
   if user.is_superuser: return True
   else:
-    return user.groups.filter(name='Board').exists()
+    return user.groups.filter(name='BOARD').exists()
 
 
 def set_admin(u):
-  members = Group.objects.get(name='Admins')
+  members = Group.objects.get(name='ADMIN')
   set_group(u,members)
  
 def is_admin(user):
   if user.is_superuser: return True
   else:
-    return user.groups.filter(name='Admins').exists()
+    return user.groups.filter(name='ADMIN').exists()
 
 
 

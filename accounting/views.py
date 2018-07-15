@@ -9,6 +9,8 @@ from django.forms.models import model_to_dict
 
 from django_tables2 import RequestConfig
 
+from cms.functions import group_required
+
 from members.functions import gen_fullname
 from members.models import Member
 
@@ -23,7 +25,7 @@ from .functions import generate_invoice, generate_credit_note
 
 # list #
 #########
-@permission_required('cms.BOARD')
+@group_required('BOARD')
 def list(request):
   request.breadcrumbs( ( ('board','/board/'),
                          ('treasury','/accounting/'),
@@ -41,10 +43,9 @@ def list(request):
 
 # validate payment #
 ####################
-@permission_required('cms.BOARD')
+@group_required('BOARD')
 def payment(r,member_id,year):
   r.breadcrumbs( ( 	
-			('home','/'),
                    	('accounting','/accounting/'),
                ) )
 
@@ -91,7 +92,7 @@ def payment(r,member_id,year):
 
 # invoice #
 ###########
-@permission_required('cms.BOARD')
+@group_required('BOARD')
 def invoice(r,member,year):
   r.breadcrumbs( ( 
 			('home','/home/'),
@@ -114,7 +115,7 @@ def invoice(r,member,year):
 
 # credit #
 ##########
-@permission_required('cms.BOARD')
+@group_required('BOARD')
 def credit(r,member,year): #year is not used, but for sake of easiness keep it
   r.breadcrumbs( ( 
 			('home','/home/'),

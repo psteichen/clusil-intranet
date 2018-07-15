@@ -73,7 +73,7 @@ def profile(r):
 
 # modify #
 ###########
-@group_required('HeadOfLists')
+@group_required('HEAD-OF-LIST')
 def modify(r):
   r.breadcrumbs( (      
                        	('member profile','/profile/'),
@@ -152,7 +152,7 @@ def modify(r):
 
 # add user #
 ############
-@group_required('HeadOfLists')
+@group_required('HEAD-OF-LIST')
 def adduser(r): # only if membership-type is ORG
   r.breadcrumbs( (      
                        	('member profile','/profile/'),
@@ -218,73 +218,9 @@ def adduser(r): # only if membership-type is ORG
 		   })
 
 
-# affiliate user #
-##################
-@group_required('HeadOfLists')
-def affiluser(r,user):
-  r.breadcrumbs( (      
-                       	('member profile','/profile/'),
-               ) )
- 
-  M = get_member_from_username(user)
-  U = User.objects.get(username=user)
-  title = settings.TEMPLATE_CONTENT['profile']['affiluser']['title'].format(name=gen_fullname(U))
-  template = settings.TEMPLATE_CONTENT['profile']['affiluser']['template']
-  done_title = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['title'].format(name=gen_fullname(U))
-  done_template = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['template']
-
-  if r.POST:
-    af = AffiliateForm(r.POST)
-    if af.is_valid() and af.has_changed():
-      # get selected wgs and affiliate to user
-      WGs = af.cleaned_data['wgs']
-      AGs = af.cleaned_data['ags']
-      TLs = af.cleaned_data['tls']
-#TODO: add ldap sync
-      for wg in WGs: 
-        affiliate(U,wg)
-      for ag in AGs: 
-        affiliate(U,ag)
-      for tl in TLs: 
-        affiliate(U,tl)
-
-
-      #all fine -> show working groups form
-      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(name=gen_fullname(U),groups=get_affiliations(U))
-      return render(r,done_template, {
-			'title'		: done_title,
-			'message'	: message,
-		   })
-
-    else: #from not valid -> error
-      return render(r,done_template, {
-			'title'		: title,
-                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ' + gen_form_errors(af),
-		   })
-
-
-  else:
-    #no POST data yet -> show working groups form
-    form = AffiliateForm()
-    Affils = Affiliation.objects.filter(user=U)
-    init = { 'wgs': [], 'ags': [], 'tls': [], }
-    for a in Affils:
-      if a.group.type == Group.WG: init['wgs'].append(a.group.pk)
-      if a.group.type == Group.AG: init['ags'].append(a.group.pk)
-      if a.group.type == Group.TL: init['tls'].append(a.group.pk)
-    form.initial = init
-
-    return render(r,template, {
-			'title'	: title,
-  			'desc'	: settings.TEMPLATE_CONTENT['profile']['affiluser']['desc'].format(name=gen_fullname(U)),
-  			'submit': settings.TEMPLATE_CONTENT['profile']['affiluser']['submit'],
-			'form'	: form,
-		   })
-
-
 # make user the head of list #
 ##############################
-@group_required('HeadOfLists')
+@group_required('HEAD-OF-LIST')
 def make_head(r,user):
   r.breadcrumbs( (      
                        	('member profile','/profile/'),
@@ -320,7 +256,7 @@ def make_head(r,user):
 
 # make user the delegate #
 ##########################
-@group_required('HeadOfLists')
+@group_required('HEAD-OF-LIST')
 def make_delegate(r,user):
   r.breadcrumbs( (      
                        	('member profile','/profile/'),
@@ -400,7 +336,7 @@ def moduser(r,user):
 
 # remove user #
 ###############
-@group_required('HeadOfLists')
+@group_required('HEAD-OF-LIST')
 def rmuser(r,user,really=False): # only if membership-type is ORG
   r.breadcrumbs( (      
                        	('member profile','/profile/'),
@@ -454,7 +390,7 @@ def rmuser(r,user,really=False): # only if membership-type is ORG
 
 # invoice #
 ###########
-@group_required('HeadOfLists')
+@group_required('HEAD-OF-LIST')
 def invoice(r):
   r.breadcrumbs( ( 
                        	('member profile','/profile/'),
@@ -487,7 +423,7 @@ def invoice(r):
 
 # new invoice #
 ###############
-@group_required('HeadOfLists')
+@group_required('HEAD-OF-LIST')
 def new_invoice(r):
   r.breadcrumbs( ( 
                        	('member profile','/profile/'),

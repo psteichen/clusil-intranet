@@ -1,6 +1,7 @@
 from django.db.models import Model, EmailField, DateField, IntegerField, CharField, ForeignKey, ManyToManyField, FileField, BooleanField
 from django.db.models.deletion import SET_NULL
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from members.groups.models import Group
 
@@ -83,6 +84,7 @@ class Member(Model):
     (HON, 'honorary'),
   )
 
+
   id 		= CharField(max_length=25,primary_key=True)
   type 		= IntegerField(choices=MEMBER_TYPES)
   lvl 		= IntegerField(choices=MEMBER_LEVELS,default=SINGLE)
@@ -102,6 +104,14 @@ class Member(Model):
       o += gen_fulluser(self.head_of_list)
 
     return self.id + ' [ ' + o + ' ]'
+
+settings.FEE = {
+    Member.IND	: 100,
+    Member.STD 	: 25,
+    Member.ORG_6: 400,
+    Member.ORG_12: 700,
+    Member.ORG_18 : 1000,
+}
 
 
 # Renew model

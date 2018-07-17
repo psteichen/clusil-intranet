@@ -515,15 +515,6 @@ EVENTS_REG_BASE_URL = 'https://' + ALLOWED_HOSTS[0] + '/events/reg/'
 from accounting.settings import *
 TEMPLATE_CONTENT['accounting'] = ACCOUNTING_TMPL_CONTENT
 
-#from members.models import Member
-#FEE = {
-#  Member.IND	: 100,
-#  Member.STD 	: 25,
-#  Member.ORG_6	: 400,
-#  Member.ORG_12	: 700,
-#  Member.ORG_18 : 1000,
-#}
-
 ACCOUNTING = {
   'invoice' : {
     'logo'		: STATIC_ROOT + 'pics/logo.png',

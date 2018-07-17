@@ -9,11 +9,9 @@
 {% csrf_token %}
  {{ wizard.management_form }}
  {{ wizard.form.non_form_errors }}
- <div class="panel panel-info">
-  <div class="panel-heading">
-   <h2 class="panel-title">{{ step_title }}&nbsp;<span class="badge pull-right">step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span></h2>
-  </div>
-  <div class="panel-body">
+ <div class="card card-info">
+  <h2 class="card-header">{{ step_title }}&nbsp;<span class="badge pull-right">step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span></h2>
+  <div class="card-body">
   {% if step_desc %}<div class="well well-sm">{{ step_desc|safe }}</div>{% endif %}
    <div class="col-xs-10">
    {% if wizard.form.forms %}
@@ -30,12 +28,12 @@
  {% buttons %}
  <div class="btn-toolbar">
   <div class="btn-group pull-right">
-   <button class="btn btn-info" type="submit" value="{{ next }}">{{ next }}&nbsp;&nbsp{% bootstrap_icon "play" %}</button>
+   <button class="btn btn-info" type="submit" value="{{ next }}">{{ next }}&nbsp;&nbsp<i class="fa fa-play"></i></button>
   </div>
  {% if wizard.steps.prev %}
   <div class="btn-group pull-left">
-   <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% bootstrap_icon "backward" %}&nbsp;&nbsp;{{ first }}</button>
-   <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% bootstrap_icon "step-backward" %}&nbsp;&nbsp;{{ prev }}</button>
+   <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}"><i class="fa fa-backward"></i>&nbsp;&nbsp;{{ first }}</button>
+   <button class="btn btn-default" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}"><i class="fa fa-step-backward"></i>&nbsp;&nbsp;{{ prev }}</button>
   </div>
  {% endif %}
  </div>

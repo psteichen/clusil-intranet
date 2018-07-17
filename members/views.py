@@ -101,7 +101,7 @@ def renew(r):
       debug('members.renew','renewing member: '+unicode(m))
 
       # send confirmation
-      ok=notify_by_email(m.head_of_list.email,email_title,message_content,email_template)
+      ok=notify_by_email(m.head_of_list.email,email_title,message_content,email_template,copy=True)
       if not ok:
         return render(r, template, { 
 				'mode': 'Error in email request', 
@@ -134,15 +134,17 @@ def renew(r):
 def details(r, member_id):
   member = Member.objects.get(id=member_id)
 
+  mid = unicode(member.id)
+
   r.breadcrumbs( ( 
 			('home','/'),
                    	('members','/members/'),
-                   	('details of member: '+unicode(member_id),'/members/details/'+member_id+'/'),
+                   	('details of member: '+unicode(mid),'/members/details/'+mid+'/'),
                ) )
 
   actions = settings.TEMPLATE_CONTENT['members']['details']['overview']['actions']
   for a in actions:
-    a['url'] = a['url'].format(member_id)
+    a['url'] = a['url'].format(mid)
   message = gen_member_overview(settings.TEMPLATE_CONTENT['members']['details']['overview']['template'],member,actions)
 
   return render(r, settings.TEMPLATE_CONTENT['members']['details']['template'], {
@@ -249,21 +251,23 @@ class ModifyMemberWizard(SessionWizardView):
 ###########
 @permission_required('cms.MEMBER')
 def invoice(r, member_id):
+  M = Member.objects.get(id=member_id)
+  mid = unicode(M.id)
+
   r.breadcrumbs( ( 
 			('home','/home/'),
                        	('members','/members/'),
-                       	('invoices - '+member_id,'/members/invoice/'+member_id+'/'),
+                       	('invoices - '+mid,'/members/invoice/'+mid+'/'),
                ) )
-  M = Member.objects.get(id=member_id)
 
   template = settings.TEMPLATE_CONTENT['profile']['invoice']['template']
   done_template = settings.TEMPLATE_CONTENT['profile']['invoice']['done']['template']
   if M != None:  
-    title = settings.TEMPLATE_CONTENT['profile']['invoice']['title'] % { 'member' : M.id, }
+    title = settings.TEMPLATE_CONTENT['profile']['invoice']['title'] % { 'member' : mid, }
     desc = settings.TEMPLATE_CONTENT['profile']['invoice']['desc']
-    actions = settings.TEMPLATE_CONTENT['profile']['invoice']['admin_actions']
-    for a in actions:
-      a['url'] = a['url'].format(member_id)
+    admin_actions = settings.TEMPLATE_CONTENT['profile']['invoice']['admin_actions']
+    for aa in admin_actions:
+      aa['url'] = aa['url'].format(mid)
  
     table = InvoiceTable(Fee.objects.filter(member=M).order_by('-year'))
     RequestConfig(r, paginate={"per_page": 75}).configure(table)
@@ -271,7 +275,7 @@ def invoice(r, member_id):
     return render(r, template, {
 			'title'		: title,
 			'desc'		: desc,
-			'actions'	: actions,
+			'actions'	: admin_actions,
        	            	'table'		: table,
                   })
 

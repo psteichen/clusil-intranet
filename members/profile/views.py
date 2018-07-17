@@ -302,8 +302,8 @@ def make_head(r,user):
   #set new head-of-list
   M.head_of_list = new_H
   M.save()
-  M.users.add(old_H) #add old head to users
   M.users.remove(new_H) #remove new head from users
+  M.users.add(old_H) #add old head to users
 
   #set perms
   set_cms_perms(new_H) #set perms for new head
@@ -337,13 +337,12 @@ def make_delegate(r,user):
   #set new delegate
   M.delegate = new_D
   M.save()
-  if old_D: M.users.add(old_D) #add old delegate to users
   M.users.remove(new_D) #remove new delegate from users
+  if old_D: M.users.add(old_D) #add old delegate to users
 
   #set perms
-  if old_D: set_cms_perms(old_D,True) #remove perms for old delegate
   set_cms_perms(new_D) #set perms for new delegate
-
+  if old_D: set_cms_perms(old_D,True) #remove perms for old delegate
 
   title = settings.TEMPLATE_CONTENT['profile']['make_delegate']['title'].format(id=M.id)
   template = settings.TEMPLATE_CONTENT['profile']['make_delegate']['template']

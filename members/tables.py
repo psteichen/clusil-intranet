@@ -43,15 +43,15 @@ class MemberTable(Table):
     return len(users)
 
   def render_details(self, record):
-    link = '<center><a class="btn btn-info btn-sm" href="/members/details/{}/"><span class="glyphicon glyphicon-list"></span></a></center>'.format(escape(record.id))
+    link = '<center><a class="btn btn-info btn-sm" href="/members/details/{}/"><span class="fa fa-list"></span></a></center>'.format(escape(record.id))
     return mark_safe(link)
 
   def render_modify(self, record):
-    link = '<center><a class="btn btn-warning btn-sm" href="/members/modify/{}/"><span class="glyphicon glyphicon-pencil"></span></a></center>'.format(escape(record.id))
+    link = '<center><a class="btn btn-warning btn-sm" href="/members/modify/{}/"><span class="fa fa-pencil"></span></a></center>'.format(escape(record.id))
     return mark_safe(link)
 
   def render_activate(self, record):
-    link = '<center><a class="btn btn-danger btn-sm" href="/reg/validate/{}/"><span class="glyphicon glyphicon-ok"></span></a></center>'.format(escape(record.id))
+    link = '<center><a class="btn btn-danger btn-sm" href="/reg/validate/{}/"><span class="fa fa-check"></span></a></center>'.format(escape(record.id))
     return mark_safe(link)
 
   class Meta:

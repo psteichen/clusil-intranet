@@ -6,6 +6,7 @@ ACTIONS = (
     'label'	: 'Change Profile',
     'icon'	: 'pencil',
     'grade'	: 'warning',
+    'url'    	: '/profile/modify/',
     'has_perms'	: 'HEAD-OF-LIST',
   },
   {

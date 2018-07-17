@@ -58,6 +58,8 @@ def profile(r):
 					'actions'	: actions, 
 					'users'		: get_all_users_for_membership(M), 
 					'U'		: U, 
+					'is_hol'	: is_hol(U), 
+					'groups'	: U.groups.all().values_list('name', flat=True),
 				})
 
   else: #none-member login, probably an admin

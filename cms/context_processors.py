@@ -12,8 +12,9 @@ def group_perms(request):
     gl = False
   if request.user.is_superuser: gl = Group.objects.all().values_list('name', flat=True)
 
-  return {
-    'groups': gl
+
+  return  {
+    'groups': gl,
   }
 
 def user_context(request):

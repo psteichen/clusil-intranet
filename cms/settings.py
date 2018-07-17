@@ -315,6 +315,7 @@ TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
 HOME_ACTIONS = (
   {
     'heading'		: 'Membership Management',
+    'has_perms'		: 'MEMBER',
     'actions' : (
       {         
         'label'         : 'Profile', 
@@ -322,19 +323,22 @@ HOME_ACTIONS = (
         'grade'     	: 'primary',
         'desc'          : 'Manage your Membership profile',
         'url'           : '/profile/',
+    	'has_perms'	: 'MEMBER',
       },
     ),
   },
   {
     'heading'		: 'Suggestion Box',
     'desc'         	: 'An idea? A remark? A suggestion?',
+    'has_perms'		: 'MEMBER',
     'actions' : (
       {         
         'label'        	: 'Submit your thought', 
-        'icon' 		: 'commenting-o',
+        'icon' 		: 'comments',
         'grade'  	: 'primary',
     	'desc'         	: 'Please share with us your thoughts about CLUSIL!',
         'url'          	: '/ideabox/',
+    	'has_perms'	: 'MEMBER',
       },
 #      {         
 #        'label'        : 'Document Management', 
@@ -350,14 +354,14 @@ HOME_ACTIONS = (
 #        'grade'  	: 'info',
 #        'desc'         : 'Wiki, Workflows and Calendar platform (Confluence based)',
 #        'url'          : 'https://collab.clusil.lu/',
-#    	'has_perms'	: 'cms.MEMBER',
+#    	 'has_perms'	: 'cms.MEMBER',
 #      },
 #
     ),
   },
   {
     'heading'   	: 'Management Console (BOARD)',
-    'perms'		: 'Board',
+    'has_perms'		: 'BOARD',
     'cols'		: '12',
     'actions' : (
       {         
@@ -366,7 +370,7 @@ HOME_ACTIONS = (
         'grade'  	: 'info',
         'desc'          : 'Club management tools and functions',
         'url'           : '/board/',
-        'perms'		: 'Board',
+        'has_perms'	: 'BOARD',
       },
     ),
   },
@@ -406,7 +410,7 @@ TEMPLATE_CONTENT['upload'] = UPLOAD_TMPL_CONTENT
 BOARD_ACTIONS = (
   {
     'heading'      	: 'Meetings, Events and Communication',
-    'has_perms'		: 'cms.SECR',
+    'has_perms'		: 'BOARD',
     'cols'		: '6',
     'actions' : (
       {         
@@ -415,7 +419,7 @@ BOARD_ACTIONS = (
         'grade'     	: 'info',
         'desc'          : 'Manage regular meetings (board, working groups...) or members-only events.',
         'url'           : '/meetings/',
-	'has_perms'	: 'cms.SECR',
+    	'has_perms'	: 'BOARD',
       },
       {         
         'label'         : 'Public Events', 
@@ -423,7 +427,7 @@ BOARD_ACTIONS = (
         'grade'     	: 'warning',
         'desc'          : 'Manage public events or activities',
         'url'           : '/events/',
-	'has_perms'	: 'cms.SECR',
+    	'has_perms'	: 'BOARD',
       },
       {         
         'label'         : 'Web Content', 
@@ -431,13 +435,13 @@ BOARD_ACTIONS = (
         'grade'     	: 'danger',
         'desc'          : 'Manage the public website content',
         'url'           : '/webcontent/',
-	'has_perms'	: 'cms.SECR',
+    	'has_perms'	: 'BOARD',
       },
     ),
   },
   {
     'heading'      	: 'Club Management',
-    'has_perms'		: 'cms.SECR',
+    'has_perms'		: 'BOARD',
     'cols'		: '6',
     'actions' : (
       {         
@@ -446,7 +450,7 @@ BOARD_ACTIONS = (
         'grade'     	: 'info',
         'desc'          : 'Manage members.',
         'url'           : '/members/',
-	'has_perms'	: 'cms.SECR',
+    	'has_perms'	: 'BOARD',
       },
       {         
         'label'         : 'Organisation', 
@@ -454,7 +458,7 @@ BOARD_ACTIONS = (
         'grade'     	: 'info',
         'desc'          : 'Manage and affiliate members to groups.',
         'url'           : '/members/groups/',
-	'has_perms'	: 'cms.BOARD',
+    	'has_perms'	: 'BOARD',
       },
       {         
         'label'         : 'Treasury', 
@@ -462,7 +466,7 @@ BOARD_ACTIONS = (
         'grade'     	: 'info',
         'desc'          : 'Manage and check payments or other financial figures.',
         'url'           : '/accounting/',
-	'has_perms'	: 'cms.BOARD',
+    	'has_perms'	: 'BOARD',
       },
     ),
   },

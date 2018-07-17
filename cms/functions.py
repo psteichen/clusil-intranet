@@ -14,6 +14,21 @@ def debug(app,message):
     from sys import stderr as errlog
     print >>errlog, 'DEBUG ['+str(app)+']: '+str(message)
 
+def group_required(*group_names):
+  from django.contrib.auth.decorators import user_passes_test
+  from django.core.exceptions import PermissionDenied
+
+  """Requires user membership in at least one of the groups passed in."""
+  def in_groups(user):
+    if user.is_authenticated():
+      if bool(user.groups.filter(name__in=group_names)) or user.is_superuser:
+        return True
+      else:
+        raise PermissionDenied
+
+  return user_passes_test(in_groups)
+
+
 def attach_to_email(email,attachment):
   from os import path
   from django.core.files.storage import default_storage
@@ -38,7 +53,7 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
                 from_email=settings.EMAILS['email']['no-reply'], 
                 to=[to]
           )
-  if copy: email.cc=[copy]
+  if copy: email.cc=[settings.EMAILS['email']['secgen']]
 
   # add default footer (questions, salutation and disclaimer)
   message_content['SALUTATION'] = settings.EMAILS['salutation']
@@ -148,47 +163,12 @@ def genIcal(event):
   invite.add_header("Filename", filename)
   invite.add_header("Path", filename)
 
-  return invite
- 
+def gen_signup_content():
 
-############################
-# LDAP (for SSO) FUNCTIONS #
-############################
-def create_ldap_user(user):
-  from .models import LdapUser
+  return render_to_string(settings.TEMPLATE_CONTENT['reg']['home']['template'], { 
+			'title': settings.TEMPLATE_CONTENT['reg']['home']['title'], 
+			'desc': settings.TEMPLATE_CONTENT['reg']['home']['desc'], 
+			'actions': settings.TEMPLATE_CONTENT['reg']['home']['actions'], 
+		})
 
-  lu = None
-  try:
-    lu = LdapUser.objects.get(username=user.username)
-  except LdapUser.DoesNotExist:
-    lu = LdapUser(username=user.username)
-    lu.first_name = user.first_name
-    lu.last_name  = user.last_name
-    lu.email      = user.email
-    lu.password   = user.password
-    lu.save()
-
-  return lu
-
-def add_to_ldap_group(ldap_user,ldap_group_name):
-  from .models import LdapGroup
-
-  group = LdapGroup.objects.get(name=ldap_group_name)
-  gm = []
-  for m in group.members:
-    gm.append(m)
-  if unicode(ldap_user) != m: gm.append(unicode(ldap_user))
-
-  group.members=gm
-  group.save()
-
-def replicate_to_ldap(member):
-
-  #create and add hol and delegate to 'cms' group
-  add_to_ldap_group(create_ldap_user(member.head_of_list),'cms')
-  if member.delegate: add_to_ldap_group(create_ldap_user(member.delagate),'cms')
-
-  if member.users.count() > 0:
-    for u in member.users.all():
-      create_ldap_user(u)
 

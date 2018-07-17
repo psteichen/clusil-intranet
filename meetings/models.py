@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from django.db.models import Model, CharField, DateField, ForeignKey, TimeField, DateTimeField, IntegerField, FileField, EmailField
+from django.db.models import Model, CharField, DateField, ForeignKey, TimeField, DateTimeField, IntegerField, FileField, EmailField, OneToOneField
 
 from members.models import Member
 from members.groups.models import Group
@@ -26,7 +26,8 @@ def rename_attach(i, f):
   return 'MEETINGS/INVIT/'+unicode(i.meeting.group)+'/'+f
 
 class Invitation(Model):
-  meeting	= ForeignKey(Meeting,primary_key=True)
+#  meeting	= ForeignKey(Meeting,primary_key=True)
+  meeting	= OneToOneField(Meeting,primary_key=True)
   message	= CharField(max_length=5000,blank=True,null=True)
   attachement   = FileField(upload_to=rename_attach,blank=True,null=True)
   sent		= DateTimeField(blank=True,null=True)

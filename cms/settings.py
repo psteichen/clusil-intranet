@@ -21,7 +21,6 @@ SECRET_KEY = '"&_-L%/(OI&RBçtzdb*v6hv+b8@rav4fgh@zre64z$54wrefdB%&*/Ã§ZR(r!)0b71
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = [ 'cms.clusil.lu', 'intranet.clusil.lu', ]
 
@@ -183,6 +182,8 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'cms.context_processors.template_content', #for own templating system
+                'cms.context_processors.group_perms', #for perms model using groups
+                'cms.context_processors.user_context', #for perms model using groups
 	  	],
 	  },
     },
@@ -229,7 +230,8 @@ TEMPLATE_CONTENT = {
   'meta' : {
     'author'            : 'Pascal Steichen - pst@clusil.lu ; 2012, 2014, 2015, 2018',
     'copyright'         : 'CLUSIL a.s.b.l. - info@clusil.lu ; 2012, 2014, 2015, 2018',
-    'title'             : 'Club Management System',
+    'title'             : 'CLUSIL Club Management System',
+    'header'            : 'Club Management System',
     'logo' : {
       'url'		: "/",
       'img'		: STATIC_URL + 'pics/logo.png',
@@ -242,6 +244,11 @@ TEMPLATE_CONTENT = {
         'bt'            : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
 #        'bt_theme'      : '//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css',
         'bt_theme'      : '//stackpath.bootstrapcdn.com/bootswatch/4.1.1/lux/bootstrap.min.css',
+        'fontawesome' : {
+          'url'		: "//use.fontawesome.com/releases/v5.1.0/css/all.css",
+          'integrity'	: "sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt",
+          'crossorigin'	: "anonymous",
+        },
         'jumbotron'	: '//clusil.lu/css/jumbotron.css',
         'jt_narrow'	: '//clusil.lu/css/jumbotron-narrow.css',
         'own'           : STATIC_URL + 'css/bt-clusil.css',
@@ -254,7 +261,7 @@ TEMPLATE_CONTENT = {
 	'popper'        : '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js',
         'bt'            : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js',
         'bt_bundle'     : '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js',
-        'fontawesome'   : '//use.fontawesome.com/42b7f0ba56.js',
+#        'fontawesome'   : '//use.fontawesome.com/42b7f0ba56.js',
 #        'momentjs'      : '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment-with-locales.min.js',
 #        'dtpicker'      : '//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js',
     },
@@ -270,10 +277,6 @@ TEMPLATE_CONTENT = {
     'submit'	: 'Login',
     'reg' : {
       'title'	: 'Sign Up',
-      'desc'	: '''and become a member
-<br/><br/>
-&gt;&nbsp;<a href="/reg/">Member registration</a>&nbsp;&lt;
-''',
     },
   },
   'pwd' : {
@@ -297,6 +300,16 @@ TEMPLATE_CONTENT = {
     },
   },
 }
+
+## registration
+from registration.settings import *
+
+MEMBER_ID_SALT     = u']*8/bi83}7te!TJZ(IL!K?&+U'
+REG_VAL_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/reg/validate/'
+REG_SALT	= u'CLUSIL 1996-2016, 20 years of CHEEBANG!'
+
+TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
+
 
 ## home
 HOME_ACTIONS = (
@@ -344,7 +357,7 @@ HOME_ACTIONS = (
   },
   {
     'heading'   	: 'Management Console (BOARD)',
-    'has_perms'		: 'cms.SECR',
+    'perms'		: 'Board',
     'cols'		: '12',
     'actions' : (
       {         
@@ -353,7 +366,7 @@ HOME_ACTIONS = (
         'grade'  	: 'info',
         'desc'          : 'Club management tools and functions',
         'url'           : '/board/',
-        'has_perms'	: 'cms.SECR',
+        'perms'		: 'Board',
       },
     ),
   },
@@ -383,15 +396,6 @@ TEMPLATE_CONTENT['documentation'] = {
     },
   ),
 }
-
-## registration
-from registration.settings import *
-
-MEMBER_ID_SALT     = u']*8/bi83}7te!TJZ(IL!K?&+U'
-REG_VAL_URL 	= u'https://' + ALLOWED_HOSTS[0] + '/reg/validate/'
-REG_SALT	= u'CLUSIL 1996-2016, 20 years of CHEEBANG!'
-
-TEMPLATE_CONTENT['reg'] = REGISTRATION_TMPL_CONTENT
 
 ## upload
 from upload.settings import *

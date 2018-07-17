@@ -3,7 +3,7 @@ from django.db.models.deletion import SET_NULL
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from members.groups.models import Group
+from django.contrib.auth.models import Group
 
 from .functions import gen_fulluser
 
@@ -28,13 +28,16 @@ class Address(Model):
   town 		= CharField(max_length=250)
   country 	= IntegerField(choices=COUNTRIES,default=LU)
   c_other 	= CharField(max_length=250,blank=True,null=True)
- 
-  def __unicode__(self):
+
+  def gen_country(self):
     c = self.COUNTRIES[int(self.country)][1]
     if self.country == self.OTH:
       c = unicode(self.c_other)
 
-    return self.street + ' ; ' + self.postal_code + ' ' + self.town + ' ; ' + c
+    return c
+
+  def __unicode__(self):
+    return self.street + ' ' + self.postal_code + ' ' + self.town +  ' ' + self.gen_country()
 
 
 # Organisation model
@@ -42,9 +45,6 @@ class Organisation(Model):
   name 		= CharField(max_length=250)
   address	= ForeignKey(Address)
 
-  def __unicode__(self):
-#    return self.name + ' (' + unicode(self.address) + ')'
-    return self.name
 
 def rename_sp(i,f):
   return 'REG/students/'+i.id+'_'+f
@@ -93,17 +93,25 @@ class Member(Model):
   address	= ForeignKey(Address,blank=True,null=True)
   head_of_list 	= ForeignKey(User,related_name='head_of_list+',null=True,on_delete=SET_NULL)
   delegate 	= ForeignKey(User,related_name='delegate+',blank=True,null=True,on_delete=SET_NULL)
-  users 	= ManyToManyField(User, related_name='users+',blank=True,null=True)
+  users 	= ManyToManyField(User, related_name='users+',blank=True)
   student_proof	= FileField(upload_to=rename_sp,blank=True,null=True)
 
-  def __unicode__(self):
+  def gen_name(self):
     o = ''
-    if self.type == Member.ORG and self.organisation:
-      o += unicode(self.organisation) + ' - head-of-list: ' + gen_fulluser(self.head_of_list)
-    else:
-      o += gen_fulluser(self.head_of_list)
+    hol = ''
+    t = self.MEMBER_TYPES[int(self.type)][1]
 
-    return self.id + ' [ ' + o + ' ]'
+    if self.head_of_list: hol = gen_fulluser(self.head_of_list)
+    if self.type == Member.ORG and self.organisation:
+      o += unicode(self.organisation) + ' - head-of-list: ' + hol
+    else:
+      o += hol
+
+    return self.id + ' [ ' + t + ' ] - ' + o
+
+  def nb_users(self):
+    return self.users.count()
+
 
 settings.FEE = {
     Member.IND	: 100,
@@ -112,7 +120,6 @@ settings.FEE = {
     Member.ORG_12: 700,
     Member.ORG_18 : 1000,
 }
-
 
 # Renew model
 class Renew(Model):

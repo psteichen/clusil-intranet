@@ -3,6 +3,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 
 from cms.functions import notify_by_email, gen_form_errors
 
@@ -20,7 +21,12 @@ def gen_ideabox_message(user,idea):
 
   return render_to_string(settings.TEMPLATE_CONTENT['ideabox']['email']['template'],content)
 
+@login_required()
 def submit_idea(r):
+  r.breadcrumbs( ( ('home','/'),
+                   ('ideabox','/ideabox/'),
+               ) )
+
 
   template 	= settings.TEMPLATE_CONTENT['ideabox']['template']
   title 	= settings.TEMPLATE_CONTENT['ideabox']['title']

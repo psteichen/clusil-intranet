@@ -6,13 +6,14 @@ ACTIONS = (
     'label'	: 'Change Profile',
     'icon'	: 'pencil',
     'grade'	: 'warning',
-    'url'    	: '/profile/modify/',
+    'has_perms'	: 'HEAD-OF-LIST',
   },
   {
     'label'	: 'Invoices',
     'icon'	: 'euro',
     'grade'	: 'info',
     'url'    	: '/profile/invoice/',
+    'has_perms'	: 'HEAD-OF-LIST',
   },
 )
 ACTIONS_ORG = (
@@ -21,6 +22,7 @@ ACTIONS_ORG = (
     'icon'	: 'plus',
     'grade'	: 'success',
     'url'	: '/profile/adduser/',
+    'has_perms'	: 'HEAD-OF-LIST',
   },
 )
 INV_ACTIONS = (
@@ -29,6 +31,7 @@ INV_ACTIONS = (
     'icon'	: 'euro',
     'grade'	: 'warning',
     'url'	: '/profile/invoice/new/',
+    'has_perms'	: 'HEAD-OF-LIST',
   },
 )
 ADMIN_INV_ACTIONS = (
@@ -58,7 +61,7 @@ PROFILE_TMPL_CONTENT = {
       'affil'          	: u'Affiliation',
     },
     'user_overview' : {
-      'template'        : 'overview_member_readonly.html',
+      'template'        : 'overview_member.html',
       'managers'       	: u'Managers',
       'firstname'       : u'Firstname',
       'name'            : u'Name',
@@ -105,17 +108,17 @@ PROFILE_TMPL_CONTENT = {
 <p>If you want more Users, you'll have to get the next membership level. Contact us to <a href="mailto:membership@clusil.lu?Subject=Upgrade membership [{member_id}]">upgrade your membership</a>.</p>''',
     },
   },
-  'affiluser': {
-    'template'		: 'form.html',
-    'title'     	: u'Affiliate {name}',
-    'desc'     		: u'Procede to affiliate <i>{name}</i> to a Working Group, Ad-Hoc Group or Tool',
-    'submit'   		: u'Affiliate',
-    'done': {
-      'template'	: 'done.html',
-      'title'     	: u'{name} successfully affiliated.',
-      'message'     	: u'User <i>{name}</i> is now affiliated to the following groups: <b>{groups}</b>',
-    },
-  },
+#  'affiluser': {
+#    'template'		: 'form.html',
+#    'title'     	: u'Affiliate {name}',
+#    'desc'     		: u'Procede to affiliate <i>{name}</i> to a Working Group, Ad-Hoc Group or Tool',
+#    'submit'   		: u'Affiliate',
+#    'done': {
+#      'template'	: 'done.html',
+#      'title'     	: u'{name} successfully affiliated.',
+#      'message'     	: u'User <i>{name}</i> is now affiliated to the following groups: <b>{groups}</b>',
+#    },
+#  },
   'make_head': {
     'template'		: 'done.html',
     'title'     	: u'Changed Head of List for [{id}]',

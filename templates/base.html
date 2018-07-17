@@ -16,12 +16,6 @@
     
     <link rel="index" href="/" title="{{ meta.title }}">
 
-    <!-- LogRocket -->
-{% comment %}
-    <script src="https://cdn.logrocket.com/LogRocket.min.js"></script>
-    <script>window.LogRocket && window.LogRocket.init('0hp5bw/clusil');</script>
-{% endcomment %}
-
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="{{ meta.css.bt }}">
 
@@ -32,36 +26,46 @@
     <link rel="stylesheet" href="{{ meta.css.own }}">
 
    <!-- fontawesome //-->
-   <script src="{{ meta.js.fontawesome }}"></script>
+   <link rel="stylesheet" href="{{ meta.css.fontawesome.url }}" integrity="{{ meta.css.fontawesome.integrity }}" crossorigin="{{ meta.css.fontawesome.origin }}">
 
   {% endblock %}
 </head>
 
 <body role="document">
 
-  <div class="container-fluid">
+  {% if user.is_authenticated %}
+  <div class="container-fluid mt-5">
 
     {% block navbar %}
       {% include "navigation.html" %}
     {% endblock %}
 
     {% block breadcrumbs %}
+      <ol class="breadcrumb my-auto">
+        <li>&nbsp;::&nbsp;<a class="text-light" href="/">home</a>&nbsp;::&nbsp;</li>
       {% for breadcrumb in request.breadcrumbs %}
-        {% if forloop.first %}<ol class="breadcrumb my-auto">{% endif %}
         {% if forloop.last %}
-          <li class="active">&nbsp;::&nbsp;<a class="text-info" href="{{ breadcrumb.url }}"><i>{{ breadcrumb.name }}</i></a>&nbsp;::&nbsp;</li></ol>
+          <li class="active"><a class="text-info" href="{{ breadcrumb.url }}"><i>{{ breadcrumb.name }}</i></a>&nbsp;::&nbsp;</li></ol>
         {% else %}
-          <li>&nbsp;::&nbsp;<a class="text-light" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+          <li><a class="text-light" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>&nbsp;::&nbsp;</li>
         {% endif %}
       {% endfor %}
+      </ol>
     {% endblock %}
+  {% else %}
+  <div class="container mt-5">
 
-    <div class="jumbotron">
+    <div class="container bg-light">
+      <h1><a href="{{ meta.logo.url }}"><img src="{{ meta.logo.img }}" class="d-inline-block align-middle" height="80" alt=""></a>&nbsp;&nbsp;&nbsp;{{ meta.header|safe }}</h1>
+    </div>
+  {% endif %}
+
+    <div class="jumbotron mb-1">
       {% block content %}{% endblock %}
     </div>
 
     <div class="footer">
-     <p class="text-muted pull-right">&copy; {{ meta.copyright }}</p>
+     <p class="text-muted float-right">&copy; {{ meta.copyright }}</p>
     </div>
 
   </div> <!-- end container -->

@@ -6,7 +6,7 @@
 {% if desc %}<p>{{ desc }}</p>{% endif %}
 <div class="card-body row">
 {% for part in actions %}
- {% if part.has_perms in perms or not part.has_perms %}
+ {% if part.perms in groups or not part.perms %}
   {% if part.cols %}
    <div class="col-sm-{{ part.cols }}">
   {% else %}
@@ -17,7 +17,7 @@
      <div class="card-body text-center">
         {% if part.desc %}<p class="card-text lead">{{ part.desc }}</p>{% endif %}
         {% for action in part.actions %}
-        {% if action.has_perms in perms or not action.has_perms %}
+        {% if action.perms in groups or not action.perms %}
           {% if action.url %}
             <a class="btn btn-outline-{{ action.grade }}" href="{{ action.url }}" role="button">{% if action.icon %}<i class="fa fa-{{ action.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ action.label|safe }}&nbsp;</a>
      	    <br />

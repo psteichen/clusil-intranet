@@ -1,20 +1,19 @@
-{% extends "default.html" %}
+{% extends "base.html" %}
 
 {% load bootstrap4 %}
 
 {% block content %}
-<ul class="nav nav-pills">
+<ul class="nav nav-pills mx-5">
   <li class="nav-item"><a class="nav-link active" data-toggle="tab" role="tab" href="#auth">{{ auth.title }}</a></li>
   <li class="nav-item"><a class="nav-link" data-toggle="tab" role="tab" href="#reg">{{ auth.reg.title }}</a></li>
 </ul>
 
-<div class="card card-info">
+<div class="card mx-5 border-dark">
   <div class="card-body">
-   <div class="col-xs-4"></div>
 
-   <div class="tab-content">
-     <div id="auth" class="tab-pane fade show active col-xs-4" role="tabpanel">
-       <h2 class="text-info">{{ auth.title }}</h2>
+   <div class="tab-content mx-5">
+     <div id="auth" class="tab-pane fade show active" role="tabpanel">
+       <h2 class="text-info text-center">{{ auth.title }}</h2>
        <form role="form" class="form-horizontal" method="post" action="{% url 'login' %}">
          {% csrf_token %}
          {% bootstrap_form form %}
@@ -25,13 +24,11 @@
          </center>
        </form>
      </div>
-     <div id="reg" class="tab-pane fade col-xs-4" role="tabpanel">
-       <h2 class="text-info">{{ auth.reg.title }}</h2>
-       <p class="lead">{{ auth.reg.desc|safe }}</p>
+     <div id="reg" class="tab-pane fade" role="tabpanel">
+       {{ signup_content|safe }}
      </div>
    </div>
 
-   <div class="col-xs-4"></div>
   </div>
 </div>
 

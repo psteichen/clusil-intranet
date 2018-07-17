@@ -5,16 +5,15 @@ from django.shortcuts import render #uses a RequestContext by default
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.template.loader import render_to_string
 from django.contrib.auth.hashers import make_password
 
 from django_tables2 import RequestConfig
 
-from cms.functions import notify_by_email, gen_form_errors
+from cms.functions import notify_by_email, gen_form_errors, group_required
 
-from members.functions import add_group, set_cms_perms, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, add_user_to_all_group, gen_user_initial
+from members.functions import set_hol, unset_hol, is_hol, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, set_member, gen_user_initial
 from members.models import Member, Renew
 
 from members.groups.functions import affiliate, get_affiliations
@@ -35,11 +34,10 @@ from .tables import InvoiceTable
 
 # profile #
 ###########
-@login_required()
+@group_required('MEMBER')
 def profile(r):
   r.breadcrumbs( ( 
-			('home','/home/'),
-                       	('member profile','/profile/'),
+                  ('member profile','/profile/'),
                ) )
 
   U = r.user
@@ -48,7 +46,7 @@ def profile(r):
     title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
     template = settings.TEMPLATE_CONTENT['profile']['profile']['user_overview']['template']
     actions = None
-    if U.has_perm('cms.MEMBER'): 
+    if is_hol(U): 
       template = settings.TEMPLATE_CONTENT['profile']['profile']['overview']['template']
       actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions']
       if M.type == Member.ORG: actions = settings.TEMPLATE_CONTENT['profile']['profile']['actions_org']
@@ -74,10 +72,9 @@ def profile(r):
 
 # modify #
 ###########
-@permission_required('cms.MEMBER')
+@group_required('HEAD-OF-LIST')
 def modify(r):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                        	('modify','/profile/modify/'),
                ) )
@@ -154,10 +151,9 @@ def modify(r):
 
 # add user #
 ############
-@permission_required('cms.MEMBER')
+@group_required('HEAD-OF-LIST')
 def adduser(r): # only if membership-type is ORG
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                        	('add user','/profile/adduser/'),
                ) )
@@ -181,7 +177,7 @@ def adduser(r): # only if membership-type is ORG
       M.users.add(U)
 
       #add user to ALL group
-      add_user_to_all_group(U)
+      set_member(U)
 	
       message = settings.TEMPLATE_CONTENT['profile']['adduser']['done']['message'].format(name=gen_fullname(U))
       return render(r,done_template, {
@@ -221,77 +217,11 @@ def adduser(r): # only if membership-type is ORG
 		   })
 
 
-# affiliate user #
-##################
-@permission_required('cms.MEMBER')
-def affiluser(r,user):
-  r.breadcrumbs( (      
-			('home','/home/'),
-                       	('member profile','/profile/'),
-               ) )
- 
-  M = get_member_from_username(user)
-  U = User.objects.get(username=user)
-  title = settings.TEMPLATE_CONTENT['profile']['affiluser']['title'].format(name=gen_fullname(U))
-  template = settings.TEMPLATE_CONTENT['profile']['affiluser']['template']
-  done_title = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['title'].format(name=gen_fullname(U))
-  done_template = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['template']
-
-  if r.POST:
-    af = AffiliateForm(r.POST)
-    if af.is_valid() and af.has_changed():
-      # get selected wgs and affiliate to user
-      WGs = af.cleaned_data['wgs']
-      AGs = af.cleaned_data['ags']
-      TLs = af.cleaned_data['tls']
-#TODO: add ldap sync
-      for wg in WGs: 
-        affiliate(U,wg)
-      for ag in AGs: 
-        affiliate(U,ag)
-      for tl in TLs: 
-        affiliate(U,tl)
-
-
-      #all fine -> show working groups form
-      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(name=gen_fullname(U),groups=get_affiliations(U))
-      return render(r,done_template, {
-			'title'		: done_title,
-			'message'	: message,
-		   })
-
-    else: #from not valid -> error
-      return render(r,done_template, {
-			'title'		: title,
-                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ' + gen_form_errors(af),
-		   })
-
-
-  else:
-    #no POST data yet -> show working groups form
-    form = AffiliateForm()
-    Affils = Affiliation.objects.filter(user=U)
-    init = { 'wgs': [], 'ags': [], 'tls': [], }
-    for a in Affils:
-      if a.group.type == Group.WG: init['wgs'].append(a.group.pk)
-      if a.group.type == Group.AG: init['ags'].append(a.group.pk)
-      if a.group.type == Group.TL: init['tls'].append(a.group.pk)
-    form.initial = init
-
-    return render(r,template, {
-			'title'	: title,
-  			'desc'	: settings.TEMPLATE_CONTENT['profile']['affiluser']['desc'].format(name=gen_fullname(U)),
-  			'submit': settings.TEMPLATE_CONTENT['profile']['affiluser']['submit'],
-			'form'	: form,
-		   })
-
-
 # make user the head of list #
 ##############################
-@permission_required('cms.MEMBER')
+@group_required('HEAD-OF-LIST')
 def make_head(r,user):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -301,13 +231,15 @@ def make_head(r,user):
 
   #set new head-of-list
   M.head_of_list = new_H
+  if M.delegate and M.delegate == new_H: 
+    M.delegate = None
   M.save()
   M.users.remove(new_H) #remove new head from users
   M.users.add(old_H) #add old head to users
 
   #set perms
-  set_cms_perms(new_H) #set perms for new head
-  set_cms_perms(old_H,True) #remove perms for old head
+  set_hol(new_H) #set as head
+  unset_hol(old_H) #remove as head
 
 
   title = settings.TEMPLATE_CONTENT['profile']['make_head']['title'].format(id=M.id)
@@ -323,10 +255,9 @@ def make_head(r,user):
 
 # make user the delegate #
 ##########################
-@permission_required('cms.MEMBER')
+@group_required('HEAD-OF-LIST')
 def make_delegate(r,user):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -336,13 +267,15 @@ def make_delegate(r,user):
 
   #set new delegate
   M.delegate = new_D
+  if M.head_of_list == new_D: 
+    M.head_of_list = None
   M.save()
   M.users.remove(new_D) #remove new delegate from users
   if old_D: M.users.add(old_D) #add old delegate to users
 
   #set perms
-  set_cms_perms(new_D) #set perms for new delegate
-  if old_D: set_cms_perms(old_D,True) #remove perms for old delegate
+  if old_D: unset_hol(old_D) #remove perms for old delegate
+  set_hol(new_D) #set perms for new delegate
 
   title = settings.TEMPLATE_CONTENT['profile']['make_delegate']['title'].format(id=M.id)
   template = settings.TEMPLATE_CONTENT['profile']['make_delegate']['template']
@@ -356,10 +289,9 @@ def make_delegate(r,user):
 
 # modify user #
 ###############
-@login_required()
+@group_required('MEMBER')
 def moduser(r,user):
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -402,10 +334,9 @@ def moduser(r,user):
 
 # remove user #
 ###############
-@permission_required('cms.MEMBER')
+@group_required('HEAD-OF-LIST')
 def rmuser(r,user,really=False): # only if membership-type is ORG
   r.breadcrumbs( (      
-			('home','/home/'),
                        	('member profile','/profile/'),
                ) )
  
@@ -457,10 +388,9 @@ def rmuser(r,user,really=False): # only if membership-type is ORG
 
 # invoice #
 ###########
-@permission_required('cms.MEMBER')
+@group_required('HEAD-OF-LIST')
 def invoice(r):
   r.breadcrumbs( ( 
-			('home','/home/'),
                        	('member profile','/profile/'),
                        	('invoices','/profile/invoice/'),
                ) )
@@ -491,10 +421,9 @@ def invoice(r):
 
 # new invoice #
 ###############
-@permission_required('cms.MEMBER')
+@group_required('HEAD-OF-LIST')
 def new_invoice(r):
   r.breadcrumbs( ( 
-			('home','/home/'),
                        	('member profile','/profile/'),
                        	('invoices','/profile/invoice/'),
                ) )
@@ -512,7 +441,7 @@ def new_invoice(r):
 
 # password #
 ############
-@login_required
+@group_required('MEMBER')
 def password(r):
   if r.POST:
     pwd = PasswordChangeForm(r.user,r.POST)

@@ -7,33 +7,34 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 from django.contrib.auth.hashers import make_password
 
 from formtools.wizard.views import SessionWizardView
 
-from cms.functions import show_form, notify_by_email, replicate_to_ldap, debug
+from cms.functions import show_form, notify_by_email, debug
 
-from members.functions import get_members_to_validate, gen_member_fullname, activate_member
+from members.functions import get_members_to_validate, gen_member_fullname, activate_member, is_board
 from members.models import Member, Organisation, Address, Role
-from members.groups.models import Group, Affiliation
 
 from .models import Registration
 from .functions import gen_member_id, add_to_groups, gen_username, gen_random_password, gen_hash, gen_confirmation_link, gen_user_list
+
+#
+## registration home
+# (choose your flavour)
+#
+def reg_home(r):
+  return render(r, settings.TEMPLATE_CONTENT['reg']['home']['template'], { 
+			'title': settings.TEMPLATE_CONTENT['reg']['home']['title'], 
+			'desc': settings.TEMPLATE_CONTENT['reg']['home']['desc'], 
+			'actions': settings.TEMPLATE_CONTENT['reg']['home']['actions'], 
+		})
 
 
 ##
 ## registration helper functions
 ##
-def show_error_message(wizard):
-  if wizard.kwargs: #alt mode 
-    ty = None
-    for item in Member.MEMBER_TYPES:
-        if unicode(item[1]) == unicode(wizard.kwargs['type']):
-          ty = self.kwargs['type']
-  
-    if ty == None: show_form(wizard,'error','error',True)
-
 def show_delegate_form(wizard):
   if wizard.kwargs: #alt mode 
     if Member.MEMBER_TYPES[Member.ORG][1] == unicode(wizard.kwargs['type']): 
@@ -83,28 +84,30 @@ class RegistrationWizard(SessionWizardView):
       cleaned_data = self.get_cleaned_data_for_step('type') or False
       if cleaned_data: ty = Member.MEMBER_TYPES[int(cleaned_data['member_type'])][1]
 
+    mem_type = ''
+    mem_type_url = ''
+    if ty  != None: 
+      mem_type = ' ['+unicode(ty)+']'
+      mem_type_url = unicode(ty)+'/'
     self.request.breadcrumbs( ( 
-				('registration ['+unicode(ty)+']','/reg/'+unicode(ty)+'/'),
+				('registration'+mem_type,'/reg/'+mem_type_url),
                              ) )
 
 
     if self.steps.current != None:
-      if self.request.user.has_perm('cms.SECR'):
-        context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title'].format(type=ty)})
+      if is_board(self.request.user):
+        context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title']})
+        if ty != None: context.update({'title': settings.TEMPLATE_CONTENT['reg']['board_reg']['title'].format(type=ty)})
         context.update({'step_desc': ''})
       else:
-        context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title'].format(type=ty)})
+        context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title']})
+        if ty != None: context.update({'title': settings.TEMPLATE_CONTENT['reg']['register']['title'].format(type=ty)})
         context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['desc']})
 
       context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['title']})
       context.update({'first': settings.TEMPLATE_CONTENT['reg']['register']['first']})
       context.update({'prev': settings.TEMPLATE_CONTENT['reg']['register']['prev']})
       context.update({'next': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['next']})
-
-    if self.steps.current == 'head':
-      if unicode(ty) != unicode(Member.MEMBER_TYPES[Member.ORG]):
-        context.update({'step_title': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['alttitle']})
-        context.update({'step_desc': settings.TEMPLATE_CONTENT['reg']['register'][self.steps.current]['altdesc']})
 
     return context
 
@@ -264,11 +267,6 @@ class RegistrationWizard(SessionWizardView):
       # add all Users for ORG type
       if Us != []: M.users=Us
 
-#      g_f = form_dict['group']
-#      if g_f.is_valid():
-#        Gs = g_f.cleaned_data['groups']
-#        add_to_groups(U,Gs)
-
       reg_hash_code = gen_hash(settings.REG_SALT,M.head_of_list.email,15,M.address)
       # create registration entry for out-of-bound validation
       R = Registration(member=M,hash_code=reg_hash_code,date_of_registration=timezone.now())
@@ -359,7 +357,7 @@ def validate(r, val_hash):
       message_content['USERS']=users_msg.format(users=gen_user_list(M))
 
     #send email
-    ok=notify_by_email(M.head_of_list.email,title,message_content,email_template,None,settings.EMAILS['email']['secgen'])
+    ok=notify_by_email(M.head_of_list.email,title,message_content,email_template,None,True)
 
     return render(r, template, {
                    'title'	: title,

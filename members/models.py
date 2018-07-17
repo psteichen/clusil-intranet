@@ -1,9 +1,7 @@
 from django.db.models import Model, EmailField, DateField, IntegerField, CharField, ForeignKey, ManyToManyField, FileField, BooleanField
 from django.db.models.deletion import SET_NULL
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
-
-from django.contrib.auth.models import Group
 
 from .functions import gen_fulluser
 
@@ -141,7 +139,7 @@ class Renew(Model):
 class Role(Model):
   title		= CharField(max_length=100)
   user      	= ForeignKey(User) 
-  group      	= ForeignKey(Group,blank=True,null=True) 
+  group    	= ForeignKey(Group,blank=True,null=True) 
   start_date    = DateField(blank=True,null=True)
   end_date      = DateField(blank=True,null=True) 
 

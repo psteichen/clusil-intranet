@@ -43,7 +43,7 @@ def profile(r):
   U = r.user
   M = get_member_from_username(r.user.username)
   if M != None:  
-    title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, }
+    title = settings.TEMPLATE_CONTENT['profile']['profile']['title'] % { 'member' : M.id, 'type': Member.MEMBER_TYPES[M.type][1], }
     template = settings.TEMPLATE_CONTENT['profile']['profile']['user_overview']['template']
     actions = None
     if is_hol(U): 

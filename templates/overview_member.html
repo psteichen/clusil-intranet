@@ -20,8 +20,8 @@
 	{% endif %}
 	</ul>
       </div>
-      {% if member.student_proof %} <a class="btn btn-sm btn-default }}" href="{{ media_url }}{{ member.student_proof }}" role="button"><i class="fa fa-education"></i>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
     </div>
+    {% if member.student_proof %} <a class="btn btn-sm btn-outline-dark my-3 mx-5" href="/media/{{ member.student_proof }}" role="button"><i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
   </div>
 
   <!-- address & global actions -->

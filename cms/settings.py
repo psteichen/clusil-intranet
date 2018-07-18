@@ -170,22 +170,22 @@ TEMPLATES = [
 		os.path.join(BASE_DIR, 'templates/'),
   		os.path.join(BASE_DIR, 'templates/email/'),
   		os.path.join(BASE_DIR, 'templates/documentation/'),
-		],
+	],
 	'OPTIONS': {
-	  'context_processors': [
+  	    'context_processors': [
+	        'cms.context_processors.template_content', #for own templating system
+                'cms.context_processors.group_perms', #for perms model using groups
+                'cms.context_processors.user_context', #for perms model using groups
 		'django.template.context_processors.debug',
                 'django.template.context_processors.request', #tables2 needs this
-                'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
+                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'cms.context_processors.template_content', #for own templating system
-                'cms.context_processors.group_perms', #for perms model using groups
-                'cms.context_processors.user_context', #for perms model using groups
-	  	],
-	  },
+	    ],
+	},
     },
 ]
 

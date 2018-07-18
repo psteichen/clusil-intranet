@@ -23,7 +23,7 @@ def gen_ideabox_message(user,idea):
 
 @login_required()
 def submit_idea(r):
-  r.breadcrumbs( ( ('home','/'),
+  r.breadcrumbs( (
                    ('ideabox','/ideabox/'),
                ) )
 

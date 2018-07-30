@@ -33,7 +33,7 @@ class InvoiceTable(Table):
 
   class Meta:
     model = Fee
-    fields = ( 'year', 'member', 'invoice', 'paid', 'actions', )
+    fields = ( 'year', 'member.gen_name', 'invoice', 'paid', 'actions', )
     attrs = {"class": "table table-stripped"}
 
 

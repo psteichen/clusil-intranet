@@ -101,7 +101,7 @@ class Member(Model):
 
     if self.head_of_list: hol = gen_fulluser(self.head_of_list)
     if self.type == Member.ORG and self.organisation:
-      o += unicode(self.organisation) + ' - head-of-list: ' + hol
+      o += unicode(self.organisation.name) + ' - head-of-list: ' + hol
     else:
       o += hol
 

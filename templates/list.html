@@ -6,7 +6,7 @@
   {% block actions %}
     <div class="float-right">
       {% for a in actions %}
-       {% if a.has_perms in perms or not a.has_perms %}
+       {% if a.has_perms in groups or not a.has_perms %}
         {% if a.url %}<a class="btn btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
        {% endif %}
       {% endfor %}

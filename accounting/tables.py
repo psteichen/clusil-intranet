@@ -22,7 +22,7 @@ class InvoiceTable(Table):
       return 'success'
 
   def render_paid(self, value, record):
-    if value: #paid
+    if value and record.paid_date: #paid
       return mark_safe('<span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;('+visualiseDateTime(record.paid_date)+')')
     else:
       return mark_safe('<span class="glyphicon glyphicon-remove"></span>')

@@ -19,13 +19,16 @@ class Fee(Model):
   paid_date 	= DateField(blank=True,null=True)
   invoice 	= FileField(upload_to=rename_invoice)
 
-  def __unicode__(self):  
-    p = self.paid and ' - payed (' + visualiseDateTime(self.paid_date) + ')' or ''
-    o = ''
-    if self.member.type == Member.ORG: # organisation
-      o += self.member.organisation.name + ' - head-of-list: '
+  def get_member(self):
+    return self.member.gen_name()
 
-    return self.member.id + ' (' + o + self.member.head_of_list.first_name + ' ' + unicode.upper(self.member.head_of_list.last_name) + ') - ' + self.year + p
+#  def __unicode__(self):  
+#    p = self.paid and ' - payed (' + visualiseDateTime(self.paid_date) + ')' or ''
+#    o = ''
+#    if self.member.type == Member.ORG: # organisation
+#      o += self.member.organisation.name + ' - head-of-list: '
+#
+#    return self.member.id + ' (' + o + self.member.head_of_list.first_name + ' ' + unicode.upper(self.member.head_of_list.last_name) + ') - ' + self.year + p
 
   class Meta:
     unique_together = ('member', 'paid', 'year',)

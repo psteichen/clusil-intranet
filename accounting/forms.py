@@ -17,8 +17,8 @@ class PaymentForm(ModelForm):
   class Meta:
     model = Fee
 #    fields = ( 'member', 'invoice', 'year', 'paid_date', ) #maybe one day we could add thumbnail preview for invoice
-    fields = ( 'member', 'year', 'paid_date', )
+    fields = ( 'year', 'paid_date', )
     widgets = {
-      'paid_date'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', }),
+      'paid_date'	: TextInput(attrs={'type': 'date', 'id': 'dpicker', 'required': 'required'}),
     }
 

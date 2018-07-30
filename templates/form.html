@@ -9,7 +9,7 @@
 
 {% block form %}
   <div class="card card-info">
-    <h2 class="card-header">{{ title }}</h2>
+    <h2 class="card-header">{{ title|safe }}</h2>
     <div class="card-body">
       {% if desc %}{{ desc|safe }}{% endif %}
     </div>

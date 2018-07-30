@@ -50,10 +50,10 @@ def payment(r,member_id,year):
                ) )
 
   M = Member.objects.get(id=member_id)
-  F = Fee.objects.get(member=member_id,year=year)
+  F = Fee.objects.get(member=M.id,year=year)
 
   template 	= settings.TEMPLATE_CONTENT['accounting']['payment']['template']
-  title 	= settings.TEMPLATE_CONTENT['accounting']['payment']['title']
+  title 	= settings.TEMPLATE_CONTENT['accounting']['payment']['title'].format(member=M.gen_name())
   submit 	= settings.TEMPLATE_CONTENT['accounting']['payment']['submit']
 
   done_template = settings.TEMPLATE_CONTENT['accounting']['payment']['done']['template']
@@ -75,7 +75,7 @@ def payment(r,member_id,year):
       # error in form -> show messages
       return render(r, done_template, {
                 	'title'		: done_title, 
-                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in pf['who']]),
+                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ; '.join([e for e in pf.errors]),
                 })
     
   else:

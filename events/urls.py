@@ -1,6 +1,8 @@
 from django.conf.urls import include, url
 from django.contrib.auth.decorators import permission_required
 
+from cms.functions import group_required
+
 from .forms import ListEventsForm, EventForm, DistributionForm
 from .views import CreateEventWizard, ModifyEventWizard
 from .views import list, send, details, register
@@ -21,7 +23,8 @@ create_event_wrapper = permission_required('cms.SECR',raise_exception=True)(crea
 #view
 modify_event_wizard = ModifyEventWizard.as_view(event_forms)
 #wrapper with specific permissions
-modify_event_wrapper = permission_required('cms.SECR',raise_exception=True)(modify_event_wizard)
+#modify_event_wrapper = permission_required('cms.SECR',raise_exception=True)(modify_event_wizard)
+modify_event_wrapper = group_required('BOARD')(modify_event_wizard)
 
 urlpatterns = [
   url(r'^reg/(?P<event_hash>.+?)/$', register, name='register'),

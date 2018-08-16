@@ -19,10 +19,11 @@ ATTENDANCE_TMPL_CONTENT = {
   'actions'  	: None,
   'yes'  	: u'%(name)s, herewith your <strong>participation</strong> is <strong>confirmed</strong>!',
   'no'  	: u'%(name)s, thank you for notifying us your cancellation, you will be <strong>excused</strong>!',
-  'details'  	: u'''<p>For your reminder:
-<ul>
-<strong>Location: %(location)s</strong><br/>
-<em>Date: %(when)s</em><br/>
+  'details'  	: u'''<p class="lead">
+<ul class="lead">
+Title: <em>%(title)s</em><br/>
+Location: <strong>%(location)s</strong><br/>
+Date: <em>%(when)s</em><br/>
 Time: %(time)s<br/>
 </ul></p>
 ''',

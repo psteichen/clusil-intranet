@@ -47,7 +47,7 @@ class EventTable(Table):
     return mark_safe(link)
 
   def render_modify(self, record):
-    link = '<center><a class="btn btn-danger btn-sm" href="/events/modify/{}/"><i class="fa fa-pencil"></i></a></center>'.format(escape(record.id))
+    link = '<center><a class="btn btn-danger btn-sm" href="/events/modify/{}/"><i class="fa fa-edit"></i></a></center>'.format(escape(record.id))
     return mark_safe(link)
 
   class Meta:

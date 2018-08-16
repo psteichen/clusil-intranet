@@ -280,4 +280,7 @@ def member_is_full(member):
   if users >= member.lvl: return True
   else: return False
 
+def get_group_members(g):
+  return g.user_set.all()
+
 

@@ -12,7 +12,7 @@ from cms.functions import notify_by_email, visualiseDateTime
 
 from members.models import Member
 from members.functions import get_active_members, gen_fullname, get_all_users_for_membership
-from members.groups.functions import get_group_members
+from members.functions import get_group_members
 
 from meetings.models import Meeting
 from events.models import Event
@@ -53,8 +53,7 @@ def attendance(r, event_type, event_id, attendance_hash):
       A = None
 
       if event_type == 'meetings':
-        for a in get_group_members(M.group):
-          U = a.user
+        for U in get_group_members(M.group):
 
           try:
             A = Meeting_Attendance.objects.get(meeting=M,user=U)
@@ -71,7 +70,7 @@ def attendance(r, event_type, event_id, attendance_hash):
             member=m
             message = settings.TEMPLATE_CONTENT['attendance']['yes'] % { 'name': gen_fullname(U), }
             #add meeting information to the confirmation message
-            message += settings.TEMPLATE_CONTENT['attendance']['details'] % { 'when': M.when, 'time': visualiseDateTime(M.start) + ' - ' + visualiseDateTime(M.end), 'location': M.location, }
+            message += settings.TEMPLATE_CONTENT['attendance']['details'] % { 'title': M.title, 'when': M.when, 'time': visualiseDateTime(M.start) + ' - ' + visualiseDateTime(M.end), 'location': M.location, }
             actions = settings.TEMPLATE_CONTENT['attendance']['actions']
             e_message = e_yes
   

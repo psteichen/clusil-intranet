@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from django.contrib.auth.decorators import permission_required
 
+from cms.functions import group_required
 #from attendance.forms import ModifyAttendanceForm
 
 from .forms import ListMeetingsForm, ModifyMeetingForm, ModifyInvitationForm
@@ -22,7 +23,8 @@ modify_meeting_condition_dict = {
 #view
 modify_meeting_wizard = ModifyMeetingWizard.as_view(modify_meeting_forms, condition_dict=modify_meeting_condition_dict)
 #wrapper with specific permissions
-modify_meeting_wrapper = permission_required('cms.BOARD',raise_exception=True)(modify_meeting_wizard)
+#modify_meeting_wrapper = permission_required('cms.BOARD',raise_exception=True)(modify_meeting_wizard)
+modify_meeting_wrapper = group_required('BOARD')(modify_meeting_wizard)
 
 urlpatterns = [
   url(r'^$', list, name='list'),

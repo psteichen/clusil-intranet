@@ -8,7 +8,7 @@ ACTIONS = {
       'icon'            : 'plus',
       'grade'           : 'success',
       'url'             : '/events/create/',
-      'has_perms'       : 'cms.SECR',
+      'has_perms'       : 'BOARD',
     },
   ),
 }

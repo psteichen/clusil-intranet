@@ -13,7 +13,7 @@ from django.utils import timezone
 from formtools.wizard.views import SessionWizardView
 from django_tables2  import RequestConfig
 
-from cms.functions import notify_by_email
+from cms.functions import notify_by_email, group_required
 
 from members.models import Member
 from members.functions import get_active_members, gen_fullname, get_member_from_username
@@ -30,7 +30,7 @@ from .tables  import EventTable
 
 # list #
 ########
-@permission_required('cms.MEMBER',raise_exception=True)
+@group_required('BOARD')
 def list(r):
   r.breadcrumbs( ( 
 			('board','/board/'),
@@ -130,7 +130,7 @@ def send_invitation(event,user,invitation):
     return notify_by_email(user.email,subject,message_content)
 
 
-@permission_required('cms.SECR',raise_exception=True)
+@group_required('BOARD')
 def send(r,event_id):
   r.breadcrumbs( ( 
 			('board','/board/'),
@@ -250,7 +250,7 @@ def register(r, event_hash):
 
 # details #
 ###########
-@login_required
+@group_required('MEMBER')
 def details(r, event_id):
   r.breadcrumbs( ( 
 			('board','/board/'),

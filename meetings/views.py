@@ -8,18 +8,16 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from formtools.wizard.views import SessionWizardView
 from django_tables2  import RequestConfig
 
-from cms.functions import notify_by_email, show_form, visualiseDateTime, genIcal
+from cms.functions import notify_by_email, show_form, visualiseDateTime, genIcal, group_required
 
 from events.models import Event
 from members.models import Member
-from members.functions import get_active_members, gen_fullname, get_member_from_username
-from members.groups.models import Group
-from members.groups.functions import get_group_members
+from members.functions import get_active_members, gen_fullname, get_member_from_username, is_board, get_group_members
 from attendance.functions import gen_attendance_hashes, gen_invitation_message
 from attendance.models import Meeting_Attendance
 
@@ -35,15 +33,15 @@ from .tables  import MeetingTable, MgmtMeetingTable, MeetingMixin, MeetingListin
 
 # list #
 ########
-@permission_required('cms.MEMBER',raise_exception=True)
+@group_required('BOARD')
 def list(r):
   r.breadcrumbs( ( 
 			('board','/board/'),
                    	('meetings','/meetings/'),
                ) )
 
-  table = MeetingTable(Meeting.objects.filter(group__type=Group.WG).order_by('-when'))
-  if r.user.has_perm('cms.BOARD'):
+  table = MeetingTable(Meeting.objects.all().order_by('-when'))
+  if is_board(r.user):
     table = MgmtMeetingTable(Meeting.objects.all().order_by('-when'))
 
   RequestConfig(r, paginate={"per_page": 75}).configure(table)
@@ -58,7 +56,7 @@ def list(r):
 
 # add #
 #######
-@permission_required('cms.BOARD',raise_exception=True)
+@group_required('BOARD')
 def add(r):
   r.breadcrumbs( ( 	
 			('board','/board/'),
@@ -90,7 +88,7 @@ def add(r):
       I.save()
       return render(r, settings.TEMPLATE_CONTENT['meetings']['add']['done']['template'], {
                 'title': settings.TEMPLATE_CONTENT['meetings']['add']['done']['title'], 
-                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': I.message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]), },
+                'message': settings.TEMPLATE_CONTENT['meetings']['add']['done']['message'] % { 'email': I.message, 'attachement': I.attachement, 'list': ' ; '.join([gen_fullname(a) for a in get_group_members(Mt.group)]), },
                 })
 
     # form not valid -> error
@@ -112,7 +110,7 @@ def add(r):
 
 # send #
 ########
-@permission_required('cms.BOARD',raise_exception=True)
+@group_required('BOARD')
 def send(r, meeting_id):
   r.breadcrumbs( ( 
 			('board','/board/'),
@@ -129,8 +127,7 @@ def send(r, meeting_id):
   subject = settings.TEMPLATE_CONTENT['meetings']['send']['done']['email']['subject'] % { 'title': unicode(Mt.title) }
 
   email_error = { 'ok': True, 'who': [], }
-  for a in get_group_members(Mt.group):
-    u = a.user
+  for u in get_group_members(Mt.group):
    
     gen_attendance_hashes(Mt,Event.MEET,u)
     invitation_message = gen_invitation_message(e_template,Mt,Event.MEET,u) + I.message
@@ -165,13 +162,13 @@ def send(r, meeting_id):
     I.save()
     return render(r, settings.TEMPLATE_CONTENT['meetings']['send']['done']['template'], {
 	                'title': title, 
-                	'message': settings.TEMPLATE_CONTENT['meetings']['send']['done']['message'] + ' ; '.join([gen_fullname(a.user) for a in get_group_members(Mt.group)]),
+                	'message': settings.TEMPLATE_CONTENT['meetings']['send']['done']['message'] + ' ; '.join([gen_fullname(a) for a in get_group_members(Mt.group)]),
                   })
 
 
 # details #
 ############
-@login_required
+@group_required('MEMBER')
 def details(r, meeting_id):
   meeting = Meeting.objects.get(id=meeting_id)
   meeting_date = visualiseDateTime(meeting.when)
@@ -280,7 +277,7 @@ class ModifyMeetingWizard(SessionWizardView):
 
 # report #
 ##########
-@permission_required('cms.BOARD',raise_exception=True)
+@group_required('BOARD')
 def report(r, meeting_id):
   r.breadcrumbs( ( 	
 			('board','/board/'),
@@ -353,8 +350,8 @@ def report(r, meeting_id):
 
 
 # delete #
-########
-@permission_required('cms.BOARD',raise_exception=True)
+##########
+@group_required('BOARD')
 def delete(r, meeting_id):
   r.breadcrumbs( ( 
 			('board','/board/'),

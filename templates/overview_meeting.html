@@ -1,27 +1,27 @@
 <div class="overview">
-<div class="panel panel-primary">
-  <div class="panel-body">
+<div class="card">
+  <div class="card-body">
     <div class="row">
       <div class="col-sm-4">
-        {{ overview.date }}<p class="lead">{{ when }} {{ time }}</p>
+        {{ overview.date }}<pre>{{ when }} {{ time }}</pre>
       </div>
       <div class="col-sm-4">
-        {{ overview.location }}<address class="lead">{{ location }}<br/>{{ address }}</address>
+        {{ overview.location }}<address><pre>{{ location }}</pre><br/><pre>{{ address }}</pre></address>
       </div>
       <div class="col-sm-4">
-          {% if report %}<a class="btn btn-info pull-right" href="{{ report }}" target="_blank" role="button"><span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;{{ overview.report }}&nbsp;</a>{% endif %}
+          {% if report %}<a class="btn btn-info pull-right" href="{{ report }}" target="_blank" role="button"><span class="fa fa-file"></span>&nbsp;&nbsp;{{ overview.report }}&nbsp;</a>{% endif %}
       </div>
     </div>
     <div class="row">
       <div class="col-sm-12">
         <div class="pull-right" role="group">
           {% if message %}{{ overview.message }}
-	    {% if attach %}<a class="btn btn-info" href="{{ attach }}" target="_blank" role="button"><span class="glyphicon glyphicon-open-file"></span>&nbsp;&nbsp;{{ overview.attach }}&nbsp;</a><br />{% endif %}
+	    {% if attach %}<a class="btn btn-info" href="{{ attach }}" target="_blank" role="button"><span class="fa fa-open-file"></span>&nbsp;&nbsp;{{ overview.attach }}&nbsp;</a><br />{% endif %}
 	    <br />
-            <div class="well"><p class="lead">{{ message }}</p></div>
+            <pre>{{ message }}</pre>
 	  {% endif %}
         </div>
-        {{ overview.topic }}<p class="lead">{{ topic }}</p>
+        {{ overview.topic }}<pre>{{ topic }}</pre>
       </div>
     </div>
     <br/>
@@ -31,8 +31,8 @@
         <table class="table table-condensed">
          {% for a in attendance %}
          <tr>
-          <td class="lead">{{ a.user.first_name }}</td>
-          <td class="lead">{{ a.user.last_name|upper }}</td>
+          <td>{{ a.user.first_name }}</td>
+          <td>{{ a.user.last_name|upper }}</td>
          </tr>
          {% endfor %}
         </table>
@@ -42,8 +42,8 @@
         <table class="table table-condensed">
          {% for e in excused %}
          <tr>
-          <td class="lead">{{ e.user.first_name }}</td>
-          <td class="lead">{{ e.user.last_name|upper }}</td>
+          <td>{{ e.user.first_name }}</td>
+          <td>{{ e.user.last_name|upper }}</td>
          </tr>
          {% endfor %}
         </table>

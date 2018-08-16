@@ -18,7 +18,7 @@ from members.functions import get_members_to_validate, gen_member_fullname, acti
 from members.models import Member, Organisation, Address, Role
 
 from .models import Registration
-from .functions import gen_member_id, add_to_groups, gen_username, gen_random_password, gen_hash, gen_confirmation_link, gen_user_list
+from .functions import gen_member_id, gen_username, gen_random_password, gen_hash, gen_confirmation_link, gen_user_list
 
 #
 ## registration home

@@ -1,7 +1,8 @@
 
 from django.conf import settings
 from django.shortcuts import render
-from django.contrib.auth.decorators import permission_required
+
+from cms.functions import group_required
 
 from .forms import UploadForm
 from .functions import handle_uploaded_file, import_data
@@ -55,7 +56,7 @@ def upload(r,campaign='gen'):
 
 # import_data #
 ###############
-@permission_required('cms.BOARD')
+@group_required('BOARD')
 def import_data(r,ty):
 
   template      = settings.TEMPLATE_CONTENT['upload']['import'][ty]['template']

@@ -1,7 +1,6 @@
 
 from django.conf import settings
 from django.shortcuts import render
-from django.contrib.auth.decorators import permission_required
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 

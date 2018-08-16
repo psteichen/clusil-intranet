@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from formtools.wizard.views import SessionWizardView
 from django_tables2  import RequestConfig
 
-from cms.functions import show_form, notify_by_email, gen_form_errors, debug
+from cms.functions import show_form, notify_by_email, gen_form_errors, debug, group_required
 
 from registration.functions import gen_hash, gen_username, gen_random_password
 
@@ -24,16 +24,13 @@ from attendance.functions import gen_attendance_hashes
 from members.functions import set_member, set_hol, unset_hol, gen_fullname, get_all_users_for_membership, get_country_from_address, get_member_from_username, gen_user_initial
 from members.models import Member, Renew
 
-from members.groups.functions import affiliate, get_affiliations
-from members.groups.models import Group, Affiliation
-
 from meetings.models import Meeting
 from events.models import Event
 
 from .profile.tables import InvoiceTable
 
 from .functions import gen_member_initial, gen_role_initial, gen_fullname, gen_member_overview, get_active_members, gen_renewal_link, gen_member_fullname, member_initial_data, get_user_choice_list, member_is_full
-from .forms import AffiliateForm, UserForm, UserChangeForm, MemberForm, RoleForm
+from .forms import UserForm, UserChangeForm, MemberForm, RoleForm
 from .models import Member, Role, Renew
 from .tables  import MemberTable, InvoiceTable
 
@@ -44,7 +41,7 @@ from .tables  import MemberTable, InvoiceTable
 
 # list #
 #########
-@permission_required('cms.SECR')
+@group_required('BOARD')
 def list(request):
   request.breadcrumbs( ( ('board','/board/'),
                          ('members','/members/'),
@@ -62,7 +59,7 @@ def list(request):
 
 # renew #
 #########
-@permission_required('cms.SECR')
+@group_required('BOARD')
 def renew(r):
   r.breadcrumbs( ( 
 			('home','/'),
@@ -130,7 +127,7 @@ def renew(r):
 
 # details #
 ###########
-@permission_required('cms.SECR')
+@group_required('BOARD')
 def details(r, member_id):
   member = Member.objects.get(id=member_id)
 
@@ -249,7 +246,7 @@ class ModifyMemberWizard(SessionWizardView):
 
 # invoice #
 ###########
-@permission_required('cms.MEMBER')
+@group_required('MEMBER')
 def invoice(r, member_id):
   M = Member.objects.get(id=member_id)
   mid = unicode(M.id)
@@ -287,7 +284,7 @@ def invoice(r, member_id):
 
 # new invoice #
 ###############
-@permission_required('cms.MEMBER')
+@group_required('MEMBER')
 def new_invoice(r, member_id):
   r.breadcrumbs( ( 
 			('home','/home/'),
@@ -308,7 +305,7 @@ def new_invoice(r, member_id):
 
 # role_add #
 ############
-@permission_required('cms.BOARD')
+@group_required('BOARD')
 def role_add(r):
   r.breadcrumbs( ( ('board','/board/'),
                    ('members','/members/'),
@@ -348,7 +345,7 @@ def role_add(r):
 
 # add user #
 ############
-@permission_required('cms.SECR')
+@group_required('BOARD')
 def adduser(r,member_id):
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -422,75 +419,10 @@ def adduser(r,member_id):
 		   })
 
 
-# affiliate user #
-##################
-@permission_required('cms.SECR')
-def affiluser(r,member_id,user):
-  r.breadcrumbs( (      
-			('home','/home/'),
-                       	('members','/members/'),
-                       	(member_id+' details','/members/details/'+member_id),
-               ) )
- 
-  M = Member.objects.get(pk=member_id)
-  U = User.objects.get(username=user)
-  title = settings.TEMPLATE_CONTENT['profile']['affiluser']['title'].format(name=gen_fullname(U))
-  template = settings.TEMPLATE_CONTENT['profile']['affiluser']['template']
-  done_title = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['title'].format(name=gen_fullname(U))
-  done_template = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['template']
-
-  if r.POST:
-    af = AffiliateForm(r.POST)
-    if af.is_valid() and af.has_changed():
-      # get selected wgs and affiliate to user
-      WGs = af.cleaned_data['wgs']
-      AGs = af.cleaned_data['ags']
-      TLs = af.cleaned_data['tls']
-#TODO: add ldap sync
-      for wg in WGs: 
-        affiliate(U,wg)
-      for ag in AGs: 
-        affiliate(U,ag)
-      for tl in TLs: 
-        affiliate(U,tl)
-
-
-      #all fine -> show working groups form
-      message = settings.TEMPLATE_CONTENT['profile']['affiluser']['done']['message'].format(name=gen_fullname(U),groups=get_affiliations(U))
-      return render(r,done_template, {
-			'title'		: done_title,
-			'message'	: message,
-		   })
-
-    else: #from not valid -> error
-      return render(r,done_template, {
-			'title'		: title,
-                	'error_message'	: settings.TEMPLATE_CONTENT['error']['gen'] + ' ' + gen_form_errors(af),
-		   })
-
-
-  else:
-    #no POST data yet -> show working groups form
-    form = AffiliateForm()
-    Affils = Affiliation.objects.filter(user=U)
-    init = { 'wgs': [], 'ags': [], 'tls': [], }
-    for a in Affils:
-      if a.group.type == Group.WG: init['wgs'].append(a.group.pk)
-      if a.group.type == Group.AG: init['ags'].append(a.group.pk)
-      if a.group.type == Group.TL: init['tls'].append(a.group.pk)
-    form.initial = init
-
-    return render(r,template, {
-			'title'	: title,
-  			'desc'	: settings.TEMPLATE_CONTENT['profile']['affiluser']['desc'].format(name=gen_fullname(U)),
-  			'submit': settings.TEMPLATE_CONTENT['profile']['affiluser']['submit'],
-			'form'	: form,
-		   })
-
 
 # make user the head of list #
 ##############################
-@permission_required('cms.SECR')
+@group_required('BOARD')
 def make_head(r,member_id,user):
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -526,7 +458,7 @@ def make_head(r,member_id,user):
 
 # make user the delegate #
 ##########################
-@permission_required('cms.SECR')
+@group_required('BOARD')
 def make_delegate(r,member_id,user):
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -561,7 +493,7 @@ def make_delegate(r,member_id,user):
 
 # modify user #
 ###############
-@permission_required('cms.SECR')
+@group_required('BOARD')
 def moduser(r,member_id,user):
   r.breadcrumbs( (      
 			('home','/home/'),
@@ -609,7 +541,7 @@ def moduser(r,member_id,user):
 
 # remove user #
 ###############
-@permission_required('cms.SECR')
+@group_required('BOARD')
 def rmuser(r,member_id,user,really=False):
   r.breadcrumbs( (      
 			('home','/home/'),

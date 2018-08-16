@@ -47,7 +47,7 @@ urlpatterns = [
   url(r'^board/', board, name='board'),
 
   url(r'^members/', include('members.urls')),
-  url(r'^members/groups/', include('members.groups.urls')),
+#  url(r'^members/groups/', include('members.groups.urls')),
   url(r'^meetings/', include('meetings.urls')),
   url(r'^events/', include('events.urls')),
   url(r'^locations/', include('events.urls')),

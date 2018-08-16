@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.views.generic.base import RedirectView
 
 
-from .forms import MemberTypeForm, AddressForm, RegisterUserForm, AffiliationForm, StudentProofForm, MultiUserFormSet, ErrorForm
+from .forms import MemberTypeForm, AddressForm, RegisterUserForm, StudentProofForm, MultiUserFormSet, ErrorForm
 from .views import RegistrationWizard, show_delegate_form, show_multi_user_form, show_student_proof_form
 
 from .views import validate

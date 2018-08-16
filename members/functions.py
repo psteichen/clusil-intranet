@@ -100,7 +100,7 @@ def gen_member_id():
   mid = 'CLUSIL-%(year)s-%(num)04d' % { 'year': date.today().strftime('%Y'), 'num': num }
   return mid
 
-# Group setting functions
+# Group functions
 def set_group(u,g):
   u.groups.add(g)
   u.save()
@@ -207,8 +207,6 @@ def gen_renewal_link(code):
 def activate_member(member):
   from django.contrib.auth.models import Permission, User
   from members.models import Member
-  from groups.models import Group
-  from groups.functions import affiliate
   from accounting.functions import generate_invoice
   from attendance.functions import gen_attendance_hashes
   from events.models import Event

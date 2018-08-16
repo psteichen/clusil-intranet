@@ -1,13 +1,12 @@
 # coding=utf-8
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import Form, ChoiceField, ModelForm, CharField, ModelMultipleChoiceField, CheckboxSelectMultiple, TextInput, FileField, EmailField, BooleanField, RadioSelect
 from django.forms.models import modelformset_factory, BaseModelFormSet
 
 from accounting.models import Fee
 from members.models import Member, Address
-from members.groups.models import Group, Affiliation
 
 
 class ErrorForm(Form):
@@ -74,12 +73,4 @@ class StudentProofForm(ModelForm):
   class Meta:
     model = Member
     fields = ( 'student_proof', )
-
-class AffiliationForm(Form):
-  groups = ModelMultipleChoiceField(
-		queryset=Group.objects.filter(type=Group.WG).filter(status=Group.ACT),
-		widget=CheckboxSelectMultiple(),
-		label='Select Group affiliations',
-		required=False
-	)
 

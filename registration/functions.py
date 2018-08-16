@@ -7,7 +7,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 from members.models import Member
-from members.groups.models import Affiliation, Group
 
 
 ##
@@ -44,12 +43,6 @@ def gen_member_id(add_randomness=False):
 
   mid = 'CLUSIL-%(year)s-%(id)05s' % { 'year': date.today().strftime('%Y'), 'id': id_part }
   return mid
-
-def add_to_groups(user,groups):
-  from members.groups.functions import affiliate
-  for g in groups:
-    affiliate(user,g)
-
 
 # gen fullname for a user
 def gen_user_fullname(u):

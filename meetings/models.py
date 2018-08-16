@@ -5,7 +5,6 @@ from django.db.models import Model, CharField, DateField, ForeignKey, TimeField,
 from django.contrib.auth.models import Group
 
 from members.models import Member
-from members.groups.models import Group as Old_Group
 
 def rename_report(i,f):
   return 'MEETINGS/'+unicode(i.group.acronym)+'/'+f
@@ -13,8 +12,6 @@ def rename_report(i,f):
 class Meeting(Model):
   title		= CharField(max_length=100)
   group		= ForeignKey(Group)
-#  ng_group		= ForeignKey(Group)
-#  group		= ForeignKey(Old_Group)
   when		= DateField(verbose_name='Date')
   start		= TimeField(verbose_name='Start time')
   end		= TimeField(verbose_name='End time')

@@ -10,7 +10,7 @@ from django.utils.html import escape
 
 from accounting.models import Fee
 
-from .functions import get_all_users_for_membership
+from .functions import get_all_users_for_membership, gen_member_fullname
 from .models import Member, Role
 
 
@@ -31,7 +31,7 @@ class MemberTable(Table):
     if record.type == Member.ORG:
       return unicode(record.organisation.name)
     else:
-      name = unicode(record.head_of_list.first_name) + u' ' + unicode(record.head_of_list.last_name).upper()
+      name = gen_member_fullname(record)
       return name
 
   def render_head_of_list(self, value):

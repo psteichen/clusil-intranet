@@ -35,7 +35,9 @@ def get_member_from_username(username):
 def gen_member_fullname(m):
   from .models import Member
 
-  fn = m.head_of_list.first_name + ' ' + unicode.upper(m.head_of_list.last_name)
+  fn = ''
+  if m.head_of_list:
+    fn = m.head_of_list.first_name + ' ' + unicode.upper(m.head_of_list.last_name)
   if m.type == Member.ORG:
     fn += ' (' + unicode(m.organisation) + ')'
   return fn
@@ -163,8 +165,8 @@ def gen_user_line(r,u):
   
 def get_all_users_for_membership(m):
   users = []
-  users.append(gen_user_line('hol',m.head_of_list))
   try:
+    users.append(gen_user_line('hol',m.head_of_list))
     users.append(gen_user_line('del',m.delegate))
   except:
     pass

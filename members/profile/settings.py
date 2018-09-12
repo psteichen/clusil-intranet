@@ -59,7 +59,6 @@ PROFILE_TMPL_CONTENT = {
       'login'        	: u'Login',
       'email'           : u'E-mail',
       'role'            : u'Role',
-      'affil'          	: u'Affiliation',
     },
     'user_overview' : {
       'template'        : 'overview_member.html',
@@ -69,7 +68,6 @@ PROFILE_TMPL_CONTENT = {
       'login'        	: u'Login',
       'email'           : u'E-mail',
       'role'            : u'Role',
-      'affil'          	: u'Affiliation',
     },
     'admin_overview' : {
       'template'        : 'overview_user.html',
@@ -148,7 +146,6 @@ PROFILE_TMPL_CONTENT = {
 <dt>Name:</dt><dd>{name}</dd>
 <dt>Email:</dt><dd>{email}</dd>
 <dt>Login:</dt><dd>{login}</dd>
-<dt>Affiliations:</dt><dd>{affil}</dd>
 </dl>
 <a href="{url}" class="btn btn-xl btn-danger"><b>Really</b> delete this User?</a>
 ''',

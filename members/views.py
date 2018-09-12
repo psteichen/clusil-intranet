@@ -585,7 +585,6 @@ def rmuser(r,member_id,user,really=False):
 								name	= gen_fullname(U),
 								email	= U.email,
 								login	= U.username,
-								affil	= get_affiliations(U),
 								url	= '/members/'+M.pk+'/rmuser/'+U.username+'/REALLY/'
 							),
 		 })

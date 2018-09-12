@@ -62,7 +62,7 @@ def gen_fulluser(user):
 def gen_member_initial(m):
   initial_data = {}
 
-  initial_data['head_of_list'] = gen_fullname(m.head_of_list)
+  if m.head_of_list: initial_data['head_of_list'] = gen_fullname(m.head_of_list)
   if m.delegate: initial_data['delegate'] = gen_fullname(m.delegate)
   initial_data['address'] = m.address
 

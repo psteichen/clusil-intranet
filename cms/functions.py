@@ -14,19 +14,19 @@ def debug(app,message):
     from sys import stderr as errlog
     print >>errlog, 'DEBUG ['+str(app)+']: '+str(message)
 
-def group_required(*group_names):
+def group_required(*group_name):
   from django.contrib.auth.decorators import user_passes_test
   from django.core.exceptions import PermissionDenied
 
   """Requires user membership in at least one of the groups passed in."""
-  def in_groups(user):
+  def in_group(user):
     if user.is_authenticated():
-      if bool(user.groups.filter(name__in=group_names)) or user.is_superuser:
+      if bool(user.groups.filter(name=group_name)) or user.is_superuser:
         return True
       else:
         raise PermissionDenied
 
-  return user_passes_test(in_groups)
+  return user_passes_test(in_group)
 
 
 def attach_to_email(email,attachment):

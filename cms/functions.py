@@ -14,7 +14,7 @@ def debug(app,message):
     from sys import stderr as errlog
     print >>errlog, 'DEBUG ['+str(app)+']: '+str(message)
 
-def group_required(*group_name):
+def group_required(group_name):
   from django.contrib.auth.decorators import user_passes_test
   from django.core.exceptions import PermissionDenied
 

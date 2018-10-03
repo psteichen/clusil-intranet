@@ -42,18 +42,6 @@
       </div>
     </div>
 
-    <!-- global actions -->
-    {% if is_hol %}
-    <h5>Global Actions</h5>
-    {% for a in actions %}
-      <div class="btn-group" role="group">
-        {% if a.has_perms in groups %}
-        {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
-        {% endif %}
-      </div>
-    {% endfor %}
-    {% endif %}
-
   </div>
 
 </div>
@@ -88,15 +76,6 @@
           <div class="btn-group-vertical" role="group">
             {% if U.username == u.username  or is_hol %}
 	    <a class="btn btn-sm btn-outline-primary mb-1" role="button" href="/profile/moduser/{{ u.username }}/" title="Modify User"><i class="fa fa-pencil-square">&nbsp;&nbsp;Modify User</i></a>
-            {% endif %}
-            {% if member.organisation %} {# functions only available for ORG type #}
-              {% if u.role != 'hol' %}
-	        <a class="btn btn-sm btn-success mb-1" role="button" href="/profile/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
-              {% endif %}
-              {% if u.role != 'del' %}
-	        <a class="btn btn-sm btn-warning mb-1" role="button" href="/profile/make_delegate/{{ u.username }}/" title=""><i class="fa fa-user-secret"></i>&nbsp;&nbsp;Assign as Delegate</a>
-              {% endif %}
-	        <a class="btn btn-sm btn-danger mb-1" role="button" href="/profile/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
             {% endif %}
           </div>
         </td>

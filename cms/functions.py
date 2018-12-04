@@ -50,7 +50,7 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
 
   email = EmailMessage(
                 subject=subject, 
-                from_email=settings.EMAILS['email']['no-reply'], 
+                from_email=settings.EMAILS['email']['secgen'], 
                 to=[to]
           )
   if copy: email.cc=[settings.EMAILS['email']['secgen']]
@@ -128,7 +128,7 @@ def genIcal(event):
 
   vevent = Event()
 #  event.add('attendee', self.getEmail())
-  vevent.add('organizer', settings.EMAILS['email']['no-reply'])
+  vevent.add('organizer', settings.EMAILS['email']['secgen'])
   vevent.add('status', "confirmed")
   vevent.add('category', "Event")
   vevent.add('summary', title)
@@ -137,7 +137,7 @@ def genIcal(event):
   vevent.add('dtstart', start)
   vevent.add('dtend', end)
   from attendance.functions import gen_hash
-  vevent['uid'] = gen_hash(event,settings.EMAILS['email']['no-reply'])[:10] # Generate some unique ID
+  vevent['uid'] = gen_hash(event,settings.EMAILS['email']['secgen'])[:10] # Generate some unique ID
   vevent.add('priority', 5)
   vevent.add('sequence', 1)
   vevent.add('created', timezone.now())

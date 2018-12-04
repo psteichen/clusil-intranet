@@ -212,7 +212,6 @@ EMAILS = {
   'email' : {
     'board'	: 'CLUSIL Board <board@clusil.lu>',
     'secgen'	: 'Secretariat <secgen@clusil.lu>',
-    'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },
   'salutation' 	: '''
 Best Regards,

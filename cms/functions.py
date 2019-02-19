@@ -34,13 +34,14 @@ def attach_to_email(email,attachment):
   from django.core.files.storage import default_storage
   from django.core.files.base import ContentFile
 
-  try: email.attach(attachment)
-  except:
-    try: email.attach_file(attachment)
+  if attachment != None:
+    try: email.attach(attachment)
     except:
-      tmp_file = default_storage.save(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name), ContentFile(attachment.read()))
-      email.attach_file(tmp_file)
-      tmp_file = default_storage.delete(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name))
+      try: email.attach_file(attachment)
+      except:
+        tmp_file = default_storage.save(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name), ContentFile(attachment.read()))
+        email.attach_file(tmp_file)
+        tmp_file = default_storage.delete(path.join(settings.MEDIA_ROOT, 'tmp', attachment.name))
 
 def notify_by_email(to,subject,message_content,template='default.txt',attachment=None,copy=None):
   from django.core.mail import EmailMessage

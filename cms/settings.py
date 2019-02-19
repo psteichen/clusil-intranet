@@ -195,13 +195,6 @@ RECAPTCHA_USE_SSL = True
 RECAPTCHA_PUBLIC_KEY = "6Lc7twwTAAAAANJUI4eaSt2cBq0gm7U9QTcyXlLM"
 RECAPTCHA_PRIVATE_KEY = "6Lc7twwTAAAAAD5Gh03S-3FTE3eza8n9QD3WWQSf"
 
-# email config
-
-#mailgun stuff
-#EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = '81ac7d85d5de3e94cdd02fc1e1cce098'
-MAILGUN_SERVER_NAME = 'mail.clusil.lu'
-
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = 'CLUSIL Admin <admin@clusil.lu>'
 
 ADMINS = (
@@ -212,7 +205,6 @@ EMAILS = {
   'email' : {
     'board'	: 'CLUSIL Board <board@clusil.lu>',
     'secgen'	: 'Secretariat <secgen@clusil.lu>',
-    'no-reply'	: 'CLUSIL (no-reply) <no-reply@clusil.lu>',
   },
   'salutation' 	: '''
 Best Regards,
@@ -340,14 +332,14 @@ HOME_ACTIONS = (
         'url'          	: '/ideabox/',
     	'has_perms'	: 'MEMBER',
       },
-#      {         
-#        'label'        : 'Document Management', 
-#        'icon'  	: 'folder-open',
-#        'grade'  	: 'info',
-#        'desc'         : 'Filesharing and document management platform (SeaFile based)',
-#        'url'          : 'https://cloud.clusil.lu/',
-#    	'has_perms'	: 'cms.MEMBER',
-#      },
+      {         
+        'label'        	: 'Document Management', 
+        'icon'  	: 'folder-open',
+        'grade'  	: 'info',
+        'desc'         	: 'Filesharing and document management platform (SeaFile based)',
+        'url'          	: 'https://cloud.clusil.lu/',
+    	'has_perms'	: 'MEMBER',
+      },
 #      {         
 #        'label'        : 'Team Collaboration', 
 #        'icon'     	: 'comment',
@@ -416,14 +408,14 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Meetings and <i>members-only</i> Events', 
         'icon'     	: 'calendar',
-        'grade'     	: 'info',
+        'grade'     	: 'success',
         'desc'          : 'Manage regular meetings (board, working groups...) or members-only events.',
         'url'           : '/meetings/',
     	'has_perms'	: 'BOARD',
       },
       {         
         'label'         : 'Public Events', 
-        'icon'     	: 'glass',
+        'icon'     	: 'cocktail',
         'grade'     	: 'warning',
         'desc'          : 'Manage public events or activities',
         'url'           : '/events/',
@@ -432,9 +424,9 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Web Content', 
         'icon'     	: 'cloud',
-        'grade'     	: 'danger',
+        'grade'     	: 'info',
         'desc'          : 'Manage the public website content',
-        'url'           : '/webcontent/',
+        'url'           : 'https://clusil.lu/hibou/',
     	'has_perms'	: 'BOARD',
       },
     ),
@@ -447,22 +439,14 @@ BOARD_ACTIONS = (
       {         
         'label'         : 'Members', 
         'icon'     	: 'user',
-        'grade'     	: 'info',
+        'grade'     	: 'success',
         'desc'          : 'Manage members.',
         'url'           : '/members/',
     	'has_perms'	: 'BOARD',
       },
       {         
-        'label'         : 'Organisation', 
-        'icon'     	: 'users',
-        'grade'     	: 'info',
-        'desc'          : 'Manage and affiliate members to groups.',
-        'url'           : '/members/groups/',
-    	'has_perms'	: 'BOARD',
-      },
-      {         
         'label'         : 'Treasury', 
-        'icon'     	: 'euro',
+        'icon'     	: 'euro-sign',
         'grade'     	: 'info',
         'desc'          : 'Manage and check payments or other financial figures.',
         'url'           : '/accounting/',

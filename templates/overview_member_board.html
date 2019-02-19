@@ -1,29 +1,35 @@
-<div class="overview">
-<div class="panel panel-info">
-  <div class="panel-heading">
-    <center><h2>{{ title|safe }}</h2></center>
-  </div>
-  <div class="panel-body">
-    <div class="row">
-      <div class="col-sm-8">
-	<h4>Managers</h4>
+<h2 class="text-center">{{ title|safe }}</h2>
+
+<div class="row mb-4 mt-4">
+
+  <!-- managers -->
+  <div class="col-sm-8">
+    <div class="card">
+      <h4 class="card-header">Managers</h4>
+      <div class="card-body">
 	<ul class="list-group">
 	  <li class="list-group-item list-group-item-success">
-    	    <span class="badge">Head of List</span>
-	    {{ member.head_of_list.first_name }} {{ member.head_of_list.last_name|upper }} ({{ member.head_of_list.email }})
+    	    <h5>Head of List</h5>
+	    <i class="fa fa-user-circle"></i>&nbsp;&nbsp;{{ member.head_of_list.first_name }} {{ member.head_of_list.last_name|upper }} ({{ member.head_of_list.email }})
   	  </li>
         {% if member.delegate %}
-	  <li class="list-group-item list-group-item-info">
-    	    <span class="badge">Delegate</span>
-	    {{ member.delegate.first_name }} {{ member.delegate.last_name|upper }} ({{ member.delegate.email }})
+	  <li class="list-group-item list-group-item-warning">
+    	    <h5>Delegate</h5>
+	    <i class="fa fa-user-secret"></i>&nbsp;&nbsp;{{ member.delegate.first_name }} {{ member.delegate.last_name|upper }} ({{ member.delegate.email }})
   	  </li>
 	{% endif %}
 	</ul>
-        {% if member.student_proof %} <a class="btn btn-sm btn-default }}" href="{{ media_url }}{{ member.student_proof }}" role="button"><i class="fa fa-education"></i>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
       </div>
-      <div class="col-sm-4">
-        <blockquote>
-        <address>
+    </div>
+    {% if member.student_proof %} <a class="btn btn-sm btn-outline-dark my-3 mx-5" href="/media/{{ member.student_proof }}" role="button"><i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;Student Proof&nbsp;</a>{% endif %}
+  </div>
+
+  <!-- address & global actions -->
+  <div class="col-sm-4">
+    <div class="card mb-4">
+    <h4 class="card-header">Address</h4>
+      <div class="card-body">
+        <address class="text-dark">
           {% if member.organisation %}
 	    <b>{{ member.organisation.name }}</b><br/>
 	  {% else %}
@@ -33,61 +39,69 @@
           {{ member.address.postal_code }} {{ member.address.town }}<br/>
           {{ country|upper }}
         </address>
-        </blockquote>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="pull-right">
-          <span class="text-muted">Global Actions:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          {% for a in actions %}
-            {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
-          {% endfor %}
-        </div>
-        <p>All users registered on this membership:</p>
-        <table class="table table-condensed table-striped">
-         <tr> {# headers #}
-          <th>Role</th>
-          <th>Firstname</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Login</th>
-          <th>Affiliations</th>
-          <th class="text-center">Actions</th>
-         </tr>
- 
-         {% for u in users %}
-         <tr>
-          <td>
-           {% if u.role == 'hol' %}<i class="fa fa-user-circle text-success" title="Head of list"></i>{% endif %}
-           {% if u.role == 'del' %}<i class="fa fa-user-secret text-warning" title="Delegate"></i>{% endif %}
-           {% if u.role == 'u' %}<i class="fa fa-user"></i>{% endif %}
-          </td>
-          <td>{{ u.first_name }}</td>
-          <td>{{ u.last_name|upper }}</td>
-          <td>{{ u.email }}</td>
-          <td>{{ u.username }}</td>
-          <td>{{ u.affil|safe }}</td>
-          <td>
-            <div class="btn-group-vertical" role="group">
-	      <a class="btn btn-sm btn-default" role="button" href="/members/{{ member.id }}/moduser/{{ u.username }}/" title="Modify User"><i class="fa fa-pencil-square text-danger">&nbsp;&nbsp;Modify User</i></a>
-	      <a class="btn btn-sm btn-info" role="button" href="/members/{{ member.id }}/affiluser/{{ u.username }}/" title=""><i class="fa fa-th-list"></i>&nbsp;&nbsp;Affiliate User</a>
-              {% if member.organisation %} {# functions only available for ORG type #}
-                {% if u.role != 'hol' %}
-		  <a class="btn btn-sm btn-success" role="button" href="/members/{{ member.id }}/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
-                {% endif %}
-                {% if u.role != 'del' %}
-	          <a class="btn btn-sm btn-warning" role="button" href="/members/{{ member.id }}/make_delegate/{{ u.username }}/" title=""><i class="fa fa-user-secret"></i>&nbsp;&nbsp;Assign as Delegate</a>
-                {% endif %}
-		<a class="btn btn-sm btn-danger" role="button" href="/members/{{ member.id }}/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
-              {% endif %}
-            </div>
-          </td>
-         </tr>
-         {% endfor %}
-        </table>
+
+    <!-- global actions -->
+    {% if is_hol %}
+    <h5>Global Actions</h5>
+    {% for a in actions %}
+      <div class="btn-group" role="group">
+        {% if a.has_perms in groups %}
+        {% if a.url %} <a class="btn btn-sm btn-{{ a.grade }}" href="{{ a.url }}" role="button">{% if a.icon %}<i class="fa fa-{{ a.icon }}"></i>{% endif %}&nbsp;&nbsp;{{ a.label }}&nbsp;</a>{% endif %}
+        {% endif %}
       </div>
-    </div>
+    {% endfor %}
+    {% endif %}
+
   </div>
+
 </div>
+
+<div class="row">
+  <table class="table table-striped">
+  <caption>All registered users of this membership</caption>
+    <thead class="thead-dark">
+      <tr> {# headers #}
+        <th>Role</th>
+        <th>Firstname</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Login</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+ 
+    <tbody class="text-dark">
+      {% for u in users %}
+      <tr>
+        <td>
+        {% if u.role == 'hol' %}<i class="fa fa-user-circle text-success" title="Head of list"></i>{% endif %}
+        {% if u.role == 'del' %}<i class="fa fa-user-secret text-warning" title="Delegate"></i>{% endif %}
+        {% if u.role == 'u' %}<i class="fa fa-user"></i>{% endif %}
+        </td>
+        <td>{{ u.first_name }}</td>
+        <td>{{ u.last_name|upper }}</td>
+        <td>{{ u.email }}</tdthead-dark>
+        <td>{{ u.username }}</td>
+        <td class="text-center">
+          <div class="btn-group-vertical" role="group">
+            {% if U.username == u.username  or is_hol %}
+	    <a class="btn btn-sm btn-outline-primary mb-1" role="button" href="/profile/moduser/{{ u.username }}/" title="Modify User"><i class="fa fa-pencil-square">&nbsp;&nbsp;Modify User</i></a>
+            {% endif %}
+            {% if member.organisation %} {# functions only available for ORG type #}
+              {% if u.role != 'hol' %}
+		  <a class="btn btn-sm btn-success" role="button" href="/members/{{ member.id }}/make_head/{{ u.username }}/" title=""><i class="fa fa-user-circle"></i>&nbsp;&nbsp;Assign as HeadofList</a>
+              {% endif %}
+              {% if u.role != 'del' %}
+	          <a class="btn btn-sm btn-warning" role="button" href="/members/{{ member.id }}/make_delegate/{{ u.username }}/" title=""><i class="fa fa-user-secret"></i>&nbsp;&nbsp;Assign as Delegate</a>
+              {% endif %}
+		<a class="btn btn-sm btn-danger" role="button" href="/members/{{ member.id }}/rmuser/{{ u.username }}/" title=""><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>

@@ -14,19 +14,19 @@ def debug(app,message):
     from sys import stderr as errlog
     print >>errlog, 'DEBUG ['+str(app)+']: '+str(message)
 
-def group_required(*group_names):
+def group_required(group_name):
   from django.contrib.auth.decorators import user_passes_test
   from django.core.exceptions import PermissionDenied
 
   """Requires user membership in at least one of the groups passed in."""
-  def in_groups(user):
+  def in_group(user):
     if user.is_authenticated():
-      if bool(user.groups.filter(name__in=group_names)) or user.is_superuser:
+      if bool(user.groups.filter(name=group_name)) or user.is_superuser:
         return True
       else:
         raise PermissionDenied
 
-  return user_passes_test(in_groups)
+  return user_passes_test(in_group)
 
 
 def attach_to_email(email,attachment):
@@ -51,7 +51,7 @@ def notify_by_email(to,subject,message_content,template='default.txt',attachment
 
   email = EmailMessage(
                 subject=subject, 
-                from_email=settings.EMAILS['email']['no-reply'], 
+                from_email=settings.EMAILS['email']['secgen'], 
                 to=[to]
           )
   if copy: email.cc=[settings.EMAILS['email']['secgen']]
@@ -129,7 +129,7 @@ def genIcal(event):
 
   vevent = Event()
 #  event.add('attendee', self.getEmail())
-  vevent.add('organizer', settings.EMAILS['email']['no-reply'])
+  vevent.add('organizer', settings.EMAILS['email']['secgen'])
   vevent.add('status', "confirmed")
   vevent.add('category', "Event")
   vevent.add('summary', title)
@@ -138,7 +138,7 @@ def genIcal(event):
   vevent.add('dtstart', start)
   vevent.add('dtend', end)
   from attendance.functions import gen_hash
-  vevent['uid'] = gen_hash(event,settings.EMAILS['email']['no-reply'])[:10] # Generate some unique ID
+  vevent['uid'] = gen_hash(event,settings.EMAILS['email']['secgen'])[:10] # Generate some unique ID
   vevent.add('priority', 5)
   vevent.add('sequence', 1)
   vevent.add('created', timezone.now())

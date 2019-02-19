@@ -52,7 +52,7 @@ PROFILE_TMPL_CONTENT = {
     'actions_org'	: ACTIONS + ACTIONS_ORG,
     'title'             : u'Member profile <small>[%(type)s]</small> for <i>%(member)s</i>',
     'overview' : {
-      'template'        : 'overview_member.html',
+      'template'        : 'overview_member_board.html',
       'managers'       	: u'Managers',
       'firstname'       : u'Firstname',
       'name'            : u'Name',

@@ -59,11 +59,11 @@ EVENTS_TMPL_CONTENT = {
   'register': {
     'template'		: 'events_reg.html',
     'title'             : u'{}',
-    'header'       	: u'Registration form:',
+    'header'       	: u'Registration Form',
     'submit'            : u'Register',
     'teaser' : {
       'template'      	: 'teaser_event_reg.html',
-      'title'           : u'Event overview:',
+      'title'           : u'Event Overview',
       'date'          	: u'Schedule',
       'location'      	: u'Venue',
       'agenda'      	: u'Agenda',

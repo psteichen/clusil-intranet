@@ -10,7 +10,7 @@ from .views import list, send, details, register
 #forms
 event_forms = [
         ('event'	, EventForm),
-        ('distrib'	, DistributionForm),
+#        ('distrib'	, DistributionForm),
 ]
 
 # create event wizard #

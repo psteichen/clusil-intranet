@@ -12,11 +12,13 @@
   <div class="panel panel-info">
     <div class="panel-body">
       <div class="row">
-      <div class="col-sm-8">
-       <p class="lead">{{ header }}</p>
-       <form role="form" class="form-horizontal" action="." method="post" enctype="multipart/form-data">
+      <div class="col-sm-8 border-left border-info">
+       <p class="lead border-bottom border-info">{{ header }}</p>
+       <form role="form" action="." method="post" enctype="multipart/form-data">
+        <div class="form-group px-3">
         {% csrf_token %}
         {% bootstrap_form form %}
+        </div>
         <div class="btn-toolbar">
           <div class="btn-group">
             <button class="btn btn-info" type="submit" value="{{ submit }}">{{ submit }}&nbsp;&nbsp;<span class="glyphicon glyphicon-play"></span></button>

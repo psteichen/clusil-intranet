@@ -49,7 +49,7 @@ class Partner(Model):
 
 class Distribution(Model):
   event		= ForeignKey(Event)
-  partners	= ManyToManyField(Partner)
+  partners	= ManyToManyField(Partner,blank=True)
   others	= CharField(max_length=500,blank=True,null=True)
  
   def __unicode__(self):

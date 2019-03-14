@@ -30,7 +30,7 @@ class DistributionForm(ModelForm):
     fields = ( 'partners', 'others', )
     widgets = {
       'partners'	: CheckboxSelectMultiple(),
-      'others'		: Textarea(attrs={'placeholder': '''Please use following format (and only one entry per line): 
+      'others'		: Textarea(attrs={'placeholder': '''Please use following format (one entry per line, only): 
 Firstname;Name;email'''}),
     }
 

@@ -53,8 +53,8 @@ def gen_event_initial(e):
 def gen_reg_hash(event):
   #hash
   h = hashlib.md5()
-  h.update(unicode(event.agenda)) #salt
-  h.update(unicode(event.title) + unicode(event.when)) #message
+  h.update(unicode(event.when)) #salt
+  h.update(unicode(event.title)) #message
   return unicode(h.hexdigest()[:10])
 
 def gen_reg_code(e,p):

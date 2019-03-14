@@ -21,6 +21,7 @@ SECRET_KEY = '"&_-L%/(OI&RBçtzdb*v6hv+b8@rav4fgh@zre64z$54wrefdB%&*/Ã§ZR(r!)0b71
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+#DEBUG = True
 
 ALLOWED_HOSTS = [ 'cms.clusil.lu', 'intranet.clusil.lu', ]
 

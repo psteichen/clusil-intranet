@@ -70,4 +70,5 @@ class Participant(Model):
   def __unicode__(self):
     affil = ''
     if self.affiliation: affil = ' ['+unicode(self.affiliation)+']'
-    return unicode(self.first_name) + ' ' + unicode(self.last_name) + ' <' + self.email + '>' + affil
+    regcode = ' { '+unicode(self.regcode)+' }'
+    return unicode(self.first_name) + ' ' + unicode(self.last_name) + ' <' + self.email + '>' + affil + regcode

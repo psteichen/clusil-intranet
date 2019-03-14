@@ -15,7 +15,7 @@ class OrgAdmin(admin.ModelAdmin):
   list_display = ('name',)
 
 class MemberAdmin(admin.ModelAdmin):
-  list_display = ('gen_name', 'nb_users',)
+  list_display = ('gen_name', 'head_of_list', 'delegate', 'nb_users',)
 
 
 from .models import Address, Organisation, Member, Role, Renew

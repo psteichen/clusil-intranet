@@ -134,7 +134,7 @@ def details(r, member_id):
   mid = unicode(member.id)
 
   r.breadcrumbs( ( 
-			('home','/'),
+			('board','/board/'),
                    	('members','/members/'),
                    	('details of member: '+unicode(mid),'/members/details/'+mid+'/'),
                ) )

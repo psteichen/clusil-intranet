@@ -108,7 +108,13 @@ class Member(Model):
     return self.id + ' [ ' + t + ' ] - ' + o
 
   def nb_users(self):
-    return self.users.count()
+    nb = 0
+    if self.head_of_list:
+      nb+=1
+    if self.delegate:
+      nb+=1
+    nb += self.users.count()
+    return nb
 
 
 settings.FEE = {

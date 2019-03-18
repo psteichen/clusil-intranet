@@ -53,7 +53,7 @@ def payment(r,member_id,year):
   F = Fee.objects.get(member=M.id,year=year)
 
   template 	= settings.TEMPLATE_CONTENT['accounting']['payment']['template']
-  title 	= settings.TEMPLATE_CONTENT['accounting']['payment']['title'].format(member=M.gen_name())
+  title 	= settings.TEMPLATE_CONTENT['accounting']['payment']['title'].format(member=unicode(M.gen_name()))
   submit 	= settings.TEMPLATE_CONTENT['accounting']['payment']['submit']
 
   done_template = settings.TEMPLATE_CONTENT['accounting']['payment']['done']['template']

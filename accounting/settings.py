@@ -43,7 +43,7 @@ ACCOUNTING_TMPL_CONTENT = {
   },
   'payment': {
     'template'		: 'form.html',
-    'title'     	: 'Validate Payment for <br>&emsp;<small>{member}</small>',
+    'title'     	: u'Validate Payment for <br>&emsp;<small>{member}</small>',
     'desc'     		: '',
     'submit'   		: 'Validate',
     'done': {

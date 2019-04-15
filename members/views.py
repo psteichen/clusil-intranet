@@ -578,7 +578,14 @@ def rmuser(r,member_id,user,really=False):
 	       })
 
   #check if hol, del or admin
-  if r.user.username in (M.head_of_list.username, M.delegate.username) or r.user.is_superuser :
+  # set hol, del list
+  hd_list = (M.head_of_list.username, )
+  try:
+    hd_list.add(M.delegate.username)
+  except:
+    pass
+  
+  if r.user.username in hd_list or r.user.is_superuser :
     return render(r,template, {
 			'title'		: title,
 			'message'	: message.format(
